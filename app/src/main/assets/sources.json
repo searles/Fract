@@ -1,0 +1,11 @@
+{
+  "mandelbrotSet": {
+    "name": "Mandelbrot Set",
+    "description": "Mandelbrot Set",
+    "parameters": [
+      "mandelbrotSet",
+      "juliaSet",
+      "burningShip"
+    ]
+  }
+}

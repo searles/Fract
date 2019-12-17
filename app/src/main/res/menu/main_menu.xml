@@ -1,4 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <item
+        android:id="@+id/demoAction"
+        android:title="Demos" />
+    <item
+        android:id="@+id/openFavoritesAction"
+        android:title="Favorites" />
+    <item
+        android:id="@+id/shareAction"
+        android:title="Share/Save Image" />
+    <item
+        android:id="@+id/addToFavoritesAction"
+        android:title="Add to Favorites" />
+    <item
+        android:id="@+id/openSettingsAction"
+        android:title="Settings" />
 </menu>

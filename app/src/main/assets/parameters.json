@@ -1,0 +1,28 @@
+{
+  "mandelbrotSet": {
+    "name": "Mandelbrot Set",
+    "description": "Mandelbrot Set",
+    "parameters": {
+      "function": "sqr z + c",
+      "z0": "0"
+    }
+  },
+  "juliaSet": {
+    "name": "Julia Set",
+    "description": "Julia Set",
+    "parameters": {
+      "function": "sqr z + c",
+      "z0": "0",
+      "isJuliaSet": "true",
+      "juliaSetParameter": "-1:0"
+    }
+  },
+  "burningShip": {
+    "name": "Burning Ship",
+    "description": "Burning Ship",
+    "parameters": {
+      "function": "sqr |z| + c",
+      "z0": "0"
+    }
+  }
+}
