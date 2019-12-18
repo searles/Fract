@@ -5,7 +5,7 @@ import android.widget.ImageView
 import at.searles.itemselector.model.Folder
 import com.bumptech.glide.Glide
 
-class AssetsSourceFolder(override val name: String, override val description: String, val iconFilename: String, val sourceFilename: String, parameters: List<AssetsParametersItem>) : Folder {
+class AssetsSourceFolder(override val key: String, override val title: String, override val description: String, val iconFilename: String, val sourceFilename: String, parameters: List<AssetsParametersItem>) : Folder {
     override val children: List<AssetsParametersItem> = parameters
 
     override fun setImageInView(imageView: ImageView) {

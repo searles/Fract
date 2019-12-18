@@ -1,6 +1,6 @@
 {
   "mandelbrotSet": {
-    "name": "Mandelbrot Set",
+    "title": "Mandelbrot Set",
     "description": "Mandelbrot Set",
     "parameters": {
       "function": "sqr z + c",
@@ -8,7 +8,7 @@
     }
   },
   "juliaSet": {
-    "name": "Julia Set",
+    "title": "Julia Set",
     "description": "Julia Set",
     "parameters": {
       "function": "sqr z + c",
@@ -18,7 +18,7 @@
     }
   },
   "burningShip": {
-    "name": "Burning Ship",
+    "title": "Burning Ship",
     "description": "Burning Ship",
     "parameters": {
       "function": "sqr |z| + c",

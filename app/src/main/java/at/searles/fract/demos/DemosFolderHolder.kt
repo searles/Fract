@@ -37,7 +37,7 @@ class DemosFoldersHolder(private val context: Context): FoldersHolder {
     private fun createSourcesFolderFromJson(id: String, jsonObject: JSONObject): AssetsSourceFolder {
         val iconFilename = "$id.png"
         val sourceFilename = "$id.ft"
-        val name = jsonObject.getString(nameKey)
+        val title = jsonObject.getString(titleKey)
         val description = jsonObject.getString(descriptionKey)
 
 
@@ -47,7 +47,7 @@ class DemosFoldersHolder(private val context: Context): FoldersHolder {
             parametersMap.getValue(parametersArray.getString(it))
         }.toList()
 
-        return AssetsSourceFolder(name, description, iconFilename, sourceFilename, parameters)
+        return AssetsSourceFolder(id, title, description, iconFilename, sourceFilename, parameters)
 
     }
 
@@ -66,7 +66,7 @@ class DemosFoldersHolder(private val context: Context): FoldersHolder {
     private fun createParameterSetFromJson(id: String, jsonObject: JSONObject): AssetsParametersItem {
         val iconFilename = "$id.png"
 
-        val name = jsonObject.getString(nameKey)
+        val name = jsonObject.getString(titleKey)
         val description = jsonObject.getString(descriptionKey)
 
         val parameters = HashMap<String, String>()
@@ -77,14 +77,14 @@ class DemosFoldersHolder(private val context: Context): FoldersHolder {
             parameters[it] = parametersJson.getString(it)
         }
 
-        return AssetsParametersItem(name, description, iconFilename, parameters)
+        return AssetsParametersItem(id, name, description, iconFilename, parameters)
     }
 
     companion object {
         const val sourcesJsonFile = "sources.json"
         const val parametersJsonFile = "parameters.json"
 
-        const val nameKey = "name"
+        const val titleKey = "title"
         const val descriptionKey = "description"
         const val parametersKey = "parameters"
 

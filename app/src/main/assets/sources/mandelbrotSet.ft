@@ -9,19 +9,19 @@ val maxExponent = 2;
 val maxIterationCount = 1024;
 
 while ({
-    z = z^maxExponent + c;
+	z = z^maxExponent + c;
 
-    var radZ = rad z;
+	var radZ = rad z;
 
-    if(radZ > bailoutValue) {
-        var continuousAddend = -log(radZ / log bailoutValue) / log maxExponent;
-        var continuousN = n + continuousAddend;
-        setResult(1, log (1 + continuousN), continuousN);
-        false
-    } else if(not next(maxIterationCount, n)) {
-        setResult(0, arc z / 2 pi, log radZ);
-        false
-    } else {
-        true
-    }
+	if(radZ > bailoutValue) {
+		var continuousAddend = log(log radZ / log bailoutValue) / log maxExponent;
+		var logN = log(n + 1 - continuousAddend);
+		setResult(0, logN, logN);
+		false
+	} else if(not next(maxIterationCount, n)) {
+		setResult(1, 0, log radZ);
+		false
+	} else {
+		true
+	}
 })

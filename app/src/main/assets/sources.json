@@ -1,6 +1,6 @@
 {
   "mandelbrotSet": {
-    "name": "Mandelbrot Set",
+    "title": "Mandelbrot Set",
     "description": "Mandelbrot Set",
     "parameters": [
       "mandelbrotSet",
