@@ -13,7 +13,6 @@ class AssetsSourceFolder(override val name: String, override val description: St
             .with(imageView.context)
             .load(Uri.parse("file:///android_asset/icons/$iconFilename"))
             .centerCrop()
-            // TODO .placeholder(R.drawable.loading_spinner)
             .into(imageView)
     }
 }

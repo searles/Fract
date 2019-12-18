@@ -23,8 +23,11 @@ import at.searles.paletteeditor.Palette
 import at.searles.paletteeditor.colors.Lab
 import at.searles.paletteeditor.colors.Rgb
 import com.google.android.material.navigation.NavigationView
+import java.io.BufferedReader
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var fractal: BitmapModelParameters
 
     private val menuNavigationView: NavigationView by lazy {
         findViewById<NavigationView>(R.id.menuNavigationView)
@@ -87,8 +90,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun openDemo(sourceId: String, parameterId: String) {
+        val source = this.assets.open("$sourceId.ft").bufferedReader().use(BufferedReader::readText)
         // TODO
-
     }
 
     private fun openDemoActivity() {
@@ -132,10 +135,9 @@ class MainActivity : AppCompatActivity() {
             emptyMap()
         ).apply {
             compile()
-            Log.i("COMPILED", this.vmCode.toString())
         }
 
-        val fractal = BitmapModelParameters(Scale(2.0, 0.0, 0.0, 2.0, 0.0, 0.0),
+        fractal = BitmapModelParameters(Scale(2.0, 0.0, 0.0, 2.0, 0.0, 0.0),
             palettes,
             shaderProperties,
             compilerInstance

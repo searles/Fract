@@ -10,7 +10,6 @@ class AssetsParametersItem(override val name: String, override val description: 
             .with(imageView.context)
             .load(DemosFoldersHolder.getIconUri(iconFilename))
             .centerCrop()
-            // TODO .placeholder(R.drawable.loading_spinner)
             .into(imageView)
     }
 }
