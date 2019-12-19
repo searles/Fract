@@ -1,11 +1,30 @@
 {
-  "mandelbrotSet": {
+  "mandelbrot": {
     "title": "Mandelbrot Set",
     "description": "Mandelbrot Set",
     "parameters": [
-      "mandelbrotSet",
-      "juliaSet",
-      "burningShip"
+      "mandelbrot",
+      "mandelbrot_julia",
+      "multibrot",
+      "lambda",
+      "lambda_generic",
+      "magnet1",
+      "magnet2",
+      "multibrot_div_z",
+      "phoenix",
+      "burning_ship",
+      "burning_ship_alien",
+      "celtic",
+      "tricorn",
+      "buffalo",
+      "mandelbrot_perpendicular",
+      "burningship_perpendicular",
+      "celtic_perpendicular",
+      "buffalo_perpendicular",
+      "cczcpaczcp",
+      "glynn",
+      "simonbrot",
+      "simonbrot_generalized"
     ]
   }
 }

@@ -8,15 +8,14 @@ import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.RecyclerView
-import at.searles.fract.changes.SetAssetChange
 import at.searles.fract.demos.AssetsUtils
 import at.searles.fract.demos.DemosFolderHolder
 import at.searles.fractbitmapmodel.BitmapSync
 import at.searles.fractbitmapmodel.CalcBitmapModel
+import at.searles.fractbitmapmodel.tasks.SourceCodeChange
 import at.searles.fractimageview.ScalableImageView
 import at.searles.itemselector.ItemSelectorActivity
 import com.google.android.material.navigation.NavigationView
-import java.io.BufferedReader
 
 class FractMainActivity : AppCompatActivity(), BitmapSync.Listener, CalcBitmapModel.Listener, TaskBitmapModelFragment.Listener {
 
@@ -95,9 +94,10 @@ class FractMainActivity : AppCompatActivity(), BitmapSync.Listener, CalcBitmapMo
         val sourceCode = AssetsUtils.readAssetSource(this, sourceKey)
         val parameters = AssetsUtils.readAssetParameters(this, parametersKey)
 
-        // TODO: Much easier if I create a new field in fragment and change instantly in this new field
+        val change = SourceCodeChange(sourceCode, parameters)
 
-        bitmapModelFragment.bitmapModel.addPostCalcChange(SetAssetChange(sourceCode, parameters))
+        bitmapModelFragment.bitmapModel.addCalcChange(change)
+        bitmapModelFragment.bitmapModel.addPostCalcChange(change)
     }
 
     private fun openDemoActivity() {

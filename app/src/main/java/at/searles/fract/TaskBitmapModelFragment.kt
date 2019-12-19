@@ -9,10 +9,10 @@ import androidx.fragment.app.Fragment
 import at.searles.commons.math.Scale
 import at.searles.fract.demos.AssetsUtils
 import at.searles.fractbitmapmodel.*
+import at.searles.fractlang.FractlangProgram
 import at.searles.paletteeditor.Palette
 import at.searles.paletteeditor.colors.Lab
 import at.searles.paletteeditor.colors.Rgb
-import java.io.BufferedReader
 
 class TaskBitmapModelFragment : Fragment() {
 
@@ -62,7 +62,7 @@ class TaskBitmapModelFragment : Fragment() {
     }
 
     private fun initBitmapModel() {
-        calcProperties = CalcProperties(initialScale, initialSourceCode, emptyMap())
+        calcProperties = CalcProperties(initialScale, FractlangProgram(initialSourceCode, emptyMap()))
 
         bitmapProperties = BitmapProperties(initialPalettes, initialShader)
 
