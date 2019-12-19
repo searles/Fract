@@ -73,7 +73,7 @@ class TaskBitmapModelFragment : Fragment() {
         bitmapModel = CalcBitmapModel(controller)
     }
 
-    private val initialSourceCode get() = AssetsUtils.readAssetSource(context!!, "mandelbrotSet")
+    private val initialSourceCode get() = AssetsUtils.readAssetSource(context!!, "mandelbrot")
     private val initialScale = Scale(2.0, 0.0, 0.0, 2.0, 0.0, 0.0)
     private val initialShader = ShaderProperties()
     private val initialPalettes = listOf(

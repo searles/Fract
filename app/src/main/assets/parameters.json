@@ -84,7 +84,7 @@
     "title": "Phoenix Fractal",
     "description": "Fractal with lots of spirals",
     "parameters": {
-      "function": "z^2 + re c + zlast * im c",
+      "function": "z^2 + re c + lastZ * im c",
       "z0": "c",
       "isJuliaSet": "true",
       "juliaSetParameter": "0.56666: -0.5"

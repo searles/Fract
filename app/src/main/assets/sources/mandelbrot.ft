@@ -10,14 +10,14 @@ extern bailoutRadius: "Bailout Radius" = "64";
 extern bailoutValue: "Color Value when Bailout is exceeded" = "log(n + continuousAddend)";
 extern bailoutHeight: "Height when Bailout is exceeded" = "re value";
 extern epsilonRadius: "Epsilon Radius" = "1e-9";
-extern lakeValue: "Color Value for Lake" = "radZ : radDz";
+extern lakeValue: "Color Value for Lake" = "radDz : radZ";
 extern lakeHeight: "Height for Lake" = "re value";
 
 // Parameters that are used by the system to eg determine how many palettes there should be.
 
 declareScale(-2, 0, 0, -2, 0, 0);
-declarePalette("Bailout Palette", 4, 1, [0, 0, #ffff0000], [1, 0, #ffffff00], [2, 0, #ffffffff], [3, 0, #ff0000ff]);
-declarePalette("Lake Palette", 1, 1, [0, 0, #ff000000]);
+declarePalette("Bailout Palette", 5, 1, [0, 0, #ff4400aa], [1, 0, #ffffdd22], [2, 0, #ffffff88], [3, 0, #ffffffff], [4, 0, #ff000000]);
+declarePalette("Lake Palette", 1, 1, [0, 0, #ffffffff]);
 
 /*
  * Fract default file. At the bottom all extern parameters are defined.
@@ -63,7 +63,7 @@ class Calculator {
 		} else (radZ < bailoutRadius) or {
 			// bailout
 			var continuousAddend =
-				1 - log(log radZ / log bailoutValue) / log maxExponent;
+				1 - log(log radZ / log bailoutRadius) / log maxExponent;
 
 			var value = bailoutValue;
 			setResult(0, value, bailoutHeight);
