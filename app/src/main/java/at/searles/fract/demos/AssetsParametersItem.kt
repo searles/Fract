@@ -4,11 +4,12 @@ import android.widget.ImageView
 import at.searles.itemselector.model.Item
 import com.bumptech.glide.Glide
 
-class AssetsParametersItem(override val key: String, override val title: String, override val description: String, private val iconFilename: String, private val parameters: Map<String, String>) : Item {
+class AssetsParametersItem(override val key: String, override val title: String, override val description: String,
+                           private val iconFilename: String, val parameters: Map<String, String>) : Item {
     override fun setImageInView(imageView: ImageView) {
         Glide
             .with(imageView.context)
-            .load(DemosFoldersHolder.getIconUri(iconFilename))
+            .load(DemosFolderHolder.getIconUri(iconFilename))
             .centerCrop()
             .into(imageView)
     }

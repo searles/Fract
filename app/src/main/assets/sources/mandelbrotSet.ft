@@ -1,21 +1,29 @@
-val z0 = 0:0;
-var c = point;
 var n = 0;
+
+extern isJuliaSet: "Julia Set Mode" = "false";
+extern juliaSetParameter: "Julia Set Parameter" = "0 : -1";
+
+extern mandelInit: "z[0]" = "0:0";
+
+var z0 = if(isJuliaSet) point else mandelInit;
+var c = if(isJuliaSet) juliaSetParameter else point;
+
+extern bailoutValue: "Bailout Value" = "64";
+extern maxExponent: "Exponent" = "2";
+extern maxIterationCount: "Maximum Iteration Count" = "1024";
+extern function: "Function z[n]" = "z^2 + c";
 
 var z = z0;
 
-val bailoutValue = 64;
-val maxExponent = 2;
-val maxIterationCount = 1024;
-
 while ({
-	z = z^maxExponent + c;
+	z = function;
 
 	var radZ = rad z;
 
 	if(radZ > bailoutValue) {
-		var continuousAddend = log(log radZ / log bailoutValue) / log maxExponent;
-		var logN = log(n + 1 - continuousAddend);
+		var continuousAddend = 1 - log(log radZ / log bailoutValue) / log maxExponent;
+
+		var logN = log(n + continuousAddend);
 		setResult(0, logN, logN);
 		false
 	} else if(not next(maxIterationCount, n)) {

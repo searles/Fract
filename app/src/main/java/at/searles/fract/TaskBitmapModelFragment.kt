@@ -7,9 +7,8 @@ import android.renderscript.RenderScript
 import android.util.SparseArray
 import androidx.fragment.app.Fragment
 import at.searles.commons.math.Scale
+import at.searles.fract.demos.AssetsUtils
 import at.searles.fractbitmapmodel.*
-import at.searles.fractbitmapmodel.tasks.BitmapModelParameters
-import at.searles.fractlang.CompilerInstance
 import at.searles.paletteeditor.Palette
 import at.searles.paletteeditor.colors.Lab
 import at.searles.paletteeditor.colors.Rgb
@@ -17,21 +16,19 @@ import java.io.BufferedReader
 
 class TaskBitmapModelFragment : Fragment() {
 
-    lateinit var bitmapModel: CalculationTaskBitmapModel
+    lateinit var bitmapModel: CalcBitmapModel
         private set
 
-    lateinit var fractal: BitmapModelParameters
-    private lateinit var taskFactory: CalculationTaskFactory
-
-    val bitmapModelParameters: BitmapModelParameters
-        get() = taskFactory.bitmapModelParameters
+    lateinit var calcProperties: CalcProperties
+    lateinit var bitmapProperties: BitmapProperties
+    private lateinit var controller: CalcController
 
     var isInitializing: Boolean = true
         private set
 
     var initListener: Listener? = null
 
-    var listener: CalculationTaskBitmapModel.Listener?
+    var listener: CalcBitmapModel.Listener?
         get() {
             return bitmapModel.listener
         }
@@ -65,30 +62,20 @@ class TaskBitmapModelFragment : Fragment() {
     }
 
     private fun initBitmapModel() {
-        val compilerInstance = CompilerInstance(
-            initialSourceCode,
-            emptyMap()
-        ).apply {
-            compile()
-        }
+        calcProperties = CalcProperties(initialScale, initialSourceCode, emptyMap())
 
-        fractal = BitmapModelParameters(
-            initialScale,
-            initialPalettes,
-            initialShader,
-            initialSourceCode,
-            emptyMap()
-        )
+        bitmapProperties = BitmapProperties(initialPalettes, initialShader)
 
         val rs = RenderScript.create(context)
         val bitmapAllocation = BitmapAllocation(rs, 1000,600)
-        taskFactory = CalculationTaskFactory(rs, fractal, bitmapAllocation)
-        bitmapModel = CalculationTaskBitmapModel(taskFactory)
+
+        controller = CalcController(rs, calcProperties, bitmapProperties, bitmapAllocation)
+        bitmapModel = CalcBitmapModel(controller)
     }
 
-    private val initialSourceCode get() = context!!.assets.open("sources/mandelbrotSet.ft").bufferedReader().use(BufferedReader::readText)
+    private val initialSourceCode get() = AssetsUtils.readAssetSource(context!!, "mandelbrotSet")
     private val initialScale = Scale(2.0, 0.0, 0.0, 2.0, 0.0, 0.0)
-    private val initialShader = Shader3DProperties()
+    private val initialShader = ShaderProperties()
     private val initialPalettes = listOf(
         Palette(5, 2, 0f, 0f,
             SparseArray<SparseArray<Lab>>().also { table ->

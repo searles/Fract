@@ -8,15 +8,17 @@ import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.RecyclerView
-import at.searles.fract.changes.SourceCodeChangeTask
-import at.searles.fract.demos.DemosFoldersHolder
-import at.searles.fractbitmapmodel.CalculationTaskBitmapModel
+import at.searles.fract.changes.SetAssetChange
+import at.searles.fract.demos.AssetsUtils
+import at.searles.fract.demos.DemosFolderHolder
+import at.searles.fractbitmapmodel.BitmapSync
+import at.searles.fractbitmapmodel.CalcBitmapModel
 import at.searles.fractimageview.ScalableImageView
 import at.searles.itemselector.ItemSelectorActivity
 import com.google.android.material.navigation.NavigationView
 import java.io.BufferedReader
 
-class FractMainActivity : AppCompatActivity(), CalculationTaskBitmapModel.Listener, TaskBitmapModelFragment.Listener {
+class FractMainActivity : AppCompatActivity(), BitmapSync.Listener, CalcBitmapModel.Listener, TaskBitmapModelFragment.Listener {
 
     private lateinit var bitmapModelFragment: TaskBitmapModelFragment
 
@@ -89,17 +91,18 @@ class FractMainActivity : AppCompatActivity(), CalculationTaskBitmapModel.Listen
         super.onActivityResult(requestCode, resultCode, data)
     }
 
-    private fun openDemo(sourceId: String, parameterId: String) {
-        val sourceCode = this.assets.open("sources/$sourceId.ft").bufferedReader().use(BufferedReader::readText)
+    private fun openDemo(sourceKey: String, parametersKey: String) {
+        val sourceCode = AssetsUtils.readAssetSource(this, sourceKey)
+        val parameters = AssetsUtils.readAssetParameters(this, parametersKey)
 
         // TODO: Much easier if I create a new field in fragment and change instantly in this new field
 
-        bitmapModelFragment.bitmapModel.addPostCalcTask(SourceCodeChangeTask(sourceCode))
+        bitmapModelFragment.bitmapModel.addPostCalcChange(SetAssetChange(sourceCode, parameters))
     }
 
     private fun openDemoActivity() {
         Intent(this, ItemSelectorActivity::class.java).also {
-            it.putExtra(ItemSelectorActivity.initializerClassNameKey, DemosFoldersHolder::class.java.canonicalName)
+            it.putExtra(ItemSelectorActivity.initializerClassNameKey, DemosFolderHolder::class.java.canonicalName)
             startActivityForResult(it, demoSelectorRequestCode)
         }
     }

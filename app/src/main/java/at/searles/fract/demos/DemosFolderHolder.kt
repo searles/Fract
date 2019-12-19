@@ -6,15 +6,11 @@ import at.searles.itemselector.model.Folder
 import at.searles.itemselector.model.FoldersHolder
 import org.json.JSONObject
 
-class DemosFoldersHolder(private val context: Context): FoldersHolder {
+class DemosFolderHolder(private val context: Context): FoldersHolder {
 
     private val parametersMap = readParametersFromAssets()
 
     override val folders: List<Folder> = readSourcesFromAssets()
-
-    init {
-
-    }
 
     private fun readJson(filename: String): JSONObject {
         return context.assets.open(filename).bufferedReader().use {
@@ -51,7 +47,7 @@ class DemosFoldersHolder(private val context: Context): FoldersHolder {
 
     }
 
-    private fun readParametersFromAssets(): Map<String, AssetsParametersItem> {
+    fun readParametersFromAssets(): Map<String, AssetsParametersItem> {
         val root = readJson(parametersJsonFile)
 
         val parametersMap = LinkedHashMap<String, AssetsParametersItem>()
