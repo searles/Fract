@@ -1,4 +1,33 @@
 <resources>
     <string name="app_name">Fract</string>
-    <string name="appName">Fract</string>
+    <string name="compileError">ERROR: %s</string>
+    <string name="openDemo">Open Sample</string>
+    <string name="openFavorites">Favorites</string>
+    <string name="addToFavorites">Add to Favorites</string>
+    <string name="shareImage">Share Image</string>
+    <string name="saveImage">Save Image</string>
+    <string name="setImageSize">Set Image Size</string>
+    <string name="openSettings">Settings</string>
+    <string name="nameOfFavorite">Unique name for favorite</string>
+    <string name="imageWidthInPixel">Width (px)</string>
+    <string name="imageHeightInPixel">Height (px)</string>
+    <string name="xxLabel">[a] Horizontal-X</string>
+    <string name="xyLabel">[c] Horizontal-Y</string>
+    <string name="yxLabel">[b] Vertical-X</string>
+    <string name="yyLabel">[d] Vertical-Y</string>
+    <string name="yCenter">[f] Center-Y</string>
+    <string name="xCenter">[e] Center-X</string>
+    <string name="badNumberFormat">Bad number format</string>
+    <string name="dimensionsOutOfRange">Dimensions must be in range (%d .. %d)</string>
+    <string name="exceptionMessage">ERROR: %s</string>
+    <string name="zeroDeterminante">Determinante (ad - bc) must not be 0</string>
+    <string name="setScale">Set Scale</string>
+    <string name="polarAngle">Polar Angle (Radians)</string>
+    <string name="azimuthAngle">Azimuth Angle (Radians)</string>
+    <string name="useLightEffect">Use Light Effect</string>
+    <string name="shininess">Shininess (Integer 1 .. )</string>
+    <string name="specularReflection">Specular Reflection (0.0 ..)</string>
+    <string name="diffuseReflection">Diffuse Reflection (0.0 ..)</string>
+    <string name="ambientReflection">Ambient Reflection (0 ..)</string>
+    <string name="setShaderProperties">Shader Properties</string>
 </resources>

@@ -1,23 +1,33 @@
 package at.searles.fract
 
 import android.annotation.SuppressLint
+import android.graphics.Bitmap
 import android.os.AsyncTask
 import android.os.Bundle
 import android.renderscript.RenderScript
 import android.util.SparseArray
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import at.searles.commons.math.Scale
 import at.searles.fract.demos.AssetsUtils
 import at.searles.fractbitmapmodel.*
+import at.searles.fractbitmapmodel.tasks.CalcChange
+import at.searles.fractbitmapmodel.tasks.ControllerChange
 import at.searles.fractlang.FractlangProgram
+import at.searles.fractlang.PaletteData
 import at.searles.paletteeditor.Palette
 import at.searles.paletteeditor.colors.Lab
 import at.searles.paletteeditor.colors.Rgb
 
 class TaskBitmapModelFragment : Fragment() {
 
+    private lateinit var rs: RenderScript
+
     lateinit var bitmapModel: CalcBitmapModel
         private set
+
+    val bitmap: Bitmap
+        get() = bitmapModel.bitmap
 
     lateinit var calcProperties: CalcProperties
     lateinit var bitmapProperties: BitmapProperties
@@ -62,15 +72,58 @@ class TaskBitmapModelFragment : Fragment() {
     }
 
     private fun initBitmapModel() {
+        rs = RenderScript.create(context)
         calcProperties = CalcProperties(initialScale, FractlangProgram(initialSourceCode, emptyMap()))
-
         bitmapProperties = BitmapProperties(initialPalettes, initialShader)
 
-        val rs = RenderScript.create(context)
         val bitmapAllocation = BitmapAllocation(rs, 1000,600)
 
         controller = CalcController(rs, calcProperties, bitmapProperties, bitmapAllocation)
         bitmapModel = CalcBitmapModel(controller)
+    }
+
+    fun addSetImageSizeChange(width: Int, height: Int) {
+        try {
+            val newBitmapAllocation = BitmapAllocation(rs, width, height)
+
+            bitmapModel.addPostCalcChange(object: ControllerChange {
+                override fun accept(controller: CalcController) {
+                    controller.bitmapAllocation = newBitmapAllocation
+                }
+            })
+        } catch(th: Throwable) {
+            Toast.makeText(context, getString(R.string.exceptionMessage, th.localizedMessage), Toast.LENGTH_LONG).show()
+        }
+    }
+
+    fun addScaleChange(scale: Scale) {
+        bitmapModel.addCalcChange(object: CalcChange {
+            override fun accept(calcProperties: CalcProperties): CalcProperties {
+                return calcProperties.createWithNewScale(scale)
+            }
+        })
+    }
+
+    /**
+     * This one is called from favorites.
+     */
+    fun addSetPropertiesChange(calcProperties: CalcProperties, bitmapProperties: BitmapProperties) {
+        val change = object: CalcChange, ControllerChange {
+            override fun accept(calcProperties: CalcProperties): CalcProperties {
+                return calcProperties
+            }
+
+            override fun accept(controller: CalcController) {
+                controller.bitmapProperties = bitmapProperties
+            }
+        }
+
+        bitmapModel.addCalcChange(change)
+        bitmapModel.addPostCalcChange(change)
+    }
+
+    fun setPalette(index: Int, palette: Palette) {
+        // TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     private val initialSourceCode get() = AssetsUtils.readAssetSource(context!!, "mandelbrot")
