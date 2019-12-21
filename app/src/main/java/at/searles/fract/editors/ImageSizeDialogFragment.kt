@@ -8,17 +8,16 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import at.searles.fract.FractMainActivity
 import at.searles.fract.R
-import at.searles.fractbitmapmodel.BitmapAllocation
 import java.lang.NumberFormatException
 
 
-class SetImageSizeDialogFragment: DialogFragment() {
+class ImageSizeDialogFragment: DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val builder = AlertDialog.Builder(activity!!)
 
         builder
-            .setView(R.layout.set_image_size_dialog)
+            .setView(R.layout.image_size_dialog)
             .setTitle(R.string.setImageSize)
             .setPositiveButton(android.R.string.ok) { _, _ -> run { validateImageSize(); dismiss() } }
             .setNegativeButton(android.R.string.cancel) { _, _ -> dismiss() }
@@ -64,8 +63,8 @@ class SetImageSizeDialogFragment: DialogFragment() {
         const val widthKey = "width"
         const val heightKey = "height"
 
-        fun newInstance(width: Int, height: Int): SetImageSizeDialogFragment {
-            val dialogFragment = SetImageSizeDialogFragment()
+        fun newInstance(width: Int, height: Int): ImageSizeDialogFragment {
+            val dialogFragment = ImageSizeDialogFragment()
 
             dialogFragment.arguments = Bundle().apply {
                 putInt(widthKey, width)

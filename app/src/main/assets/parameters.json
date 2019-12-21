@@ -27,7 +27,7 @@
     "title": "Multibrot Set",
     "description": "Mandelbrot Set with generalized Exponent",
     "parameters": {
-      "function": "z^a + p",
+      "function": "z^a + c",
       "maxExponent": "re a",
       "z0": "0",
       "a": "3"

@@ -7,8 +7,8 @@
     <string name="shareImage">Share Image</string>
     <string name="saveImage">Save Image</string>
     <string name="setImageSize">Set Image Size</string>
-    <string name="openSettings">Settings</string>
-    <string name="nameOfFavorite">Unique name for favorite</string>
+    <string name="settings">Settings</string>
+    <string name="nameOfFavorite">Enter Name for favorite</string>
     <string name="imageWidthInPixel">Width (px)</string>
     <string name="imageHeightInPixel">Height (px)</string>
     <string name="xxLabel">[a] Horizontal-X</string>
@@ -30,4 +30,9 @@
     <string name="diffuseReflection">Diffuse Reflection (0.0 ..)</string>
     <string name="ambientReflection">Ambient Reflection (0 ..)</string>
     <string name="setShaderProperties">Shader Properties</string>
+    <string name="editParameter">Edit Parameter</string>
+    <string name="editParameterName">Edit Parameter %s</string>
+    <string name="sourceCode">Source Code</string>
+    <string name="scale">Scale</string>
+    <string name="shaderProperties">Shader Properties</string>
 </resources>

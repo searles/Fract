@@ -16,7 +16,7 @@ class ScaleDialogFragment: DialogFragment() {
         val builder = AlertDialog.Builder(activity!!)
 
         builder
-            .setView(R.layout.set_scale_dialog)
+            .setView(R.layout.scale_dialog)
             .setTitle(R.string.setScale)
             .setPositiveButton(android.R.string.ok) { _, _ -> run { setScale(); dismiss() } }
             .setNegativeButton(android.R.string.cancel) { _, _ -> dismiss() }

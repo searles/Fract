@@ -15,8 +15,8 @@ extern lakeHeight: "Height for Lake" = "re value";
 
 // Parameters that are used by the system to eg determine how many palettes there should be.
 
-declareScale(-2, 0, 0, -2, 0, 0);
-declarePalette("Bailout Palette", 5, 1, [0, 0, #ff4400aa], [1, 0, #ffffdd22], [2, 0, #ffffff88], [3, 0, #ffffffff], [4, 0, #ff000000]);
+declareScale(2, 0, 0, 2, 0, 0);
+declarePalette("Bailout Palette", 8, 1, [0, 0, #ff4400aa], [2, 0, #ffffdd22], [4, 0, #ffffffff], [6, 0, #ff000000]);
 declarePalette("Lake Palette", 1, 1, [0, 0, #ffffffff]);
 
 /*
