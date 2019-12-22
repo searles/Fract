@@ -35,4 +35,7 @@
     <string name="sourceCode">Source Code</string>
     <string name="scale">Scale</string>
     <string name="shaderProperties">Shader Properties</string>
+    <string name="lockRotation">Lock Rotation</string>
+    <string name="confirmZoom">Confirm Zoom</string>
+    <string name="touchEnabled">Touch Gestures Enabled</string>
 </resources>

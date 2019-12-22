@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
+import android.widget.CompoundButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import at.searles.fractbitmapmodel.FractBitmapModel
@@ -14,16 +15,16 @@ class ParameterAdapter(private val activity: FractMainActivity): RecyclerView.Ad
     private var items = emptyList<Item>() // TODO: Can use a listadapter.
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        // TODO: More view types.
-
-        val view = when(viewType) {
-            parameterBoolType -> LayoutInflater.from(activity).inflate(R.layout.parameter_bool_item, parent, false)
-            else -> LayoutInflater.from(activity).inflate(R.layout.parameter_simple_item, parent, false)
-        }
-
-        return ViewHolder(view).also {
-            view.setOnClickListener(it)
-            view.setOnLongClickListener(it)
+        if(parameterBoolType == viewType) {
+            val view = LayoutInflater.from(activity).inflate(R.layout.parameter_bool_item, parent, false)
+            val vh = ViewHolder(view)
+            view.findViewById<CheckBox>(R.id.parameterNameCheckBox).setOnCheckedChangeListener(vh)
+            return vh
+        } else {
+            val view = LayoutInflater.from(activity).inflate(R.layout.parameter_simple_item, parent, false)
+            return ViewHolder(view).also {
+                view.setOnClickListener(it)
+            }
         }
     }
 
@@ -39,12 +40,12 @@ class ParameterAdapter(private val activity: FractMainActivity): RecyclerView.Ad
         holder.bindTo(items[position])
     }
 
-    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener, View.OnLongClickListener {
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
+        View.OnClickListener, CompoundButton.OnCheckedChangeListener {
         override fun onClick(v: View) {
             val item = items[adapterPosition]
 
             when(item.type) {
-                parameterBoolType -> activity.setParameter(item.name, (!(item.value as Boolean)).toString())
                 parameterType -> activity.openParameterEditor(item.name)
                 paletteType -> activity.openPaletteEditor(adapterPosition - paletteStartPosition)
                 sourceCodeType -> activity.openSourceEditor()
@@ -54,9 +55,10 @@ class ParameterAdapter(private val activity: FractMainActivity): RecyclerView.Ad
             }
         }
 
-        override fun onLongClick(v: View?): Boolean {
-            // TODO Show context menu.
-            return false
+        override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
+            val item = items[adapterPosition]
+            require(item.type == parameterBoolType)
+            activity.setParameter(item.name, isChecked.toString())
         }
 
         internal fun bindTo(item: Item) {

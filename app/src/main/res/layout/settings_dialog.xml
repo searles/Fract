@@ -4,20 +4,21 @@
     android:layout_height="match_parent">
 
     <CheckBox
+        android:id="@+id/touchEnabledCheckBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/touchEnabled" />
+
+    <CheckBox
         android:id="@+id/rotationLockCheckBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Deactivate Rotation" />
+        android:text="@string/lockRotation" />
 
     <CheckBox
         android:id="@+id/confirmZoomCheckBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Confirm Zoom by Tap" />
+        android:text="@string/confirmZoom" />
 
-    <CheckBox
-        android:id="@+id/touchEnabledCheckBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Deactivate all Touch Gestures" />
 </LinearLayout>

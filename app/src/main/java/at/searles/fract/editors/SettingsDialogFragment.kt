@@ -17,7 +17,7 @@ class SettingsDialogFragment: DialogFragment() {
         val builder = AlertDialog.Builder(activity!!)
 
         builder
-            .setView(R.layout.image_size_dialog)
+            .setView(R.layout.settings_dialog)
             .setTitle(R.string.settings)
             .setPositiveButton(android.R.string.ok) { _, _ -> run { setPropertiesInActivity(); dismiss() } }
             .setNegativeButton(android.R.string.cancel) { _, _ -> dismiss() }
@@ -55,15 +55,6 @@ class SettingsDialogFragment: DialogFragment() {
         }
     }
 
-    private fun setImageSize(width: Int, height: Int) {
-        if(width < minDim || width > maxDim || height < minDim || height > maxDim) {
-            Toast.makeText(activity, getString(R.string.dimensionsOutOfRange, minDim, maxDim), Toast.LENGTH_LONG).show()
-            return
-        }
-
-        (activity as FractMainActivity).setImageSize(width, height)
-    }
-
     companion object {
         const val isTouchEnabledKey = "isTouchEnabled"
         const val hasRotationLockKey = "hasRotationLock"
@@ -80,8 +71,5 @@ class SettingsDialogFragment: DialogFragment() {
 
             return dialogFragment
         }
-
-        const val minDim = 1
-        const val maxDim = 100000
     }
 }

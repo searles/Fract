@@ -38,8 +38,9 @@ import java.io.FileOutputStream
 import java.io.OutputStream
 
 
-class FractMainActivity : AppCompatActivity(), FractBitmapModelFragment.Listener {
+class FractMainActivity : AppCompatActivity(), FractBitmapModelFragment.Listener, FractBitmapModel.Listener {
 
+    private lateinit var parameterAdapter: ParameterAdapter
     private lateinit var bitmapModelFragment: FractBitmapModelFragment
     private lateinit var bitmapModel: FractBitmapModel
 
@@ -79,8 +80,10 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModelFragment.Listener
         mainImageView.visibility = View.INVISIBLE
         taskProgressBar.visibility = View.VISIBLE
 
+        parameterAdapter = ParameterAdapter(this)
+
         with(parameterRecyclerView) {
-            adapter = ParameterAdapter(this@FractMainActivity)
+            adapter = parameterAdapter
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
         }
@@ -103,68 +106,62 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModelFragment.Listener
         super.onDestroy()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
         if (resultCode != Activity.RESULT_OK) {
             return
         }
 
         when (requestCode) {
             demoSelectorRequestCode -> {
-                require(data != null)
-                val sourceId = data.getStringExtra(ItemSelectorActivity.folderKey)!!
-                val parameterId = data.getStringExtra(ItemSelectorActivity.itemKey)!!
+                require(intent != null)
+                val sourceId = intent.getStringExtra(ItemSelectorActivity.folderKey)!!
+                val parameterId = intent.getStringExtra(ItemSelectorActivity.itemKey)!!
 
                 loadDemo(sourceId, parameterId)
             }
             saveImageCode -> {
-                require(data != null)
+                require(intent != null)
                 saveImage(contentResolver.openOutputStream(intent.data!!)!!)
             }
             sourceRequestCode -> {
-                val sourceCode = data!!.getStringExtra(SourceEditorActivity.sourceKey)!!
-                val parameters = SourceEditorActivity.toStringMap(data.getBundleExtra(SourceEditorActivity.parametersKey)!!)
+                val sourceCode = intent!!.getStringExtra(SourceEditorActivity.sourceKey)!!
+                val parameters = SourceEditorActivity.toStringMap(intent.getBundleExtra(SourceEditorActivity.parametersKey)!!)
 
                 setSourceCode(sourceCode, parameters)
                 return
             }
             paletteRequestCode -> {
-                val palette = data!!.getParcelableExtra(PaletteEditorActivity.paletteKey) as Palette
-                val index = data.getIntExtra(paletteIndexKey, -1)
+                val palette = intent!!.getParcelableExtra(PaletteEditorActivity.paletteKey) as Palette
+                val index = intent.getIntExtra(paletteIndexKey, -1)
 
                 setPalette(index, palette)
                 return
             }
             favoritesRequestCode -> {
-                val favoriteKey = data!!.getStringExtra(StorageActivity.nameKey)!!
+                val favoriteKey = intent!!.getStringExtra(StorageActivity.nameKey)!!
                 loadFavorite(favoriteKey)
                 return
             }
         }
 
-        super.onActivityResult(requestCode, resultCode, data)
+        super.onActivityResult(requestCode, resultCode, intent)
     }
 
     private fun loadFavorite(favoriteKey: String) {
         FavoritesProvider(this).load(favoriteKey) {
-            loadFromJsonString(it)
+            val obj = JSONObject(it)
+            bitmapModel.addChange(PropertiesFromJsonChange(obj))
         }
-    }
-
-    private fun loadFromJsonString(jsonString: String) {
-        val obj = JSONObject(jsonString)
-
-        val bitmapProperties = BitmapProperties.fromJson(obj)
-        val calcProperties = CalcProperties.fromJson(obj)
-
-        bitmapModelFragment.addChange(PropertiesChange(calcProperties, bitmapProperties))
     }
 
     private fun setPalette(index: Int, palette: Palette) {
-        val newPalettes = ArrayList(bitmapModelFragment.palettes).apply {
+        val newPalettes = ArrayList(bitmapModel.palettes).apply {
             this[index] = palette
         }
 
-        bitmapModelFragment.palettes = newPalettes
+        bitmapModel.palettes = newPalettes
+        // TODO Move to FractBitmapModel?
+        bitmapModel.updateBitmap()
     }
 
     private fun openMainMenuItem(menuItem: MenuItem) {
@@ -176,7 +173,7 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModelFragment.Listener
                 openFavorites()
             }
             R.id.addToFavoritesAction -> {
-                openAddToFavorites()
+                openAddToFavoritesDialog()
             }
             R.id.shareAction -> {
                 openShareImage()
@@ -200,18 +197,18 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModelFragment.Listener
             mainImageView.isTouchEnabled,
                 mainImageView.hasRotationLock,
                 mainImageView.mustConfirmZoom
-        )
+        ).show(supportFragmentManager, "dialog")
     }
 
     private fun openImageSize() {
         ImageSizeDialogFragment.newInstance(
-            bitmapModelFragment.bitmap!!.width,
-            bitmapModelFragment.bitmap!!.height).show(supportFragmentManager, "dialog")
+            bitmapModel.bitmap.width,
+            bitmapModel.bitmap.height).show(supportFragmentManager, "dialog")
     }
 
     private fun saveImage(os: OutputStream) {
         os.use {
-            if (!bitmapModelFragment.bitmap!!.compress(Bitmap.CompressFormat.PNG, 100, it)) {
+            if (!bitmapModel.bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)) {
                 throw UnsupportedOperationException("compress not supported!")
             }
         }
@@ -249,8 +246,7 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModelFragment.Listener
         )
     }
 
-
-    private fun openAddToFavorites() {
+    private fun openAddToFavoritesDialog() {
         AddToFavoritesDialogFragment.newInstance().show(supportFragmentManager, "dialog")
     }
 
@@ -271,7 +267,7 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModelFragment.Listener
         try {
             val fractlangProgram = FractlangProgram(sourceCode, parameters)
             val change = FractlangWithDefaultsChange(fractlangProgram)
-            bitmapModelFragment.addChange(change)
+            bitmapModel.addChange(change)
         } catch(e: SemanticAnalysisException) {
             Toast.makeText(this, getString(R.string.compileError, e.message), Toast.LENGTH_LONG).show()
         }
@@ -281,7 +277,7 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModelFragment.Listener
         try {
             val fractlangProgram = FractlangProgram(sourceCode, parameters)
             val change = FractlangChange(fractlangProgram)
-            bitmapModelFragment.addChange(change)
+            bitmapModel.addChange(change)
         } catch(e: SemanticAnalysisException) {
             Toast.makeText(this, getString(R.string.compileError, e.message), Toast.LENGTH_LONG).show()
         }
@@ -296,7 +292,9 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModelFragment.Listener
 
     fun addToFavorites(name: String) {
         // Save everything except for resolution
-        val jsonProperties = bitmapModelFragment.createJson()
+        // TODO Only non-standard properties!
+
+        val jsonProperties = bitmapModel.createJson()
         val jsonString = jsonProperties.toString(4)
 
         FavoritesProvider(this).save(name, { jsonString }, false)
@@ -323,8 +321,10 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModelFragment.Listener
 
     private fun connectBitmapModelFragment() {
         bitmapModel = bitmapModelFragment.bitmapModel
+        bitmapModel.listener = this
         mainImageView.scalableBitmapModel = bitmapModel
-
+        parameterAdapter.updateFrom(bitmapModel)
+        
         mainImageView.visibility = View.VISIBLE
         mainImageView.invalidate()
 
@@ -350,6 +350,10 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModelFragment.Listener
         taskProgressBar.visibility = View.INVISIBLE
     }
 
+    override fun propertiesChanged(src: FractBitmapModel) {
+        parameterAdapter.updateFrom(src)
+    }
+
     override fun setProgress(progress: Float) {
         taskProgressBar.visibility = View.VISIBLE
         taskProgressBar.progress = (progessBarFactor * progress).toInt()
@@ -362,17 +366,16 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModelFragment.Listener
     }
 
     fun setScale(scale: Scale) {
-        bitmapModelFragment.addChange(ScaleChange(scale))
+        bitmapModel.addChange(ScaleChange(scale))
     }
 
     fun setParameter(key: String, value: String) {
         try {
-            bitmapModelFragment.addChange(ParameterChange(key, value))
+            bitmapModel.addChange(ParameterChange(key, value))
         } catch(e: SemanticAnalysisException) {
             Toast.makeText(this, getString(R.string.compileError, e.message), Toast.LENGTH_LONG).show()
         }
     }
-
 
     fun openParameterEditor(name: String) {
         ParameterEditDialogFragment.newInstance(name, bitmapModel.parameters.getValue(name)).
@@ -381,13 +384,13 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModelFragment.Listener
 
     fun openScaleEditor() {
         ScaleDialogFragment.
-            newInstance(bitmapModelFragment.scale).
+            newInstance(bitmapModel.scale).
             show(supportFragmentManager, "dialog")
     }
 
     fun openSourceEditor() {
-        val sourceCode = bitmapModelFragment.sourceCode
-        val parameters = bitmapModelFragment.parameters
+        val sourceCode = bitmapModel.sourceCode
+        val parameters = bitmapModel.parameters
 
         Intent(this, SourceEditorActivity::class.java).also {
             it.putExtra(SourceEditorActivity.sourceKey, sourceCode)
@@ -397,7 +400,7 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModelFragment.Listener
     }
 
     fun openPaletteEditor(index: Int) {
-        val palette = bitmapModelFragment.palettes[index]
+        val palette = bitmapModel.palettes[index]
 
         Intent(this, PaletteEditorActivity::class.java).also {
             it.putExtra(PaletteEditorActivity.paletteKey, palette)
@@ -415,6 +418,11 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModelFragment.Listener
     fun openShaderPropertiesEditor() {
         ShaderPropertiesDialogFragment.newInstance(bitmapModel.shaderProperties).
             show(supportFragmentManager, "dialog")
+    }
+
+    fun setShaderProperties(shaderProperties: ShaderProperties) {
+        bitmapModel.shaderProperties = shaderProperties
+        bitmapModel.updateBitmap()
     }
 
     companion object {
