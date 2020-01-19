@@ -211,5 +211,13 @@
       "a": "3",
       "b": "2"
     }
+  },
+  "fold_experiment": {
+    "title": "Fold experiment 1",
+    "description": "Experiment with fast branching",
+    "parameters": {
+      "foldFunction": "foldValue + (exp(-radZ + 1) * re (z^a)) : re (dz^a)",
+      "a": "6"
+    }
   }
 }

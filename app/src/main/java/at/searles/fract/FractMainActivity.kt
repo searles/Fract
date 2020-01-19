@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import at.searles.android.storage.StorageActivity
+import at.searles.android.storage.data.InvalidNameException
 import at.searles.android.storage.data.PathContentProvider
 import at.searles.commons.math.Scale
 import at.searles.fract.demos.AssetsUtils
@@ -24,7 +25,8 @@ import at.searles.fract.favorites.AddToFavoritesDialogFragment
 import at.searles.fract.favorites.FavoritesProvider
 import at.searles.fractbitmapmodel.*
 import at.searles.fractbitmapmodel.changes.*
-import at.searles.fractimageview.ScalableImageView
+import at.searles.fractimageview.DrawBitmapBoundsPlugin
+import at.searles.fractimageview.PluginScalableImageView
 import at.searles.fractlang.FractlangProgram
 import at.searles.fractlang.semanticanalysis.SemanticAnalysisException
 import at.searles.itemselector.ItemSelectorActivity
@@ -56,8 +58,8 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModelFragment.Listener
         findViewById<RecyclerView>(R.id.parameterRecyclerView)
     }
 
-    private val mainImageView: ScalableImageView by lazy {
-        findViewById<ScalableImageView>(R.id.mainImageView)
+    private val mainImageView: PluginScalableImageView by lazy {
+        findViewById<PluginScalableImageView>(R.id.mainImageView)
     }
 
     private val taskProgressBar: ProgressBar by lazy {
@@ -116,6 +118,9 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModelFragment.Listener
                 require(intent != null)
                 val sourceId = intent.getStringExtra(ItemSelectorActivity.folderKey)!!
                 val parameterId = intent.getStringExtra(ItemSelectorActivity.itemKey)!!
+                val merge = intent.getBooleanExtra(ItemSelectorActivity.mergeKey, false)!!
+
+                // TODO use merge!
 
                 loadDemo(sourceId, parameterId)
             }
@@ -292,12 +297,14 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModelFragment.Listener
 
     fun addToFavorites(name: String) {
         // Save everything except for resolution
-        // TODO Only non-standard properties!
-
         val jsonProperties = bitmapModel.createJson()
         val jsonString = jsonProperties.toString(4)
 
-        FavoritesProvider(this).save(name, { jsonString }, false)
+        try {
+            FavoritesProvider(this).save(name, { jsonString }, false)
+        } catch(e: InvalidNameException) {
+            Toast.makeText(this, getString(R.string.invalidName), Toast.LENGTH_LONG).show()
+        }
     }
 
     private fun createNewBitmapModelFragment(): FractBitmapModelFragment {
@@ -327,6 +334,8 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModelFragment.Listener
         
         mainImageView.visibility = View.VISIBLE
         mainImageView.invalidate()
+
+        mainImageView.addPlugin(DrawBitmapBoundsPlugin())
 
         taskProgressBar.apply {
             min = -progressBarZero

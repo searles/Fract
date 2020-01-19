@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <at.searles.fractimageview.ScalableImageView
+        <at.searles.fractimageview.PluginScalableImageView
             android:id="@+id/mainImageView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>

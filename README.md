@@ -4,3 +4,7 @@
 features like color cycling or fast changing light effects.
 * Consists of multiple projects.
 
+# Features required
+
+* Demos should keep current palettes
+    + Or at least allow merge

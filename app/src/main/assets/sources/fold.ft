@@ -7,22 +7,23 @@ extern isJuliaSet: "Julia Set Mode" = "false";
 extern juliaSetParameter: "Julia Set Parameter" = "0 : -1";
 extern z0: "Start Value (z[0])" = "0:0";
 extern bailoutRadius: "Bailout Radius" = "64";
-extern bailoutValue: "Color Value when Bailout is exceeded" = "log(n + continuousAddend)";
+extern bailoutValue: "Color Value when Bailout is exceeded" = "log (1 + re foldValue)";
 extern bailoutHeight: "Height when Bailout is exceeded" = "re value";
 extern epsilonRadius: "Epsilon Radius" = "1e-9";
-extern lakeValue: "Color Value for Lake" = "radDz : radZ";
+extern lakeValue: "Color Value for Lake" = "log (1 + im foldValue)";
 extern lakeHeight: "Height for Lake" = "re value";
 
 // Parameters that are used by the system to eg determine how many palettes there should be.
 
 declareScale(2, 0, 0, 2, 0, 0);
 declarePalette("Bailout Palette", 8, 1, [0, 0, #ff000000], [2, 0, #ff4400aa], [4, 0, #ffffdd22], [6, 0, #ffffffff], [7, 0, #ff440000]);
-declarePalette("Lake Palette", 1, 1, [0, 0, #ffffffff]);
+declarePalette("Lake Palette", 8, 1, [0, 0, #ff4400aa], [2, 0, #ffffdd22], [4, 0, #ffffffff], [6, 0, #ff000000]);
 
-/*
- * Fract default file. At the bottom all extern parameters are defined.
- */
 class Calculator {
+    extern initialValue: "Start Value of Fold" = "0";
+
+    var foldValue: Cplx = initialValue;
+
 	// iteration counter
 	var n: Int = 0;
 
@@ -55,6 +56,9 @@ class Calculator {
 		var dz = z - lastZ;
 		var radDz = rad dz;
 
+		extern foldFunction: "Function for Fold" = "foldValue + exp(-radZ + 1) : radDz";
+		foldValue = foldFunction;
+
 		if(not next(maxIterationCount, n) or radDz < epsilonRadius) {
 			// lake
 			var value = lakeValue;
@@ -63,9 +67,6 @@ class Calculator {
 			false
 		} else (radZ < bailoutRadius) or {
 			// bailout
-			var continuousAddend =
-				1 - log(log radZ / log bailoutRadius) / log maxExponent;
-
 			var value = bailoutValue;
 			setResult(0, value, bailoutHeight);
 
