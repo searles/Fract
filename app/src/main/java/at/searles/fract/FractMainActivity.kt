@@ -40,7 +40,7 @@ import java.io.FileOutputStream
 import java.io.OutputStream
 
 
-class FractMainActivity : AppCompatActivity(), FractBitmapModelFragment.Listener, FractBitmapModel.Listener {
+class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener {
 
     private lateinit var parameterAdapter: ParameterAdapter
     private lateinit var bitmapModelFragment: FractBitmapModelFragment
@@ -93,19 +93,8 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModelFragment.Listener
 
     override fun onResume() {
         super.onResume()
-
-        if(!bitmapModelFragment.isInitializing) {
-            connectBitmapModelFragment()
-            taskProgressBar.visibility = View.INVISIBLE
-        }
-    }
-
-    override fun onDestroy() {
-        if(!bitmapModelFragment.isInitializing) {
-            bitmapModelFragment.listener = null
-        }
-
-        super.onDestroy()
+        connectBitmapModelFragment()
+        taskProgressBar.visibility = View.INVISIBLE
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
@@ -319,11 +308,6 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModelFragment.Listener
     private fun initBitmapModelFragment() {
         val fragment = supportFragmentManager.findFragmentByTag(fractBitmapModelFragmentTag)
         bitmapModelFragment = fragment as FractBitmapModelFragment? ?: createNewBitmapModelFragment()
-        bitmapModelFragment.listener = this
-    }
-
-    override fun initializationFinished() {
-        connectBitmapModelFragment()
     }
 
     private fun connectBitmapModelFragment() {
