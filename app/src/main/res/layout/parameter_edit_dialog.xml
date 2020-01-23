@@ -19,7 +19,7 @@
             android:ems="10"
             android:hint="@string/editParameter"
             android:importantForAutofill="no"
-            android:inputType="text" />
+            android:inputType="textFilter|textNoSuggestions" />
     </com.google.android.material.textfield.TextInputLayout>
 
 </LinearLayout>

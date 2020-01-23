@@ -27,11 +27,38 @@
       "simonbrot_generalized"
     ]
   },
-  "fold": {
-    "title": "Fold Orbit",
-    "description": "Accumulates all values in the orbit",
+  "branching": {
+    "title": "Branching Addend",
+    "description": "Sum of interpolated addend values ",
     "parameters": [
-      "fold_experiment",
+      "mandelbrot",
+      "mandelbrot_julia",
+      "multibrot",
+      "lambda",
+      "lambda_generic",
+      "magnet1",
+      "magnet2",
+      "multibrot_div_z",
+      "phoenix",
+      "burning_ship",
+      "burning_ship_alien",
+      "celtic",
+      "tricorn",
+      "buffalo",
+      "mandelbrot_perpendicular",
+      "burningship_perpendicular",
+      "celtic_perpendicular",
+      "buffalo_perpendicular",
+      "cczcpaczcp",
+      "glynn",
+      "simonbrot",
+      "simonbrot_generalized"
+    ]
+  },
+  "aggregate": {
+    "title": "Aggregate Orbit",
+    "description": "Aggregates all values of the orbit",
+    "parameters": [
       "mandelbrot",
       "mandelbrot_julia",
       "multibrot",

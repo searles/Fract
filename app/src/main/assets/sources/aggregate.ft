@@ -15,14 +15,20 @@ val lakeValueLabel = "Lake Color Value";
 val lakeHeightLabel = "Lake Height";
 val lakePaletteLabel = "Lake Palette";
 
+val aggregateFunctionLabel = "Aggregate Function";
+val aggregateStartValueLabel = "Start Value of Aggregate Function";
+
 // Parameters that are used by the system to eg determine how many palettes there should be.
 
 declareScale(2, 0, 0, 2, 0, 0);
 
-declarePalette(lakePaletteLabel, 1, 1, [0, 0, #ff000000]);
+declarePalette(lakePaletteLabel, 2, 1,
+	[0, 0, #ff000000], [1, 0, #ffffffff]
+);
 
 declarePalette(bailoutPaletteLabel, 6, 1,
-  [0, 0, #ff000000], [1, 0, #ff4400aa], [5, 0, #ff4400aa], [2, 0, #ffffdd22], [4, 0, #ffffdd22], [3, 0, #ffffffff]);
+  [0, 0, #ff000000], [1, 0, #ff4400aa], [5, 0, #ff4400aa], [2, 0, #ffffdd22], [4, 0, #ffffdd22], [3, 0, #ffffffff]
+);
 
 extern maxIteration: maxIterationLabel = "250";
 
@@ -30,6 +36,10 @@ extern maxIteration: maxIterationLabel = "250";
  * Fract default file. At the bottom all extern parameters are defined.
  */
 class Calculator {
+
+  extern aggregateStartValue: aggregateStartValueLabel = "0";
+  var aggregateValue: Cplx = aggregateStartValue;
+
   // iteration counter
   var n: Int = 0;
 
@@ -68,16 +78,13 @@ class Calculator {
     var dz = nextZ - z;
     var radDz = rad dz;
 
+    extern aggregateFunction: aggregateFunctionLabel = "aggregateValue + exp(-radZ): radDz";
+    aggregateValue = aggregateFunction;
+
     extern bailoutRadius: bailoutRadiusLabel = "64";
 
     if(radZ >= bailoutRadius) {
-      extern maxExponent: maxExponentLabel = "2";
-
-      // bailout
-      var continuousAddend =
-        1 - log(log radZ / log bailoutRadius) / log maxExponent;
-
-      extern bailoutValue: bailoutValueLabel = "log(n + continuousAddend + 20.08)";
+      extern bailoutValue: bailoutValueLabel = "log (1 + re aggregateValue)";
       extern bailoutHeight: bailoutHeightLabel = "re value";
 
       var value = bailoutValue;
@@ -86,7 +93,7 @@ class Calculator {
 
       false
     } else {
-      extern lakeValue: lakeValueLabel = "radDz : radZ";
+      extern lakeValue: lakeValueLabel = "log (1 + im aggregateValue)";
       extern lakeHeight: lakeHeightLabel = "re value";
 
       extern epsilonRadius: epsilonRadiusLabel = "1e-9";
@@ -106,6 +113,7 @@ class Calculator {
         false
       } else {
         // next step.
+
         lastZ = z;
         z = nextZ;
 

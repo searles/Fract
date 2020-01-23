@@ -65,7 +65,12 @@ class ParameterAdapter(private val activity: FractMainActivity): RecyclerView.Ad
             when(item.type) {
                 parameterBoolType -> {
                     val checkBox = itemView.findViewById<CheckBox>(R.id.parameterNameCheckBox)
+
+                    // Must remove listener to avoid a callback
+                    checkBox.setOnCheckedChangeListener(null)
                     checkBox.isChecked = item.value as Boolean
+                    checkBox.setOnCheckedChangeListener(this)
+
                     checkBox.text = item.name
                 }
                 else -> {
