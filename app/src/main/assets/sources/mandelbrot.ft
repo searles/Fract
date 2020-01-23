@@ -1,77 +1,118 @@
-// Parameters that can be edited from the menu
+// Names of parameters
 
-extern maxIterationCount: "Maximum Iteration Count" = "250";
-extern function: "Function (z[n])" = "z^2 + c";
-extern maxExponent: "Exponent" = "2";
-extern isJuliaSet: "Julia Set Mode" = "false";
-extern juliaSetParameter: "Julia Set Parameter" = "0 : -1";
-extern z0: "Start Value (z[0])" = "0:0";
-extern bailoutRadius: "Bailout Radius" = "64";
-extern bailoutValue: "Color Value when Bailout is exceeded" = "log(n + continuousAddend + 20.08)";
-extern bailoutHeight: "Height when Bailout is exceeded" = "re value";
-extern epsilonRadius: "Epsilon Radius" = "1e-9";
-extern lakeValue: "Color Value for Lake" = "radDz : radZ";
-extern lakeHeight: "Height for Lake" = "re value";
+val maxIterationLabel = "Maximum Iteration Count";
+val functionLabel = "Function (z[n])";
+val maxExponentLabel = "Maximum Exponent";
+val isJuliaSetLabel = "Julia Set";
+val juliaSetParameterLabel = "Julia Set Parameter";
+val z0Label = "Start Value (z[0])";
+val bailoutRadiusLabel = "Bailout Radius";
+val bailoutValueLabel = "Bailout Color Value";
+val bailoutHeightLabel = "Bailout Height";
+val bailoutPaletteLabel = "Bailout Palette";
+val epsilonRadiusLabel = "Epsilon Radius";
+val lakeValueLabel = "Lake Color Value";
+val lakeHeightLabel = "Lake Height";
+val lakePaletteLabel = "Lake Palette";
 
 // Parameters that are used by the system to eg determine how many palettes there should be.
 
 declareScale(2, 0, 0, 2, 0, 0);
-declarePalette("Bailout Palette", 6, 1, [0, 0, #ff000000], [1, 0, #ff4400aa], [2, 0, #ffffdd22], [3, 0, #ffffffff], [4, 0, #ffffdd22], [5, 0, #ff4400aa]);
-declarePalette("Lake Palette", 1, 1, [0, 0, #ffffffff]);
+
+declarePalette(lakePaletteLabel, 1, 1, [0, 0, #ffffffff]);
+
+declarePalette(bailoutPaletteLabel, 6, 1,
+  [0, 0, #ff000000], [1, 0, #ff4400aa], [5, 0, #ff4400aa], [2, 0, #ffffdd22], [4, 0, #ffffdd22], [3, 0, #ffffffff]);
+
+extern maxIteration: maxIterationLabel = "250";
 
 /*
  * Fract default file. At the bottom all extern parameters are defined.
  */
 class Calculator {
-	// iteration counter
-	var n: Int = 0;
+  // iteration counter
+  var n: Int = 0;
 
-	// parameter
-	var c: Cplx = if(isJuliaSet)
-		juliaSetParameter
-	else
-		point;
+  extern isJuliaSet: isJuliaSetLabel = "false";
 
-	// z[n]
-	var z: Cplx = if(isJuliaSet)
-		point
-	else
-		z0;
+  // parameter
+  var c: Cplx = if(isJuliaSet) {
+    extern juliaSetParameter: juliaSetParameterLabel = "0: -1";
+    juliaSetParameter
+  } else {
+    point;
+  }
 
-	// z[n-1]
-	var lastZ: Cplx = 0:0;
+  // z[n]
+  var z: Cplx = if(isJuliaSet)
+    point
+  else {
+    extern z0: z0Label = "0";
+    z0;
+  }
 
-	/*
-	 * Performs one full calculation step
-	 * z, lastZ and n are modified.
-	 * true is returned if none of the break conditions succeeds.
-	 */
-	fun step() {
-		var nextZ = function;
-		lastZ = z;
-		z = nextZ;
+  // z[n-1]
+  var lastZ: Cplx = 0:0;
 
-		var radZ = rad z;
-		var dz = z - lastZ;
-		var radDz = rad dz;
+  /*
+   * Performs one full calculation step
+   * z, lastZ and n are modified.
+   * true is returned if none of the break conditions succeeds.
+   */
+  fun step() {
+    extern function: functionLabel = "z^2 + c";
+    var nextZ = function;
 
-		if(not next(maxIterationCount, n) or radDz < epsilonRadius) {
-			// lake
-			var value = lakeValue;
-			setResult(1, value, lakeHeight);
+    lastZ = z;
+    z = nextZ;
 
-			false
-		} else (radZ < bailoutRadius) or {
-			// bailout
-			var continuousAddend =
-				1 - log(log radZ / log bailoutRadius) / log maxExponent;
+    var radZ = rad z;
 
-			var value = bailoutValue;
-			setResult(0, value, bailoutHeight);
+    extern bailoutRadius: bailoutRadiusLabel = "64";
 
-			false
-		}
-	}
+    if(radZ >= bailoutRadius) {
+      extern maxExponent: maxExponentLabel = "2";
+
+      // bailout
+      var continuousAddend =
+        1 - log(log radZ / log bailoutRadius) / log maxExponent;
+
+      extern bailoutValue: bailoutValueLabel = "log(n + continuousAddend + 20.08)";
+      extern bailoutHeight: bailoutHeightLabel = "re value";
+
+      var value = bailoutValue;
+
+      setResult(1, value, bailoutHeight);
+
+      false
+    } else {
+      var dz = z - lastZ;
+      var radDz = rad dz;
+
+      extern lakeValue: lakeValueLabel = "radDz : radZ";
+      extern lakeHeight: lakeHeightLabel = "re value";
+
+      extern epsilonRadius: epsilonRadiusLabel = "1e-9";
+
+      if(radDz < epsilonRadius) {
+        // convergent, thus lake.
+        // for magnet, another value might be of interest.
+        var value = lakeValue;
+        setResult(0, value, lakeHeight);
+
+        false
+      } else if(not next(maxIteration, n)) {
+        // lake
+        var value = lakeValue;
+        setResult(0, value, lakeHeight);
+
+        false
+      } else {
+        // next step.
+        true
+      }
+    }
+  }
 }
 
 // Main starts here. It is rather simple and linear.
@@ -79,6 +120,5 @@ class Calculator {
 val calculator = Calculator()
 
 while (
-	calculator.step()
+  calculator.step()
 );
-
