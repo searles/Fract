@@ -7,7 +7,7 @@ extern isJuliaSet: "Julia Set Mode" = "false";
 extern juliaSetParameter: "Julia Set Parameter" = "0 : -1";
 extern z0: "Start Value (z[0])" = "0:0";
 extern bailoutRadius: "Bailout Radius" = "64";
-extern bailoutValue: "Color Value when Bailout is exceeded" = "log(n + continuousAddend)";
+extern bailoutValue: "Color Value when Bailout is exceeded" = "log(n + continuousAddend + 20.08)";
 extern bailoutHeight: "Height when Bailout is exceeded" = "re value";
 extern epsilonRadius: "Epsilon Radius" = "1e-9";
 extern lakeValue: "Color Value for Lake" = "radDz : radZ";
@@ -16,7 +16,7 @@ extern lakeHeight: "Height for Lake" = "re value";
 // Parameters that are used by the system to eg determine how many palettes there should be.
 
 declareScale(2, 0, 0, 2, 0, 0);
-declarePalette("Bailout Palette", 8, 1, [0, 0, #ff000000], [2, 0, #ff4400aa], [4, 0, #ffffdd22], [6, 0, #ffffffff], [7, 0, #ff440000]);
+declarePalette("Bailout Palette", 6, 1, [0, 0, #ff000000], [1, 0, #ff4400aa], [2, 0, #ffffdd22], [3, 0, #ffffffff], [4, 0, #ffffdd22], [5, 0, #ff4400aa]);
 declarePalette("Lake Palette", 1, 1, [0, 0, #ffffffff]);
 
 /*
