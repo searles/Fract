@@ -17,6 +17,7 @@ val lakePaletteLabel = "Lake Palette";
 
 val aggregateFunctionLabel = "Aggregate Function";
 val aggregateStartValueLabel = "Start Value of Aggregate Function";
+val startIndexLabel = "Start Index of Aggregation";
 
 // Parameters that are used by the system to eg determine how many palettes there should be.
 
@@ -79,7 +80,11 @@ class Calculator {
     var radDz = rad dz;
 
     extern aggregateFunction: aggregateFunctionLabel = "aggregateValue + exp(-radZ): radDz";
-    aggregateValue = aggregateFunction;
+    extern startIndex: startIndexLabel = "0";
+
+    if(n > startIndex) {
+        aggregateValue = aggregateFunction;
+    }
 
     extern bailoutRadius: bailoutRadiusLabel = "64";
 

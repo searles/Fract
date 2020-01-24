@@ -109,9 +109,7 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener {
                 val parameterId = intent.getStringExtra(ItemSelectorActivity.itemKey)!!
                 val merge = intent.getBooleanExtra(ItemSelectorActivity.mergeKey, false)!!
 
-                // TODO use merge!
-
-                loadDemo(sourceId, parameterId)
+                loadDemo(sourceId, parameterId, merge)
             }
             saveImageCode -> {
                 require(intent != null)
@@ -252,11 +250,15 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener {
         }
     }
 
-    private fun loadDemo(sourceKey: String, parametersKey: String) {
+    private fun loadDemo(sourceKey: String, parametersKey: String, mergeParameters: Boolean) {
         val sourceCode = AssetsUtils.readAssetSource(this, sourceKey)
-        val parameters = AssetsUtils.readAssetParameters(this, parametersKey)
+        val parameters = HashMap<String, String>()
 
-        // TODO: It is possible to merge parameters here.
+        parameters.putAll(AssetsUtils.readAssetParameters(this, parametersKey))
+
+        if(mergeParameters) {
+            parameters.putAll(bitmapModel.parameters)
+        }
 
         try {
             val fractlangProgram = FractlangProgram(sourceCode, parameters)
