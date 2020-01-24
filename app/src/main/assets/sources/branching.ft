@@ -80,7 +80,8 @@ class Calculator {
 
     extern bailoutRadius: bailoutRadiusLabel = "65536";
 
-    extern addendFunction: addendFunctionLabel = "arc((nextZ - z) / (z  - lastZ))";
+    extern addendFunction: addendFunctionLabel = "norm nextZ ^ 2";
+    extern startIndex: startIndexLabel = "0";
 
     if(radZ >= bailoutRadius) {
       extern maxExponent: maxExponentLabel = "2";
@@ -89,9 +90,9 @@ class Calculator {
       var continuousAddend =
         1 - log(log radZ / log bailoutRadius) / log maxExponent;
 
-      sum = sum + continuousAddend * addendFunction;
+      var branchingAverage = (sum + continuousAddend * addendFunction) / (n + continuousAddend - startIndex);
 
-      extern bailoutValue: bailoutValueLabel = "log(abs re sum / tau + 1) : log(n + continuousAddend + 20.08)";
+      extern bailoutValue: bailoutValueLabel = "branchingAverage";
       extern bailoutHeight: bailoutHeightLabel = "re value";
 
       var value = bailoutValue;
@@ -120,8 +121,6 @@ class Calculator {
         false
       } else {
         // next step.
-        extern startIndex: startIndexLabel = "2";
-
         if(n > startIndex) {
           sum = sum + addendFunction;
         }
