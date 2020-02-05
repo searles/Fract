@@ -39,7 +39,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="end"
-        android:background="?android:colorBackground"
+        android:background="@color/transparentBackground"
         android:fitsSystemWindows="true" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

@@ -12,17 +12,17 @@ import at.searles.fractbitmapmodel.FractBitmapModel
 class ParameterAdapter(private val activity: FractMainActivity): RecyclerView.Adapter<ParameterAdapter.ViewHolder>() {
 
     // Order: Scale, SourceCode, ShaderProperties, Palettes[n], Parameters.
-    private var items = emptyList<Item>() // TODO: Can use a listadapter.
+    private var items = emptyList<Item>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        if(parameterBoolType == viewType) {
+        return if(parameterBoolType == viewType) {
             val view = LayoutInflater.from(activity).inflate(R.layout.parameter_bool_item, parent, false)
             val vh = ViewHolder(view)
             view.findViewById<CheckBox>(R.id.parameterNameCheckBox).setOnCheckedChangeListener(vh)
-            return vh
+            vh
         } else {
             val view = LayoutInflater.from(activity).inflate(R.layout.parameter_simple_item, parent, false)
-            return ViewHolder(view).also {
+            ViewHolder(view).also {
                 view.setOnClickListener(it)
             }
         }

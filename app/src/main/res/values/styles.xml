@@ -1,11 +1,9 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <item name="colorPrimary">@color/primaryColor</item> <!-- background title bar -->
+        <item name="colorPrimaryDark">@color/primaryDarkColor</item> <!-- background status bar -->
+        <item name="colorAccent">@color/secondaryColor</item> <!-- used for eg cursor color. light version is text selection-->
     </style>
-
 </resources>

@@ -107,7 +107,7 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener {
                 require(intent != null)
                 val sourceId = intent.getStringExtra(ItemSelectorActivity.folderKey)!!
                 val parameterId = intent.getStringExtra(ItemSelectorActivity.itemKey)!!
-                val merge = intent.getBooleanExtra(ItemSelectorActivity.mergeKey, false)!!
+                val merge = intent.getBooleanExtra(ItemSelectorActivity.specialKey, false)!!
 
                 loadDemo(sourceId, parameterId, merge)
             }
@@ -257,6 +257,7 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener {
         parameters.putAll(AssetsUtils.readAssetParameters(this, parametersKey))
 
         if(mergeParameters) {
+            Toast.makeText(this, "Merging sample with current parameters", Toast.LENGTH_SHORT).show()
             parameters.putAll(bitmapModel.parameters)
         }
 

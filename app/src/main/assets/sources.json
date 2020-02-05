@@ -3,6 +3,7 @@
     "title": "Mandelbrot Set",
     "description": "Mandelbrot Set",
     "parameters": [
+      "default",
       "mandelbrot",
       "mandelbrot_julia",
       "multibrot",
@@ -31,6 +32,7 @@
     "title": "Branching Addend",
     "description": "Sum of interpolated addend values ",
     "parameters": [
+      "default",
       "mandelbrot",
       "mandelbrot_julia",
       "multibrot",
@@ -59,6 +61,7 @@
     "title": "Aggregate Orbit",
     "description": "Aggregates all values of the orbit",
     "parameters": [
+      "default",
       "mandelbrot",
       "mandelbrot_julia",
       "multibrot",
