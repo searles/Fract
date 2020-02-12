@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import at.searles.android.storage.StorageActivity
 import at.searles.android.storage.data.InvalidNameException
 import at.searles.android.storage.data.PathContentProvider
+import at.searles.commons.color.Palette
 import at.searles.commons.math.Scale
 import at.searles.fract.demos.AssetsUtils
 import at.searles.fract.demos.DemosFolderHolder
@@ -30,7 +31,7 @@ import at.searles.fractimageview.PluginScalableImageView
 import at.searles.fractlang.FractlangProgram
 import at.searles.fractlang.semanticanalysis.SemanticAnalysisException
 import at.searles.itemselector.ItemSelectorActivity
-import at.searles.paletteeditor.Palette
+import at.searles.paletteeditor.PaletteAdapter
 import at.searles.paletteeditor.PaletteEditorActivity
 import at.searles.sourceeditor.SourceEditorActivity
 import com.google.android.material.navigation.NavigationView
@@ -107,7 +108,7 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener {
                 require(intent != null)
                 val sourceId = intent.getStringExtra(ItemSelectorActivity.folderKey)!!
                 val parameterId = intent.getStringExtra(ItemSelectorActivity.itemKey)!!
-                val merge = intent.getBooleanExtra(ItemSelectorActivity.specialKey, false)!!
+                val merge = intent.getBooleanExtra(ItemSelectorActivity.specialKey, false)
 
                 loadDemo(sourceId, parameterId, merge)
             }
@@ -123,7 +124,7 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener {
                 return
             }
             paletteRequestCode -> {
-                val palette = intent!!.getParcelableExtra(PaletteEditorActivity.paletteKey) as Palette
+                val palette = PaletteAdapter.toPalette(intent!!.getBundleExtra(PaletteEditorActivity.paletteKey)!!)
                 val index = intent.getIntExtra(paletteIndexKey, -1)
 
                 setPalette(index, palette)
@@ -142,18 +143,32 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener {
     private fun loadFavorite(favoriteKey: String) {
         FavoritesProvider(this).load(favoriteKey) {
             val obj = JSONObject(it)
-            bitmapModel.addChange(PropertiesFromJsonChange(obj))
+            bitmapModel.scheduleCalcPropertiesChange(PropertiesFromJsonChange(obj))
         }
     }
 
     private fun setPalette(index: Int, palette: Palette) {
-        val newPalettes = ArrayList(bitmapModel.palettes).apply {
-            this[index] = palette
+        val change = object: BitmapPropertiesChange {
+            override fun accept(properties: FractProperties): FractProperties {
+                val palettes = ArrayList<Palette?>()
+
+                (0 until properties.paletteCount).forEach {
+                    palettes.add(
+                        if(properties.isDefaultPalette(it)) {
+                            null
+                        } else {
+                            properties.palettes[it]
+                        }
+                    )
+                }
+
+                palettes[index] = palette
+
+                return properties.createWithNewBitmapProperties(palettes, null)
+            }
         }
 
-        bitmapModel.palettes = newPalettes
-        // TODO Move to FractBitmapModel?
-        bitmapModel.updateBitmap()
+        bitmapModel.applyBitmapPropertiesChange(change)
     }
 
     private fun openMainMenuItem(menuItem: MenuItem) {
@@ -254,17 +269,32 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener {
         val sourceCode = AssetsUtils.readAssetSource(this, sourceKey)
         val parameters = HashMap<String, String>()
 
-        parameters.putAll(AssetsUtils.readAssetParameters(this, parametersKey))
+        val currentProperties = bitmapModel.properties
+
+        val scale: Scale?
+        val palettes: List<Palette?>
 
         if(mergeParameters) {
             Toast.makeText(this, "Merging sample with current parameters", Toast.LENGTH_SHORT).show()
-            parameters.putAll(bitmapModel.parameters)
+            parameters.putAll(currentProperties.customParameters)
+
+            scale = if(!currentProperties.isDefaultScale) currentProperties.scale else null
+            palettes = (0 until currentProperties.paletteCount).map {
+                if(currentProperties.isDefaultPalette(it)) null else currentProperties.getPalette(it)
+            }
+        } else {
+            scale = null
+            palettes = emptyList()
         }
 
+        parameters.putAll(AssetsUtils.readAssetParameters(this, parametersKey))
+
         try {
-            val fractlangProgram = FractlangProgram(sourceCode, parameters)
-            val change = FractlangWithDefaultsChange(fractlangProgram)
-            bitmapModel.addChange(change)
+            // TODO check
+            val properties = FractProperties.create(sourceCode, parameters, scale, currentProperties.shaderProperties, palettes)
+            val change = NewFractPropertiesChange(properties)
+
+            bitmapModel.scheduleCalcPropertiesChange(change)
         } catch(e: SemanticAnalysisException) {
             Toast.makeText(this, getString(R.string.compileError, e.message), Toast.LENGTH_LONG).show()
         }
@@ -272,9 +302,14 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener {
 
     private fun setSourceCode(sourceCode: String, parameters: Map<String, String>) {
         try {
-            val fractlangProgram = FractlangProgram(sourceCode, parameters)
-            val change = FractlangChange(fractlangProgram)
-            bitmapModel.addChange(change)
+            val currentProperties = bitmapModel.properties
+
+            val newProgram = FractlangProgram(sourceCode, parameters)
+
+            val properties = currentProperties.createWithNewProperties(newProgram)
+            val change = NewFractPropertiesChange(properties)
+
+            bitmapModel.scheduleCalcPropertiesChange(change)
         } catch(e: SemanticAnalysisException) {
             Toast.makeText(this, getString(R.string.compileError, e.message), Toast.LENGTH_LONG).show()
         }
@@ -289,7 +324,7 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener {
 
     fun addToFavorites(name: String) {
         // Save everything except for resolution
-        val jsonProperties = bitmapModel.createJson()
+        val jsonProperties = FractPropertiesAdapter.toJson(bitmapModel.properties)
         val jsonString = jsonProperties.toString(4)
 
         try {
@@ -362,31 +397,31 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener {
     }
 
     fun setScale(scale: Scale) {
-        bitmapModel.addChange(ScaleChange(scale))
+        bitmapModel.scheduleCalcPropertiesChange(ScaleChange(scale))
     }
 
     fun setParameter(key: String, value: String) {
         try {
-            bitmapModel.addChange(ParameterChange(key, value))
+            bitmapModel.scheduleCalcPropertiesChange(ParameterChange(key, value))
         } catch(e: SemanticAnalysisException) {
             Toast.makeText(this, getString(R.string.compileError, e.message), Toast.LENGTH_LONG).show()
         }
     }
 
     fun openParameterEditor(name: String) {
-        ParameterEditDialogFragment.newInstance(name, bitmapModel.parameters.getValue(name)).
+        ParameterEditDialogFragment.newInstance(name, bitmapModel.properties.getParameter(name)).
             show(supportFragmentManager, "dialog")
     }
 
     fun openScaleEditor() {
         ScaleDialogFragment.
-            newInstance(bitmapModel.scale).
+            newInstance(bitmapModel.properties.scale).
             show(supportFragmentManager, "dialog")
     }
 
     fun openSourceEditor() {
-        val sourceCode = bitmapModel.sourceCode
-        val parameters = bitmapModel.parameters
+        val sourceCode = bitmapModel.properties.sourceCode
+        val parameters = bitmapModel.properties.customParameters
 
         Intent(this, SourceEditorActivity::class.java).also {
             it.putExtra(SourceEditorActivity.sourceKey, sourceCode)
@@ -396,10 +431,10 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener {
     }
 
     fun openPaletteEditor(index: Int) {
-        val palette = bitmapModel.palettes[index]
+        val palette = bitmapModel.properties.getPalette(index)
 
         Intent(this, PaletteEditorActivity::class.java).also {
-            it.putExtra(PaletteEditorActivity.paletteKey, palette)
+            it.putExtra(PaletteEditorActivity.paletteKey, PaletteAdapter.toBundle(palette))
             it.putExtra(paletteIndexKey, index)
             startActivityForResult(it, paletteRequestCode)
         }
@@ -412,13 +447,18 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener {
     }
 
     fun openShaderPropertiesEditor() {
-        ShaderPropertiesDialogFragment.newInstance(bitmapModel.shaderProperties).
+        ShaderPropertiesDialogFragment.newInstance(bitmapModel.properties.shaderProperties).
             show(supportFragmentManager, "dialog")
     }
 
     fun setShaderProperties(shaderProperties: ShaderProperties) {
-        bitmapModel.shaderProperties = shaderProperties
-        bitmapModel.updateBitmap()
+        val change = object: BitmapPropertiesChange {
+            override fun accept(properties: FractProperties): FractProperties {
+                return properties.createWithNewBitmapProperties(null, shaderProperties)
+            }
+        }
+
+        bitmapModel.applyBitmapPropertiesChange(change)
     }
 
     companion object {

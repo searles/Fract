@@ -1,5 +1,6 @@
 package at.searles.fract
 
+import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -62,6 +63,8 @@ class ParameterAdapter(private val activity: FractMainActivity): RecyclerView.Ad
         }
 
         internal fun bindTo(item: Item) {
+            val descriptionTextView = itemView.findViewById<TextView>(R.id.descriptionTextView)
+
             when(item.type) {
                 parameterBoolType -> {
                     val checkBox = itemView.findViewById<CheckBox>(R.id.parameterNameCheckBox)
@@ -71,11 +74,27 @@ class ParameterAdapter(private val activity: FractMainActivity): RecyclerView.Ad
                     checkBox.isChecked = item.value as Boolean
                     checkBox.setOnCheckedChangeListener(this)
 
-                    checkBox.text = item.name
+                    checkBox.text = item.description
+
+                    if(item.isDefault) {
+                        checkBox.typeface = Typeface.DEFAULT
+                    } else {
+                        checkBox.typeface = Typeface.DEFAULT_BOLD
+                    }
+
+                    descriptionTextView.text = item.name
                 }
                 else -> {
                     val textView = itemView.findViewById<TextView>(R.id.parameterNameTextView)
-                    textView.text = item.name
+                    textView.text = item.description
+
+                    if(item.isDefault) {
+                        textView.typeface = Typeface.DEFAULT
+                    } else {
+                        textView.typeface = Typeface.DEFAULT_BOLD
+                    }
+
+                    descriptionTextView.text = item.name
                 }
             }
         }
@@ -84,20 +103,28 @@ class ParameterAdapter(private val activity: FractMainActivity): RecyclerView.Ad
     fun updateFrom(model: FractBitmapModel) {
         val list = ArrayList<Item>()
 
-        list.add(Item(activity.resources.getString(R.string.sourceCode), sourceCodeType, model.sourceCode))
-        list.add(Item(activity.resources.getString(R.string.scale), scaleType, model.scale))
-        list.add(Item(activity.resources.getString(R.string.shaderProperties), shaderPropertiesType, model.shaderProperties))
+        val properties = model.properties
+
+        // TODO Strings!
+        list.add(Item(activity.resources.getString(R.string.sourceCode), sourceCodeType, "Source Code", false, properties.sourceCode))
+        list.add(Item(activity.resources.getString(R.string.scale), scaleType, "Scale", properties.isDefaultScale, properties.scale))
+        list.add(Item(activity.resources.getString(R.string.shaderProperties), shaderPropertiesType, "Light Effects",model.properties.isDefaultShaderProperties, properties.shaderProperties))
 
         require(list.size == paletteStartPosition)
-        model.palettes.forEachIndexed {
-                index, palette -> list.add(Item("Palette $index", paletteType, palette))
+
+        repeat(properties.paletteCount) {
+            list.add(Item("Palette $it", paletteType, properties.getPaletteDescription(it), properties.isDefaultPalette(it), properties.getPalette(it)))
         }
 
-        model.parameters.forEach { (key, value) ->
-            if(value == "true" || value == "false") {
-                list.add(Item(key, parameterBoolType, value == "true"))
+        properties.parameterIds.forEach {
+            val expr = properties.getParameter(it)
+            val isDefault = properties.isDefaultParameter(it)
+            val description = properties.getParameterDescription(it)
+
+            if(expr == "true" || expr == "false") {
+                list.add(Item(it, parameterBoolType, description, isDefault, expr == "true"))
             } else {
-                list.add(Item(key, parameterType, value))
+                list.add(Item(it, parameterType, description, isDefault, expr))
             }
         }
 
@@ -105,7 +132,7 @@ class ParameterAdapter(private val activity: FractMainActivity): RecyclerView.Ad
         notifyDataSetChanged()
     }
 
-    class Item(val name: String, val type: Int, val value: Any)
+    class Item(val name: String, val type: Int, val description: String, val isDefault: Boolean, val value: Any)
 
     companion object {
         private const val sourceCodeType = 0
