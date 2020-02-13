@@ -141,25 +141,26 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener {
     }
 
     private fun loadFavorite(favoriteKey: String) {
-        FavoritesProvider(this).load(favoriteKey) {
-            val obj = JSONObject(it)
-            bitmapModel.scheduleCalcPropertiesChange(PropertiesFromJsonChange(obj))
+        try {
+            FavoritesProvider(this).load(favoriteKey) {
+                val obj = JSONObject(it)
+                bitmapModel.scheduleCalcPropertiesChange(PropertiesFromJsonChange(obj))
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+
+            // TODO String extract!
+            Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_LONG).show()
         }
     }
 
     private fun setPalette(index: Int, palette: Palette) {
         val change = object: BitmapPropertiesChange {
             override fun accept(properties: FractProperties): FractProperties {
-                val palettes = ArrayList<Palette?>()
+                val palettes = properties.customPalettes.toMutableList()
 
-                (0 until properties.paletteCount).forEach {
-                    palettes.add(
-                        if(properties.isDefaultPalette(it)) {
-                            null
-                        } else {
-                            properties.palettes[it]
-                        }
-                    )
+                while(palettes.size <= index) {
+                    palettes.add(null)
                 }
 
                 palettes[index] = palette
