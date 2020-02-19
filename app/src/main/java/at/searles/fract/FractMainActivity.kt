@@ -4,11 +4,11 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.view.MenuItem
-import android.view.View
+import android.view.*
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.content.FileProvider
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -66,12 +66,20 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener {
     private val taskProgressBar: ProgressBar by lazy {
         findViewById<ProgressBar>(R.id.taskProgressBar).apply {
             isIndeterminate = true
+            // TODO: Fix when initializing
         }
     }
+
+    private val toolbar: Toolbar by lazy {
+        findViewById<Toolbar>(R.id.toolbar)
+    }
+
+    // TODO Add grid
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        setSupportActionBar(toolbar)
 
         menuNavigationView.setNavigationItemSelectedListener {
             openMainMenuItem(it)
@@ -89,6 +97,30 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener {
             adapter = parameterAdapter
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        val inflater = menuInflater
+        inflater.inflate(R.menu.main_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId) {
+            R.id.forward -> if(bitmapModel.hasForwardHistory()) {
+                bitmapModel.historyForward()
+                true
+            } else {
+                Toast.makeText(this, "No further elements in the history", Toast.LENGTH_LONG).show()
+                // TODO Disable menu
+                false
+            }
+            R.id.openPropertiesDrawer -> {
+                drawerLayout.openDrawer(parameterRecyclerView)
+                true
+            }
+            else -> error("bad item: $item")
         }
     }
 
@@ -138,6 +170,15 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener {
         }
 
         super.onActivityResult(requestCode, resultCode, intent)
+    }
+
+    override fun onBackPressed() {
+        if(!bitmapModelFragment.bitmapModel.hasBackHistory()) {
+            Toast.makeText(this, "History is empty.", Toast.LENGTH_LONG).show()
+            return
+        }
+
+        bitmapModelFragment.bitmapModel.historyBack()
     }
 
     private fun loadFavorite(favoriteKey: String) {
@@ -339,7 +380,7 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener {
         // use default source
         val sourceCode = AssetsUtils.readAssetSource(this, "mandelbrot")
 
-        return FractBitmapModelFragment.createInstance(sourceCode).apply {
+        return FractBitmapModelFragment.createInstance(sourceCode, emptyMap()).apply {
             supportFragmentManager.beginTransaction().add(this, fractBitmapModelFragmentTag).commit()
         }
     }
@@ -371,6 +412,7 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener {
         taskProgressBar.apply {
             visibility = View.VISIBLE
             progress = 0
+            isIndeterminate = true
         }
     }
 
@@ -387,8 +429,11 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener {
     }
 
     override fun setProgress(progress: Float) {
-        taskProgressBar.visibility = View.VISIBLE
-        taskProgressBar.progress = (progessBarFactor * progress).toInt()
+        with(taskProgressBar) {
+            visibility = View.VISIBLE
+            this.progress = (progessBarFactor * progress).toInt()
+            isIndeterminate = false
+        }
     }
 
     // Callbacks from Fragments

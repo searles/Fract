@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/demoAction"
+        android:title="@string/openDemo" />
+    <item
+        android:id="@+id/openFavoritesAction"
+        android:title="@string/openFavorites" />
+    <item
+        android:id="@+id/addToFavoritesAction"
+        android:title="@string/addToFavorites" />
+    <item
+        android:id="@+id/shareAction"
+        android:title="@string/shareImage" />
+    <item
+        android:id="@+id/saveAction"
+        android:title="@string/saveImage" />
+    <item
+        android:id="@+id/imageSize"
+        android:title="@string/setImageSize" />
+    <item
+        android:id="@+id/openSettingsAction"
+        android:title="@string/settings" />
+</menu>

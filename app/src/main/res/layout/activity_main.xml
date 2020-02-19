@@ -23,6 +23,12 @@
             android:layout_gravity="top|center_horizontal"
             android:progressBackgroundTint="@android:color/transparent"/>
 
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+
     </FrameLayout>
 
     <com.google.android.material.navigation.NavigationView
@@ -31,7 +37,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
-        app:menu="@menu/main_menu"
+        app:menu="@menu/nav_menu"
         app:headerLayout="@layout/navigation_header"/>
 
     <androidx.recyclerview.widget.RecyclerView

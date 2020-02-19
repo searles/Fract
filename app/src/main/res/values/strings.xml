@@ -39,4 +39,6 @@
     <string name="confirmZoom">Confirm Zoom</string>
     <string name="touchEnabled">Touch Gestures Enabled</string>
     <string name="invalidName">Invalid name</string>
+    <string name="forward">Forward</string>
+    <string name="editProperties">Edit</string>
 </resources>
