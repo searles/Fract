@@ -25,14 +25,18 @@ class SettingsDialogFragment: DialogFragment() {
 
         val dialog = builder.show()
 
+        // XXX This definitely could be improved by using a method like onPostCreateDialog if it exists.
+
         if(savedInstanceState == null) {
             val hasRotationLock = arguments!!.getBoolean(hasRotationLockKey)
             val isConfirmZoom = arguments!!.getBoolean(isConfirmZoomKey)
             val isTouchEnabled = arguments!!.getBoolean(isTouchEnabledKey)
+            val isShowGrid = arguments!!.getBoolean(isShowGridKey)
 
             getTouchEnabledCheckBox(dialog).isChecked = isTouchEnabled
-            getRotationLockCheckBox(dialog).isChecked = hasRotationLock 
+            getRotationLockCheckBox(dialog).isChecked = hasRotationLock
             getConfirmZoomCheckBox(dialog).isChecked = isConfirmZoom
+            getShowGridCheckBox(dialog).isChecked = isShowGrid
         }
 
 
@@ -42,6 +46,7 @@ class SettingsDialogFragment: DialogFragment() {
     private fun getTouchEnabledCheckBox(dialog: Dialog) = dialog.findViewById<CheckBox>(R.id.touchEnabledCheckBox)!!
     private fun getConfirmZoomCheckBox(dialog: Dialog) = dialog.findViewById<CheckBox>(R.id.confirmZoomCheckBox)!!
     private fun getRotationLockCheckBox(dialog: Dialog) = dialog.findViewById<CheckBox>(R.id.rotationLockCheckBox)!!
+    private fun getShowGridCheckBox(dialog: Dialog) = dialog.findViewById<CheckBox>(R.id.showGridCheckBox)!!
 
     private fun setPropertiesInActivity() {
         try {
@@ -59,14 +64,16 @@ class SettingsDialogFragment: DialogFragment() {
         const val isTouchEnabledKey = "isTouchEnabled"
         const val hasRotationLockKey = "hasRotationLock"
         const val isConfirmZoomKey = "isConfirmZoom"
+        const val isShowGridKey = "isShowGrid"
 
-        fun newInstance(isTouchEnabled: Boolean, hasRotationLock: Boolean, isConfirmZoom: Boolean): SettingsDialogFragment {
+        fun newInstance(isTouchEnabled: Boolean, hasRotationLock: Boolean, isConfirmZoom: Boolean, isShowGrid: Boolean): SettingsDialogFragment {
             val dialogFragment = SettingsDialogFragment()
 
             dialogFragment.arguments = Bundle().apply {
                 putBoolean(isTouchEnabledKey, isTouchEnabled)
                 putBoolean(hasRotationLockKey, hasRotationLock)
                 putBoolean(isConfirmZoomKey, isConfirmZoom)
+                putBoolean(isShowGridKey, isShowGrid)
             }
 
             return dialogFragment

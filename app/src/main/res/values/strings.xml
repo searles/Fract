@@ -41,4 +41,5 @@
     <string name="invalidName">Invalid name</string>
     <string name="forward">Forward</string>
     <string name="editProperties">Edit</string>
+    <string name="showGrid">Show Grid</string>
 </resources>

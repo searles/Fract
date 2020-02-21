@@ -21,4 +21,10 @@
         android:layout_height="wrap_content"
         android:text="@string/confirmZoom" />
 
+    <CheckBox
+        android:id="@+id/showGridCheckBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/showGrid" />
+
 </LinearLayout>

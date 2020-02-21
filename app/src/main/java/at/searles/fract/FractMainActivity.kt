@@ -3,8 +3,12 @@ package at.searles.fract
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Bundle
-import android.view.*
+import android.provider.MediaStore
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -89,7 +93,6 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener {
         initBitmapModelFragment()
 
         mainImageView.visibility = View.INVISIBLE
-        taskProgressBar.visibility = View.VISIBLE
 
         parameterAdapter = ParameterAdapter(this)
 
@@ -127,7 +130,6 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener {
     override fun onResume() {
         super.onResume()
         connectBitmapModelFragment()
-        taskProgressBar.visibility = View.INVISIBLE
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
@@ -228,7 +230,8 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener {
                 openShareImage()
             }
             R.id.saveAction -> {
-                openSaveImage()
+                // FIXME Test difference openSaveImage()
+                openSaveImageToGallery()
             }
             R.id.imageSize -> {
                 openImageSize()
@@ -244,8 +247,9 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener {
     private fun openSettings() {
         SettingsDialogFragment.newInstance(
             mainImageView.isTouchEnabled,
-                mainImageView.hasRotationLock,
-                mainImageView.mustConfirmZoom
+            mainImageView.hasRotationLock,
+            mainImageView.mustConfirmZoom,
+            false // FIXME
         ).show(supportFragmentManager, "dialog")
     }
 
@@ -281,6 +285,28 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener {
         }
 
         startActivity(Intent.createChooser(shareIntent, resources.getString(R.string.shareImage)))
+    }
+
+    private fun openSaveImageToGallery() {
+        // FIXME title/description
+        MediaStore.Images.Media.insertImage(contentResolver, bitmapModel.bitmap, "TODO", "TODO");
+
+        /*
+        val outFile = File.createTempFile(
+            "fract_${System.currentTimeMillis()}",
+            ".png",
+            externalCacheDir
+        )
+
+        saveImage(FileOutputStream(outFile))
+
+        val contentUri = Uri.fromFile(outFile)
+
+        val mediaScanIntent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE).apply {
+            data = contentUri
+        }
+
+        sendBroadcast(mediaScanIntent)*/
     }
 
     private fun openSaveImage() {
@@ -404,14 +430,16 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener {
         taskProgressBar.apply {
             min = -progressBarZero
             max = progessBarFactor
-            isIndeterminate = false
+        }
+
+        if(!bitmapModel.isTaskRunning) {
+            taskProgressBar.visibility = View.INVISIBLE
         }
     }
 
     override fun started() {
         taskProgressBar.apply {
             visibility = View.VISIBLE
-            progress = 0
             isIndeterminate = true
         }
     }
