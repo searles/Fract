@@ -31,6 +31,7 @@ import at.searles.fract.favorites.FavoritesProvider
 import at.searles.fractbitmapmodel.*
 import at.searles.fractbitmapmodel.changes.*
 import at.searles.fractimageview.DrawBitmapBoundsPlugin
+import at.searles.fractimageview.GridPlugin
 import at.searles.fractimageview.PluginScalableImageView
 import at.searles.fractlang.FractlangProgram
 import at.searles.fractlang.semanticanalysis.SemanticAnalysisException
@@ -51,6 +52,8 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener {
     private lateinit var bitmapModelFragment: FractBitmapModelFragment
     private lateinit var bitmapModel: FractBitmapModel
 
+    private lateinit var settings: FractSettings
+
     private val menuNavigationView: NavigationView by lazy {
         findViewById<NavigationView>(R.id.menuNavigationView)
     }
@@ -70,7 +73,6 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener {
     private val taskProgressBar: ProgressBar by lazy {
         findViewById<ProgressBar>(R.id.taskProgressBar).apply {
             isIndeterminate = true
-            // TODO: Fix when initializing
         }
     }
 
@@ -78,19 +80,23 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener {
         findViewById<Toolbar>(R.id.toolbar)
     }
 
-    // TODO Add grid
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        title = ""
         setSupportActionBar(toolbar)
+
+        toolbar.setNavigationOnClickListener {
+            drawerLayout.openDrawer(menuNavigationView)
+        }
 
         menuNavigationView.setNavigationItemSelectedListener {
             openMainMenuItem(it)
             true
         }
 
-        initBitmapModelFragment()
+        initSettings(savedInstanceState)
+        initBitmapModelFragment(savedInstanceState)
 
         mainImageView.visibility = View.INVISIBLE
 
@@ -101,6 +107,17 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
         }
+    }
+
+    private fun initSettings(savedInstanceState: Bundle?) {
+        if(savedInstanceState != null) {
+            settings = savedInstanceState.getParcelable(settingsKey)!!
+            updateSettings()
+            return
+        }
+
+        settings = FractSettings()
+        updateSettings()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -183,6 +200,13 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener {
         bitmapModelFragment.bitmapModel.historyBack()
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        outState.putParcelable(settingsKey, settings)
+        outState.putBundle(propertiesKey, FractPropertiesAdapter.toBundle(bitmapModel.properties))
+    }
+
     private fun loadFavorite(favoriteKey: String) {
         try {
             FavoritesProvider(this).load(favoriteKey) {
@@ -230,8 +254,7 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener {
                 openShareImage()
             }
             R.id.saveAction -> {
-                // FIXME Test difference openSaveImage()
-                openSaveImageToGallery()
+                openSaveImage()
             }
             R.id.imageSize -> {
                 openImageSize()
@@ -246,10 +269,7 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener {
 
     private fun openSettings() {
         SettingsDialogFragment.newInstance(
-            mainImageView.isTouchEnabled,
-            mainImageView.hasRotationLock,
-            mainImageView.mustConfirmZoom,
-            false // FIXME
+            settings
         ).show(supportFragmentManager, "dialog")
     }
 
@@ -289,9 +309,9 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener {
 
     private fun openSaveImageToGallery() {
         // FIXME title/description
-        MediaStore.Images.Media.insertImage(contentResolver, bitmapModel.bitmap, "TODO", "TODO");
+        //MediaStore.Images.Media.insertImage(contentResolver, bitmapModel.bitmap, "TODO", "TODO");
 
-        /*
+
         val outFile = File.createTempFile(
             "fract_${System.currentTimeMillis()}",
             ".png",
@@ -306,7 +326,7 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener {
             data = contentUri
         }
 
-        sendBroadcast(mediaScanIntent)*/
+        sendBroadcast(mediaScanIntent)
     }
 
     private fun openSaveImage() {
@@ -358,7 +378,6 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener {
         parameters.putAll(AssetsUtils.readAssetParameters(this, parametersKey))
 
         try {
-            // TODO check
             val properties = FractProperties.create(sourceCode, parameters, scale, currentProperties.shaderProperties, palettes)
             val change = NewFractPropertiesChange(properties)
 
@@ -402,18 +421,29 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener {
         }
     }
 
-    private fun createNewBitmapModelFragment(): FractBitmapModelFragment {
+    private fun createNewBitmapModelFragment(properties: FractProperties): FractBitmapModelFragment {
         // use default source
-        val sourceCode = AssetsUtils.readAssetSource(this, "mandelbrot")
-
-        return FractBitmapModelFragment.createInstance(sourceCode, emptyMap()).apply {
+        // TODO manage dimensions via settings
+        return FractBitmapModelFragment.createInstance(properties, FactorySettings.factoryWidth, FactorySettings.factoryHeight).apply {
             supportFragmentManager.beginTransaction().add(this, fractBitmapModelFragmentTag).commit()
         }
     }
 
-    private fun initBitmapModelFragment() {
+    private fun initBitmapModelFragment(savedInstanceState: Bundle?) {
         val fragment = supportFragmentManager.findFragmentByTag(fractBitmapModelFragmentTag)
-        bitmapModelFragment = fragment as FractBitmapModelFragment? ?: createNewBitmapModelFragment()
+
+        if(fragment != null) {
+            bitmapModelFragment = fragment as FractBitmapModelFragment
+            return
+        }
+
+        if(savedInstanceState != null) {
+            val properties = FractPropertiesAdapter.fromBundle(savedInstanceState.getBundle(propertiesKey)!!)
+            bitmapModelFragment = createNewBitmapModelFragment(properties)
+            return
+        }
+
+        bitmapModelFragment = createNewBitmapModelFragment(FactorySettings.getStartupFractal(this))
     }
 
     private fun connectBitmapModelFragment() {
@@ -514,10 +544,36 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener {
         }
     }
 
-    fun setSettings(touchEnabled: Boolean, rotationLock: Boolean, confirmZoom: Boolean) {
-        mainImageView.hasRotationLock = rotationLock
-        mainImageView.isTouchEnabled = touchEnabled
-        mainImageView.mustConfirmZoom = confirmZoom
+    // XXX: If there are more plugins, manage them in a different way.
+    var gridPlugin: GridPlugin? = null
+
+    fun setSettings(settings: FractSettings) {
+        this.settings = settings
+        updateSettings()
+    }
+
+    private fun updateSettings() {
+        mainImageView.hasRotationLock = settings.isRotationLock
+        mainImageView.isTouchEnabled = settings.isTouchEnabled
+        mainImageView.mustConfirmZoom = settings.isConfirmZoom
+
+        if(settings.isGridEnabled) {
+            if(gridPlugin == null) {
+                GridPlugin(this).also {
+                    gridPlugin = it
+                    mainImageView.addPlugin(it)
+                    mainImageView.invalidate()
+                }
+            }
+        } else {
+            with(gridPlugin) {
+                if(this != null) {
+                    mainImageView.removePlugin(this)
+                    gridPlugin = null
+                    mainImageView.invalidate()
+                }
+            }
+        }
     }
 
     fun openShaderPropertiesEditor() {
@@ -546,6 +602,9 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener {
         private const val paletteRequestCode = 571
         private const val paletteIndexKey = "paletteIndex"
         private const val favoritesRequestCode = 412
+
+        private val settingsKey = "settings"
+        private val propertiesKey = "properties"
 
         const val FILE_PROVIDER = "at.searles.fract.fileprovider"
     }

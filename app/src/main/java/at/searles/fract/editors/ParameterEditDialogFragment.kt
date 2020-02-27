@@ -2,6 +2,7 @@ package at.searles.fract.editors
 
 import android.app.Dialog
 import android.os.Bundle
+import android.view.View
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -38,6 +39,10 @@ class ParameterEditDialogFragment: DialogFragment() {
         }
 
         return dialog
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
     }
 
     private fun getValueEditText(dialog: Dialog) = dialog.findViewById<EditText>(R.id.valueEditText)!!

@@ -1,34 +1,28 @@
-// Names of parameters
-
+// Define name of extern parameters
 val maxIterationLabel = "Maximum Iteration Count";
 val functionLabel = "Function (z[n])";
 val maxExponentLabel = "Maximum Exponent";
 val isJuliaSetLabel = "Julia Set";
 val juliaSetParameterLabel = "Julia Set Parameter";
 val z0Label = "Start Value (z[0])";
+val useBailoutLabel = "Use Bailout (unset for eg Newton Fractals)";
 val bailoutRadiusLabel = "Bailout Radius";
-val bailoutValueLabel = "Bailout Color Value";
+val bailoutValueLabel = "Bailout Value";
+val bailoutColorValueLabel = "Bailout Color Value";
 val bailoutHeightLabel = "Bailout Height";
 val bailoutPaletteLabel = "Bailout Palette";
 val epsilonRadiusLabel = "Epsilon Radius";
-val lakeValueLabel = "Lake Color Value";
+val lakeValueLabel = "Lake Value";
+val lakeColorValueLabel = "Lake Color Value";
 val lakeHeightLabel = "Lake Height";
 val lakePaletteLabel = "Lake Palette";
 
-// Parameters that are used by the system to eg determine how many palettes there should be.
-
+// Define default scale and palette
 declareScale(2, 0, 0, 2, 0, 0);
-
 declarePalette(lakePaletteLabel, 1, 1, [0, 0, #ff000000]);
-
-declarePalette(bailoutPaletteLabel, 6, 1,
-  [0, 0, #ff000000], [1, 0, #ff4400aa], [5, 0, #ff4400aa], [2, 0, #ffffdd22], [4, 0, #ffffdd22], [3, 0, #ffffffff]);
 
 extern maxIteration: maxIterationLabel = "250";
 
-/*
- * Fract default file. At the bottom all extern parameters are defined.
- */
 class Calculator {
   // iteration counter
   var n: Int = 0;
@@ -37,7 +31,7 @@ class Calculator {
 
   // parameter
   var c: Cplx = if(isJuliaSet) {
-    extern juliaSetParameter: juliaSetParameterLabel = "0: -1";
+    extern juliaSetParameter: juliaSetParameterLabel = "-0.75: 0.25";
     juliaSetParameter
   } else {
     point;
@@ -64,13 +58,19 @@ class Calculator {
     var nextZ = function;
 
     var radZ = rad nextZ;
-
     var dz = nextZ - z;
     var radDz = rad dz;
 
-    extern bailoutRadius: bailoutRadiusLabel = "64";
+    extern useBailout: useBailoutLabel = "true";
 
-    if(radZ >= bailoutRadius) {
+    if(useBailout) {
+        declarePalette(bailoutPaletteLabel, 6, 1,
+          [0, 0, #ff000000], [1, 0, #ff4400aa], [5, 0, #ff4400aa], [2, 0, #ffffdd22], [4, 0, #ffffdd22], [3, 0, #ffffffff]);
+
+        extern bailoutRadius: bailoutRadiusLabel = "64";
+    }
+
+    if(if(useBailout) radZ >= bailoutRadius else false) {
       extern maxExponent: maxExponentLabel = "2";
 
       // bailout
@@ -78,30 +78,29 @@ class Calculator {
         1 - log(log radZ / log bailoutRadius) / log maxExponent;
 
       extern bailoutValue: bailoutValueLabel = "log(n + continuousAddend + 20.08)";
+      extern bailoutColorValue: bailoutColorValueLabel = "value";
       extern bailoutHeight: bailoutHeightLabel = "re value";
 
       var value = bailoutValue;
-
-      setResult(1, value, bailoutHeight);
+      setResult(1, bailoutColorValue, bailoutHeight);
 
       false
     } else {
-      extern lakeValue: lakeValueLabel = "radDz : radZ";
-      extern lakeHeight: lakeHeightLabel = "re value";
-
       extern epsilonRadius: epsilonRadiusLabel = "1e-9";
 
+      extern lakeValue: lakeValueLabel = "radDz : radZ";
+      extern lakeColorValue: lakeColorValueLabel = "value";
+      extern lakeHeight: lakeHeightLabel = "re value";
+
       if(radDz < epsilonRadius) {
-        // convergent, thus lake.
-        // for magnet, another value might be of interest.
         var value = lakeValue;
-        setResult(0, value, lakeHeight);
+        setResult(0, lakeColorValue, lakeHeight);
 
         false
       } else if(not next(maxIteration, n)) {
         // lake
         var value = lakeValue;
-        setResult(0, value, lakeHeight);
+        setResult(0, lakeColorValue, lakeHeight);
 
         false
       } else {

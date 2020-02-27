@@ -2,11 +2,13 @@ package at.searles.fract.editors
 
 import android.app.Dialog
 import android.os.Bundle
+import android.view.View
 import android.widget.CheckBox
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import at.searles.fract.FractMainActivity
+import at.searles.fract.FractSettings
 import at.searles.fract.R
 import java.lang.NumberFormatException
 
@@ -25,55 +27,55 @@ class SettingsDialogFragment: DialogFragment() {
 
         val dialog = builder.show()
 
-        // XXX This definitely could be improved by using a method like onPostCreateDialog if it exists.
+        touchEnabledCheckBox = dialog.findViewById(R.id.touchEnabledCheckBox)!!
+        confirmZoomCheckBox = dialog.findViewById(R.id.confirmZoomCheckBox)!!
+        rotationLockCheckBox = dialog.findViewById(R.id.rotationLockCheckBox)!!
+        showGridCheckBox = dialog.findViewById(R.id.showGridCheckBox)!!
 
-        if(savedInstanceState == null) {
-            val hasRotationLock = arguments!!.getBoolean(hasRotationLockKey)
-            val isConfirmZoom = arguments!!.getBoolean(isConfirmZoomKey)
-            val isTouchEnabled = arguments!!.getBoolean(isTouchEnabledKey)
-            val isShowGrid = arguments!!.getBoolean(isShowGridKey)
-
-            getTouchEnabledCheckBox(dialog).isChecked = isTouchEnabled
-            getRotationLockCheckBox(dialog).isChecked = hasRotationLock
-            getConfirmZoomCheckBox(dialog).isChecked = isConfirmZoom
-            getShowGridCheckBox(dialog).isChecked = isShowGrid
-        }
-
+        initializeFields(savedInstanceState)
 
         return dialog
     }
 
-    private fun getTouchEnabledCheckBox(dialog: Dialog) = dialog.findViewById<CheckBox>(R.id.touchEnabledCheckBox)!!
-    private fun getConfirmZoomCheckBox(dialog: Dialog) = dialog.findViewById<CheckBox>(R.id.confirmZoomCheckBox)!!
-    private fun getRotationLockCheckBox(dialog: Dialog) = dialog.findViewById<CheckBox>(R.id.rotationLockCheckBox)!!
-    private fun getShowGridCheckBox(dialog: Dialog) = dialog.findViewById<CheckBox>(R.id.showGridCheckBox)!!
+    private fun initializeFields(savedInstanceState: Bundle?) {
+        if(savedInstanceState == null) {
+            val settings = arguments!!.getParcelable<FractSettings>(settingsKey)!!
+
+            touchEnabledCheckBox.isChecked = settings.isTouchEnabled
+            rotationLockCheckBox.isChecked = settings.isRotationLock
+            confirmZoomCheckBox.isChecked = settings.isConfirmZoom
+            showGridCheckBox.isChecked = settings.isGridEnabled
+        }
+    }
+
+    private lateinit var touchEnabledCheckBox: CheckBox
+    private lateinit var confirmZoomCheckBox: CheckBox
+    private lateinit var rotationLockCheckBox: CheckBox
+    private lateinit var showGridCheckBox: CheckBox
 
     private fun setPropertiesInActivity() {
         try {
-            val isTouchEnabled = getTouchEnabledCheckBox(dialog!!).isChecked
-            val hasRotationLock = getRotationLockCheckBox(dialog!!).isChecked 
-            val isConfirmZoom = getConfirmZoomCheckBox(dialog!!).isChecked
+            val isTouchEnabled = touchEnabledCheckBox.isChecked
+            val isRotationLock = rotationLockCheckBox.isChecked
+            val isConfirmZoom = confirmZoomCheckBox.isChecked
+            val isGridEnabled = showGridCheckBox.isChecked
 
-            (activity as FractMainActivity).setSettings(isTouchEnabled, hasRotationLock, isConfirmZoom)
+            val fractSettings = FractSettings(isRotationLock, isTouchEnabled, isConfirmZoom, isGridEnabled)
+
+            (activity as FractMainActivity).setSettings(fractSettings)
         } catch(e: NumberFormatException) {
             Toast.makeText(activity, getString(R.string.badNumberFormat), Toast.LENGTH_LONG).show()
         }
     }
 
     companion object {
-        const val isTouchEnabledKey = "isTouchEnabled"
-        const val hasRotationLockKey = "hasRotationLock"
-        const val isConfirmZoomKey = "isConfirmZoom"
-        const val isShowGridKey = "isShowGrid"
+        private const val settingsKey = "settings"
 
-        fun newInstance(isTouchEnabled: Boolean, hasRotationLock: Boolean, isConfirmZoom: Boolean, isShowGrid: Boolean): SettingsDialogFragment {
+        fun newInstance(settings: FractSettings): SettingsDialogFragment {
             val dialogFragment = SettingsDialogFragment()
 
             dialogFragment.arguments = Bundle().apply {
-                putBoolean(isTouchEnabledKey, isTouchEnabled)
-                putBoolean(hasRotationLockKey, hasRotationLock)
-                putBoolean(isConfirmZoomKey, isConfirmZoom)
-                putBoolean(isShowGridKey, isShowGrid)
+                putParcelable(settingsKey, settings)
             }
 
             return dialogFragment
