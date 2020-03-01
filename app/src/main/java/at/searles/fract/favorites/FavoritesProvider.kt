@@ -1,11 +1,14 @@
 package at.searles.fract.favorites
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.*
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import at.searles.android.storage.data.InvalidNameException
 import at.searles.android.storage.data.PathContentProvider
+import at.searles.android.storage.dialog.ReplaceExistingDialogFragment
 import at.searles.fract.R
 import at.searles.fractbitmapmodel.FractBitmapModel
 import at.searles.fractbitmapmodel.FractPropertiesAdapter
@@ -60,7 +63,7 @@ class FavoritesProvider(private val context: Context): PathContentProvider(conte
         return BitmapFactory.decodeByteArray(data, 0, data.size)
     }
 
-    fun saveToFavorites(name: String, bitmapModel: FractBitmapModel) {
+    fun saveToFavorites(name: String, bitmapModel: FractBitmapModel, replaceExisting: Boolean) {
         // Save everything except for resolution
         val jsonProperties = FractPropertiesAdapter.toJson(bitmapModel.properties)
 
@@ -69,10 +72,19 @@ class FavoritesProvider(private val context: Context): PathContentProvider(conte
 
         val jsonString = jsonProperties.toString(4)
 
+        val status: Boolean
+
         try {
-            save(name, { jsonString }, false)
-        } catch(e: InvalidNameException) {
-            Toast.makeText(context, context.getString(R.string.invalidName), Toast.LENGTH_LONG).show()
+            status = save(name, { jsonString }, replaceExisting)
+        } catch (th: Throwable) {
+            Toast.makeText(context, context.resources.getString(at.searles.android.storage.R.string.error, th.localizedMessage), Toast.LENGTH_LONG).show()
+            th.printStackTrace()
+            return
+        }
+
+        if(!status) {
+            ReplaceExistingDialogFragment.create(name)
+                .show((context as AppCompatActivity).supportFragmentManager, "dialog")
         }
     }
 

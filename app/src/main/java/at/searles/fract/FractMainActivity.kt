@@ -18,8 +18,8 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import at.searles.android.storage.StorageActivity
-import at.searles.android.storage.data.InvalidNameException
 import at.searles.android.storage.data.PathContentProvider
+import at.searles.android.storage.dialog.ReplaceExistingDialogFragment
 import at.searles.commons.color.Palette
 import at.searles.commons.math.Scale
 import at.searles.fract.demos.AssetsUtils
@@ -45,7 +45,7 @@ import java.io.FileOutputStream
 import java.io.OutputStream
 
 
-class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener {
+class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, ReplaceExistingDialogFragment.Callback {
 
     private lateinit var parameterAdapter: ParameterAdapter
     private lateinit var bitmapModelFragment: FractBitmapModelFragment
@@ -579,8 +579,13 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener {
     }
 
     fun saveToFavorites(name: String) {
-        FavoritesProvider(this).saveToFavorites(name, bitmapModel)
+        FavoritesProvider(this).saveToFavorites(name, bitmapModel, false)
     }
+
+    override fun replaceExistingAndSave(name: String) {
+        FavoritesProvider(this).saveToFavorites(name, bitmapModel, true)
+    }
+
 
     fun openParameterContext(name: String) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
@@ -615,5 +620,4 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener {
 
         const val FILE_PROVIDER = "at.searles.fract.fileprovider"
     }
-
 }
