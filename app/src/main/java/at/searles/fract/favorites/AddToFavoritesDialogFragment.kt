@@ -31,7 +31,7 @@ class AddToFavoritesDialogFragment: DialogFragment() {
         val nameEditText = dialog!!.findViewById<EditText>(R.id.nameEditText)!!
         val name = nameEditText.text.toString()
 
-        (activity as FractMainActivity).addToFavorites(name)
+        (activity as FractMainActivity).saveToFavorites(name)
     }
 
     companion object {

@@ -42,7 +42,7 @@ class ParameterAdapter(private val activity: FractMainActivity): RecyclerView.Ad
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
-        View.OnClickListener, CompoundButton.OnCheckedChangeListener {
+        View.OnClickListener, View.OnLongClickListener, CompoundButton.OnCheckedChangeListener {
         override fun onClick(v: View) {
             val item = items[adapterPosition]
 
@@ -54,6 +54,23 @@ class ParameterAdapter(private val activity: FractMainActivity): RecyclerView.Ad
                 shaderPropertiesType -> activity.openShaderPropertiesEditor()
                 else -> error("unknown type: ${item.type}")
             }
+        }
+
+        override fun onLongClick(v: View): Boolean {
+            val item = items[adapterPosition]
+
+            // TODO: Use proper context menu
+
+            when(item.type) {
+                parameterType -> activity.openParameterContext(item.name)
+                paletteType -> activity.openPaletteContext(adapterPosition - paletteStartPosition)
+                sourceCodeType -> return false
+                scaleType -> activity.openScaleContext()
+                shaderPropertiesType -> activity.openShaderPropertiesContext()
+                else -> error("unknown type: ${item.type}")
+            }
+
+            return true
         }
 
         override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {

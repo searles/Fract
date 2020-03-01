@@ -5,7 +5,6 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -409,18 +408,6 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener {
         }
     }
 
-    fun addToFavorites(name: String) {
-        // Save everything except for resolution
-        val jsonProperties = FractPropertiesAdapter.toJson(bitmapModel.properties)
-        val jsonString = jsonProperties.toString(4)
-
-        try {
-            FavoritesProvider(this).save(name, { jsonString }, false)
-        } catch(e: InvalidNameException) {
-            Toast.makeText(this, getString(R.string.invalidName), Toast.LENGTH_LONG).show()
-        }
-    }
-
     private fun createNewBitmapModelFragment(properties: FractProperties): FractBitmapModelFragment {
         // use default source
         // TODO manage dimensions via settings
@@ -589,6 +576,26 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener {
         }
 
         bitmapModel.applyBitmapPropertiesChange(change)
+    }
+
+    fun saveToFavorites(name: String) {
+        FavoritesProvider(this).saveToFavorites(name, bitmapModel)
+    }
+
+    fun openParameterContext(name: String) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    fun openPaletteContext(index: Int) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    fun openScaleContext() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    fun openShaderPropertiesContext() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     companion object {
