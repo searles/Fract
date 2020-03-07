@@ -34,7 +34,7 @@
             android:ems="10"
             android:hint="@string/polarAngle"
             android:importantForAutofill="no"
-            android:inputType="numberDecimal"
+            android:inputType="numberDecimal|numberSigned"
             tools:targetApi="o" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -56,7 +56,7 @@
             android:ems="10"
             android:hint="@string/azimuthAngle"
             android:importantForAutofill="no"
-            android:inputType="numberDecimal"
+            android:inputType="numberDecimal|numberSigned"
             tools:targetApi="o" />
     </com.google.android.material.textfield.TextInputLayout>
 

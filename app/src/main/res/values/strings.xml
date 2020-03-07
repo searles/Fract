@@ -21,7 +21,7 @@
     <string name="dimensionsOutOfRange">Dimensions must be in range (%d .. %d)</string>
     <string name="exceptionMessage">ERROR: %s</string>
     <string name="zeroDeterminante">Determinante (ad - bc) must not be 0</string>
-    <string name="setScale">Set Scale</string>
+    <string name="editScale">Set Scale</string>
     <string name="polarAngle">Polar Angle (Radians)</string>
     <string name="azimuthAngle">Azimuth Angle (Radians)</string>
     <string name="useLightEffect">Use Light Effect</string>
@@ -42,4 +42,5 @@
     <string name="forward">Forward</string>
     <string name="editProperties">Edit</string>
     <string name="showGrid">Show Grid</string>
+    <string name="resetParameter">Reset to Default</string>
 </resources>

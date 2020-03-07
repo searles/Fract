@@ -17,7 +17,7 @@ class ScaleDialogFragment: DialogFragment() {
 
         builder
             .setView(R.layout.scale_dialog)
-            .setTitle(R.string.setScale)
+            .setTitle(R.string.editScale)
             .setPositiveButton(android.R.string.ok) { _, _ -> run { setScale(); dismiss() } }
             .setNegativeButton(android.R.string.cancel) { _, _ -> dismiss() }
             .setCancelable(true)
@@ -80,6 +80,7 @@ class ScaleDialogFragment: DialogFragment() {
         fun newInstance(scale: Scale): ScaleDialogFragment {
             val dialogFragment = ScaleDialogFragment()
 
+            // TODO: Adapter
             dialogFragment.arguments = Bundle().apply {
                 putDouble("a", scale.xx)
                 putDouble("b", scale.xy)

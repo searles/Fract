@@ -59,8 +59,6 @@ class ParameterAdapter(private val activity: FractMainActivity): RecyclerView.Ad
         override fun onLongClick(v: View): Boolean {
             val item = items[adapterPosition]
 
-            // TODO: Use proper context menu
-
             when(item.type) {
                 parameterType -> activity.openParameterContext(item.name)
                 paletteType -> activity.openPaletteContext(adapterPosition - paletteStartPosition)

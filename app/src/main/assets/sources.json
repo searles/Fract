@@ -1,36 +1,7 @@
 {
   "mandelbrot": {
     "title": "Mandelbrot Set",
-    "description": "Mandelbrot Set",
-    "parameters": [
-      "default",
-      "mandelbrot",
-      "mandelbrot_julia",
-      "multibrot",
-      "lambda",
-      "lambda_generic",
-      "magnet1",
-      "magnet2",
-      "multibrot_div_z",
-      "phoenix",
-      "burning_ship",
-      "burning_ship_alien",
-      "celtic",
-      "tricorn",
-      "buffalo",
-      "mandelbrot_perpendicular",
-      "burningship_perpendicular",
-      "celtic_perpendicular",
-      "buffalo_perpendicular",
-      "cczcpaczcp",
-      "glynn",
-      "simonbrot",
-      "simonbrot_generalized"
-    ]
-  },
-  "branching": {
-    "title": "Branching Addend",
-    "description": "Sum of interpolated addend values ",
+    "description": "A program suitable for fractals based on polynoms.",
     "parameters": [
       "default",
       "mandelbrot",
@@ -59,7 +30,7 @@
   },
   "aggregate": {
     "title": "Aggregate Orbit",
-    "description": "Aggregates all values of the orbit",
+    "description": "Suitable also for exponential functions and Newton/Nova-fractals",
     "parameters": [
       "default",
       "mandelbrot",
@@ -84,6 +55,39 @@
       "glynn",
       "simonbrot",
       "simonbrot_generalized"
+    ]
+  },
+  "branching": {
+    "title": "Branching Addend",
+    "description": "Suitable for polynom functions with average branching.",
+    "parameters": [
+      "default",
+      "mandelbrot",
+      "mandelbrot_julia",
+      "multibrot",
+      "lambda",
+      "lambda_generic",
+      "multibrot_div_z",
+      "phoenix",
+      "burning_ship",
+      "burning_ship_alien",
+      "celtic",
+      "tricorn",
+      "buffalo",
+      "mandelbrot_perpendicular",
+      "burningship_perpendicular",
+      "celtic_perpendicular",
+      "buffalo_perpendicular",
+      "cczcpaczcp",
+      "simonbrot",
+      "simonbrot_generalized"
+    ]
+  },
+  "lyapunov": {
+    "title": "Lyapunov Fractals",
+    "description": "Highly customizable program for Lyapunov Fractals.",
+    "parameters": [
+      "default"
     ]
   }
 }

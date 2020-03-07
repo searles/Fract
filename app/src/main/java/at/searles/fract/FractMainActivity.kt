@@ -491,9 +491,25 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
         bitmapModel.scheduleCalcPropertiesChange(ScaleChange(scale))
     }
 
+    fun resetScale() {
+        bitmapModel.scheduleCalcPropertiesChange(object: CalcPropertiesChange {
+            override fun accept(properties: FractProperties): FractProperties {
+                return FractProperties(properties.program, null, properties.customShaderProperties, properties.customPalettes)
+            }
+        })
+    }
+
     fun setParameter(key: String, value: String) {
         try {
             bitmapModel.scheduleCalcPropertiesChange(ParameterChange(key, value))
+        } catch(e: SemanticAnalysisException) {
+            Toast.makeText(this, getString(R.string.compileError, e.message), Toast.LENGTH_LONG).show()
+        }
+    }
+
+    fun resetParameter(key: String) {
+        try {
+            bitmapModel.scheduleCalcPropertiesChange(ParameterResetChange(key))
         } catch(e: SemanticAnalysisException) {
             Toast.makeText(this, getString(R.string.compileError, e.message), Toast.LENGTH_LONG).show()
         }
@@ -588,7 +604,8 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
 
 
     fun openParameterContext(name: String) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ParameterContextDialogFragment.newInstance(name, bitmapModel.properties.getParameter(name)).
+            show(supportFragmentManager, "dialog")
     }
 
     fun openPaletteContext(index: Int) {
@@ -596,12 +613,14 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
     }
 
     fun openScaleContext() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ScaleContextDialogFragment.newInstance(bitmapModel.properties.scale).
+            show(supportFragmentManager, "dialog")
     }
 
     fun openShaderPropertiesContext() {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
+
 
     companion object {
         private const val progessBarFactor = 900

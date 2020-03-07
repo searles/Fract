@@ -1,4 +1,4 @@
-// Define name of extern parameters
+// Labels of of extern parameters
 val maxIterationLabel = "Maximum Iteration Count";
 val functionLabel = "Function (z[n])";
 val maxExponentLabel = "Maximum Exponent";
@@ -21,115 +21,134 @@ val aggregateFunctionLabel = "Aggregate Function";
 val aggregateStartValueLabel = "Start Value of Aggregate Function";
 val startIndexLabel = "Start Index of Aggregation";
 
-// Define default scale and palette
-declareScale(2, 0, 0, 2, 0, 0);
-declarePalette(lakePaletteLabel, 1, 1, [0, 0, #ff000000]);
-
-extern maxIteration: maxIterationLabel = "250";
+setScale(2, 0, 0, 2, 0, 0); // Default Scale
 
 class Calculator {
+    extern maxIteration: maxIterationLabel = "250";
 
-  extern aggregateStartValue: aggregateStartValueLabel = "0";
-  var aggregateValue: Cplx = aggregateStartValue;
+    var n: Int = 0; // count iterations
+    var c: Cplx;    // parameter
+    var z: Cplx;
+    var lastZ: Cplx = 0:0; // z[n-1]
+    var nextZ: Cplx; // z[n+1]
+    var radZ: Real; // |z[n]|
+    var dz: Cplx;   // z[n+1] - z[n]
+    var radDz: Real; //  |dz|
 
-  // iteration counter
-  var n: Int = 0;
+    var aggregateValue: Cplx;
 
-  extern isJuliaSet: isJuliaSetLabel = "false";
+    fun init() {
+        extern aggregateStartValue: aggregateStartValueLabel = "0";
+        aggregateValue = aggregateStartValue
 
-  // parameter
-  var c: Cplx = if(isJuliaSet) {
-    extern juliaSetParameter: juliaSetParameterLabel = "-0.75: 0.25";
-    juliaSetParameter
-  } else {
-    point;
-  }
+        extern isJuliaSet: isJuliaSetLabel = "false";
+        c = if(isJuliaSet) {
+            extern juliaSetParameter: juliaSetParameterLabel = "-0.75: 0.25";
+            juliaSetParameter
+        } else {
+            point;
+        }
 
-  // z[n]
-  var z: Cplx = if(isJuliaSet)
-    point
-  else {
-    extern z0: z0Label = "0";
-    z0;
-  }
+        z = if(isJuliaSet) {
+            point
+        } else {
+            extern z0: z0Label = "0";
+            z0;
+        }
+    }
 
-  // z[n-1]
-  var lastZ: Cplx = 0:0;
+    /*
+    * Performs one full calculation step
+    * z, lastZ and n are modified.
+    * true is returned if none of the break conditions succeeds.
+    */
+    fun step() {
+        extern function: functionLabel = "z^2 + c";
+        nextZ = function;
 
-  /*
-   * Performs one full calculation step
-   * z, lastZ and n are modified.
-   * true is returned if none of the break conditions succeeds.
-   */
-  fun step() {
-    extern function: functionLabel = "z^2 + c";
-    var nextZ = function;
+        radZ = rad nextZ;
+        dz = nextZ - z;
+        radDz = rad dz;
 
-    var radZ = rad nextZ;
-    var dz = nextZ - z;
-    var radDz = rad dz;
+        extern aggregateFunction: aggregateFunctionLabel = "aggregateValue + exp(-radZ): log1p radDz";
+        extern startIndex: startIndexLabel = "0";
 
-    extern aggregateFunction: aggregateFunctionLabel = "aggregateValue + exp(-radZ): log(1 + radDz)";
-    extern startIndex: startIndexLabel = "0";
+        if(n > startIndex) {
+            aggregateValue = aggregateFunction;
+        }
+    }
 
-    if(n > startIndex) {
-        aggregateValue = aggregateFunction;
+    fun advance() {
+        lastZ = z;
+        z = nextZ;
+    }
+
+    val lakePaletteIndex = addPalette(bailoutPaletteLabel, 6, 1,
+       [0, 0, #ff000000], [1, 0, #ff4400aa], [5, 0, #ff4400aa], [2, 0, #ffffdd22], [4, 0, #ffffdd22], [3, 0, #ffffffff]);
+
+    extern lakeValue: lakeValueLabel = "log1p im aggregateValue";
+    extern lakeColorValue: lakeColorValueLabel = "value";
+    extern lakeHeight: lakeHeightLabel = "re value";
+
+    fun isMaxIteration() {
+        if(not next(maxIteration, n)) {
+            var value = lakeValue;
+            setResult(lakePaletteIndex, lakeColorValue, lakeHeight);
+            true
+        } else {
+            false
+        }
+    }
+
+    fun isEpsilon() {
+        extern epsilonRadius: epsilonRadiusLabel = "1e-9";
+
+        if(radDz < epsilonRadius) {
+            var value = lakeValue;
+            setResult(lakePaletteIndex, lakeColorValue, lakeHeight);
+
+            true
+        } else {
+            false
+        }
     }
 
     extern useBailout: useBailoutLabel = "true";
 
-    if(useBailout) {
-        declarePalette(bailoutPaletteLabel, 6, 1,
-          [0, 0, #ff000000], [1, 0, #ff4400aa], [5, 0, #ff4400aa], [2, 0, #ffffdd22], [4, 0, #ffffdd22], [3, 0, #ffffffff]);
+    fun isBailout() {
+        val paletteIndex = addPalette(bailoutPaletteLabel, 6, 1,
+            [0, 0, #ff000000], [1, 0, #ff4400aa], [5, 0, #ff4400aa], [2, 0, #ffffdd22], [4, 0, #ffffdd22], [3, 0, #ffffffff]);
 
-        extern bailoutRadius: bailoutRadiusLabel = "64";
+        extern bailoutRadius: bailoutRadiusLabel = "80";
+
+        if(radZ >= bailoutRadius) {
+            extern bailoutValue: bailoutValueLabel = "log1p re aggregateValue";
+            extern bailoutColorValue: bailoutColorValueLabel = "value";
+            extern bailoutHeight: bailoutHeightLabel = "re value";
+
+            var value = bailoutValue;
+            setResult(paletteIndex, bailoutColorValue, bailoutHeight);
+
+            true
+        } else {
+            false
+        }
     }
 
-    if(if(useBailout) radZ >= bailoutRadius else false) {
-      extern maxExponent: maxExponentLabel = "2";
-
-      // bailout
-      extern bailoutValue: bailoutValueLabel = "log (1 + re aggregateValue)";
-      extern bailoutColorValue: bailoutColorValueLabel = "value";
-      extern bailoutHeight: bailoutHeightLabel = "re value";
-
-      var value = bailoutValue;
-      setResult(1, bailoutColorValue, bailoutHeight);
-
-      false
-    } else {
-      extern epsilonRadius: epsilonRadiusLabel = "1e-9";
-
-      extern lakeValue: lakeValueLabel = "log (1 + im aggregateValue)";
-      extern lakeColorValue: lakeColorValueLabel = "value";
-      extern lakeHeight: lakeHeightLabel = "re value";
-
-      if(radDz < epsilonRadius) {
-        var value = lakeValue;
-        setResult(0, lakeColorValue, lakeHeight);
-
-        false
-      } else if(not next(maxIteration, n)) {
-        // lake
-        var value = lakeValue;
-        setResult(0, lakeColorValue, lakeHeight);
-
-        false
-      } else {
-        // next step.
-        lastZ = z;
-        z = nextZ;
-
-        true
-      }
+    fun isBreak() {
+        (if(useBailout) isBailout() else false) or
+        isEpsilon() or
+        isMaxIteration()
     }
-  }
 }
 
-// Main starts here. It is rather simple and linear.
+val calculator = Calculator();
 
-val calculator = Calculator()
+calculator.init();
 
-while (
-  calculator.step()
-);
+while ({
+    calculator.step();
+    not calculator.isBreak()
+}) {
+    calculator.advance();
+}
