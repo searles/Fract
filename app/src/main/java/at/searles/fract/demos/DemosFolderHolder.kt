@@ -2,6 +2,7 @@ package at.searles.fract.demos
 
 import android.content.Context
 import android.net.Uri
+import at.searles.fractbitmapmodel.FractPropertiesAdapter
 import at.searles.itemselector.model.Folder
 import at.searles.itemselector.model.FoldersHolder
 import org.json.JSONObject
@@ -36,14 +37,13 @@ class DemosFolderHolder(private val context: Context): FoldersHolder {
         val title = jsonObject.getString(titleKey)
         val description = jsonObject.getString(descriptionKey)
 
+        val tags = jsonObject.getString(tagsKey).split(",").toSet()
 
-        val parametersArray = jsonObject.getJSONArray(parametersKey)
+        val parameterSets = parametersMap.values.filter { parameterSet ->
+            tags.any { parameterSet.tags.contains(it) }
+        }
 
-        val parameters = (0 until parametersArray.length()).map {
-            parametersMap.getValue(parametersArray.getString(it))
-        }.toList()
-
-        return AssetsSourceFolder(id, title, description, iconFilename, sourceFilename, parameters)
+        return AssetsSourceFolder(id, title, description, iconFilename, sourceFilename, parameterSets)
 
     }
 
@@ -64,7 +64,13 @@ class DemosFolderHolder(private val context: Context): FoldersHolder {
 
         val name = jsonObject.getString(titleKey)
         val description = jsonObject.getString(descriptionKey)
+        val tags = jsonObject.getString(tagsKey).split(",").toSet()
 
+        val scale = if(jsonObject.has(scaleKey)) {
+            FractPropertiesAdapter.scaleFromJson(jsonObject.getJSONArray(scaleKey))
+        } else {
+            null
+        }
         val parameters = HashMap<String, String>()
 
         val parametersJson = jsonObject.getJSONObject(parametersKey)
@@ -73,7 +79,7 @@ class DemosFolderHolder(private val context: Context): FoldersHolder {
             parameters[it] = parametersJson.getString(it)
         }
 
-        return AssetsParametersItem(id, name, description, iconFilename, parameters)
+        return AssetsParametersItem(id, name, description, iconFilename, tags, scale, parameters)
     }
 
     companion object {
@@ -82,7 +88,9 @@ class DemosFolderHolder(private val context: Context): FoldersHolder {
 
         const val titleKey = "title"
         const val descriptionKey = "description"
+        const val scaleKey = "scale"
         const val parametersKey = "parameters"
+        const val tagsKey = "tags"
 
         fun getIconUri(iconFilename: String): Uri {
             return Uri.parse("file:///android_asset/icons/$iconFilename")

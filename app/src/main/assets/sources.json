@@ -2,92 +2,21 @@
   "mandelbrot": {
     "title": "Mandelbrot Set",
     "description": "A program suitable for fractals based on polynoms.",
-    "parameters": [
-      "default",
-      "mandelbrot",
-      "mandelbrot_julia",
-      "multibrot",
-      "lambda",
-      "lambda_generic",
-      "magnet1",
-      "magnet2",
-      "multibrot_div_z",
-      "phoenix",
-      "burning_ship",
-      "burning_ship_alien",
-      "celtic",
-      "tricorn",
-      "buffalo",
-      "mandelbrot_perpendicular",
-      "burningship_perpendicular",
-      "celtic_perpendicular",
-      "buffalo_perpendicular",
-      "cczcpaczcp",
-      "glynn",
-      "simonbrot",
-      "simonbrot_generalized"
-    ]
+    "tags": "default,polynom,convergent"
   },
   "aggregate": {
     "title": "Aggregate Orbit",
     "description": "Suitable also for exponential functions and Newton/Nova-fractals",
-    "parameters": [
-      "default",
-      "mandelbrot",
-      "mandelbrot_julia",
-      "multibrot",
-      "lambda",
-      "lambda_generic",
-      "magnet1",
-      "magnet2",
-      "multibrot_div_z",
-      "phoenix",
-      "burning_ship",
-      "burning_ship_alien",
-      "celtic",
-      "tricorn",
-      "buffalo",
-      "mandelbrot_perpendicular",
-      "burningship_perpendicular",
-      "celtic_perpendicular",
-      "buffalo_perpendicular",
-      "cczcpaczcp",
-      "glynn",
-      "simonbrot",
-      "simonbrot_generalized"
-    ]
+    "tags": "default,polynom,nonpolynom,aggregate,convergent"
   },
   "branching": {
     "title": "Branching Addend",
     "description": "Suitable for polynom functions with average branching.",
-    "parameters": [
-      "default",
-      "mandelbrot",
-      "mandelbrot_julia",
-      "multibrot",
-      "lambda",
-      "lambda_generic",
-      "multibrot_div_z",
-      "phoenix",
-      "burning_ship",
-      "burning_ship_alien",
-      "celtic",
-      "tricorn",
-      "buffalo",
-      "mandelbrot_perpendicular",
-      "burningship_perpendicular",
-      "celtic_perpendicular",
-      "buffalo_perpendicular",
-      "cczcpaczcp",
-      "simonbrot",
-      "simonbrot_generalized"
-    ]
+    "tags": "default,polynom"
   },
   "lyapunov": {
     "title": "Lyapunov Fractals",
     "description": "Highly customizable program for Lyapunov Fractals.",
-    "parameters": [
-      "default"
-    ]
+    "tags": "default,lyapunov"
   }
 }

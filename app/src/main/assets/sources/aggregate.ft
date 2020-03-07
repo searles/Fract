@@ -70,7 +70,7 @@ class Calculator {
         dz = nextZ - z;
         radDz = rad dz;
 
-        extern aggregateFunction: aggregateFunctionLabel = "aggregateValue + exp(-radZ): log1p radDz";
+        extern aggregateFunction: aggregateFunctionLabel = "aggregateValue + exp(-radZ - 0.5 / radDz)";
         extern startIndex: startIndexLabel = "0";
 
         if(n > startIndex) {
@@ -86,7 +86,7 @@ class Calculator {
     val lakePaletteIndex = addPalette(bailoutPaletteLabel, 6, 1,
        [0, 0, #ff000000], [1, 0, #ff4400aa], [5, 0, #ff4400aa], [2, 0, #ffffdd22], [4, 0, #ffffdd22], [3, 0, #ffffffff]);
 
-    extern lakeValue: lakeValueLabel = "log1p im aggregateValue";
+    extern lakeValue: lakeValueLabel = "log1p abs aggregateValue";
     extern lakeColorValue: lakeColorValueLabel = "value";
     extern lakeHeight: lakeHeightLabel = "re value";
 
@@ -122,7 +122,7 @@ class Calculator {
         extern bailoutRadius: bailoutRadiusLabel = "80";
 
         if(radZ >= bailoutRadius) {
-            extern bailoutValue: bailoutValueLabel = "log1p re aggregateValue";
+            extern bailoutValue: bailoutValueLabel = "log1p abs aggregateValue";
             extern bailoutColorValue: bailoutColorValueLabel = "value";
             extern bailoutHeight: bailoutHeightLabel = "re value";
 

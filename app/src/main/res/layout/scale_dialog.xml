@@ -25,7 +25,6 @@
             android:ems="10"
             android:hint="@string/xxLabel"
             android:importantForAutofill="no"
-            android:digits="0123456789."
             android:inputType="numberDecimal|numberSigned"
             tools:targetApi="o" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -49,7 +48,6 @@
             android:ems="10"
             android:hint="@string/yxLabel"
             android:importantForAutofill="no"
-            android:digits="0123456789."
             android:inputType="numberDecimal|numberSigned"
             tools:targetApi="o" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -73,7 +71,6 @@
             android:ems="10"
             android:hint="@string/xyLabel"
             android:importantForAutofill="no"
-            android:digits="0123456789."
             android:inputType="numberDecimal|numberSigned"
             tools:targetApi="o" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -97,7 +94,6 @@
             android:ems="10"
             android:hint="@string/yyLabel"
             android:importantForAutofill="no"
-            android:digits="0123456789."
             android:inputType="numberDecimal|numberSigned"
             tools:targetApi="o" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -123,7 +119,6 @@
             android:ems="10"
             android:hint="@string/xCenter"
             android:importantForAutofill="no"
-            android:digits="0123456789."
             android:inputType="numberDecimal|numberSigned"
             tools:targetApi="o" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -149,7 +144,6 @@
             android:ems="10"
             android:hint="@string/yCenter"
             android:importantForAutofill="no"
-            android:digits="0123456789."
             android:inputType="numberDecimal|numberSigned"
             tools:targetApi="o" />
     </com.google.android.material.textfield.TextInputLayout>

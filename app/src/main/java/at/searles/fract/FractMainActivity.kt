@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.FileProvider
+import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -191,6 +192,16 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
     }
 
     override fun onBackPressed() {
+        if(drawerLayout.isDrawerOpen(menuNavigationView)) {
+            drawerLayout.closeDrawer(menuNavigationView)
+            return
+        }
+
+        if(drawerLayout.isDrawerOpen(parameterRecyclerView)) {
+            drawerLayout.closeDrawer(parameterRecyclerView)
+            return
+        }
+
         if(!bitmapModelFragment.bitmapModel.hasBackHistory()) {
             Toast.makeText(this, "History is empty.", Toast.LENGTH_LONG).show()
             return

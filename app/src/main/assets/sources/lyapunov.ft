@@ -15,7 +15,7 @@ val minusColorValueLabel = "Minus Color Value";
 val minusHeightLabel = "Minus Height";
 val minusPaletteLabel = "Minus Palette";
 
-setScale(2, 0, 0, 2, 0, 0); // Default Scale
+setScale(-1, 0, 0, -1, 3, 3); // Default Scale
 
 class Calculator {
     extern maxIteration: maxIterationLabel = "250";
