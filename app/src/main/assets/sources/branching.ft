@@ -116,7 +116,7 @@ class Calculator {
         val paletteIndex = addPalette(bailoutPaletteLabel, 4, 2,
             [0, 0, #ff000000], [1, 0, #ff4400aa], [2, 0, #ffffdd22], [3, 0, #ffffffff],
             [0, 1, #ffffffff], [1, 1, #ff444444], [2, 1, #ffcccccc], [3, 1, #ff000000]
-            );
+        );
 
         extern bailoutRadius: bailoutRadiusLabel = "1000000";
 

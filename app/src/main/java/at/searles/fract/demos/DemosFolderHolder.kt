@@ -9,8 +9,7 @@ import org.json.JSONObject
 
 class DemosFolderHolder(private val context: Context): FoldersHolder {
 
-    private val parametersMap = readParametersFromAssets()
-
+    val parametersMap = readParametersFromAssets()
     override val folders: List<Folder> = readSourcesFromAssets()
 
     private fun readJson(filename: String): JSONObject {
@@ -32,7 +31,7 @@ class DemosFolderHolder(private val context: Context): FoldersHolder {
     }
 
     private fun createSourcesFolderFromJson(id: String, jsonObject: JSONObject): AssetsSourceFolder {
-        val iconFilename = "$id.png"
+        val iconFilename = "$id-default.png"
         val sourceFilename = "$id.ft"
         val title = jsonObject.getString(titleKey)
         val description = jsonObject.getString(descriptionKey)
@@ -41,16 +40,20 @@ class DemosFolderHolder(private val context: Context): FoldersHolder {
 
         val parameterSets = parametersMap.values.filter { parameterSet ->
             tags.any { parameterSet.tags.contains(it) }
-        }
+        }.map { it.createItem(id) }
 
         return AssetsSourceFolder(id, title, description, iconFilename, sourceFilename, parameterSets)
-
     }
 
-    fun readParametersFromAssets(): Map<String, AssetsParametersItem> {
+    fun readParameterFromAssets(id: String): AssetsParameters {
+        val root = readJson(parametersJsonFile)
+        return createParameterSetFromJson(id, root.getJSONObject(id))
+    }
+
+    private fun readParametersFromAssets(): Map<String, AssetsParameters> {
         val root = readJson(parametersJsonFile)
 
-        val parametersMap = LinkedHashMap<String, AssetsParametersItem>()
+        val parametersMap = LinkedHashMap<String, AssetsParameters>()
 
         root.keys().forEach { id ->
             parametersMap[id] = createParameterSetFromJson(id, root.getJSONObject(id))
@@ -59,9 +62,7 @@ class DemosFolderHolder(private val context: Context): FoldersHolder {
         return parametersMap
     }
 
-    private fun createParameterSetFromJson(id: String, jsonObject: JSONObject): AssetsParametersItem {
-        val iconFilename = "$id.png"
-
+    private fun createParameterSetFromJson(id: String, jsonObject: JSONObject): AssetsParameters {
         val name = jsonObject.getString(titleKey)
         val description = jsonObject.getString(descriptionKey)
         val tags = jsonObject.getString(tagsKey).split(",").toSet()
@@ -79,7 +80,7 @@ class DemosFolderHolder(private val context: Context): FoldersHolder {
             parameters[it] = parametersJson.getString(it)
         }
 
-        return AssetsParametersItem(id, name, description, iconFilename, tags, scale, parameters)
+        return AssetsParameters(id, name, description, tags, scale, parameters)
     }
 
     companion object {

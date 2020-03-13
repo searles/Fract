@@ -43,4 +43,5 @@
     <string name="editProperties">Edit</string>
     <string name="showGrid">Show Grid</string>
     <string name="resetParameter">Reset to Default</string>
+    <string name="saveImageToGallery">Save Image to Gallery</string>
 </resources>

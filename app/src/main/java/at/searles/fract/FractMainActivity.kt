@@ -8,12 +8,12 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.WindowManager
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.FileProvider
-import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,9 +23,11 @@ import at.searles.android.storage.data.PathContentProvider
 import at.searles.android.storage.dialog.ReplaceExistingDialogFragment
 import at.searles.commons.color.Palette
 import at.searles.commons.math.Scale
+import at.searles.fract.demos.AssetBulkIconGenerator
 import at.searles.fract.demos.AssetsUtils
 import at.searles.fract.demos.DemosFolderHolder
 import at.searles.fract.editors.*
+import at.searles.fract.experimental.BulkCalculator
 import at.searles.fract.favorites.AddToFavoritesDialogFragment
 import at.searles.fract.favorites.FavoritesProvider
 import at.searles.fractbitmapmodel.*
@@ -83,6 +85,8 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
         title = ""
         setSupportActionBar(toolbar)
 
@@ -138,6 +142,10 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
             }
             R.id.openPropertiesDrawer -> {
                 drawerLayout.openDrawer(parameterRecyclerView)
+                true
+            }
+            R.id.bulkCreateIcons -> {
+                BulkCalculator(this, AssetBulkIconGenerator(this)).start()
                 true
             }
             else -> error("bad item: $item")
@@ -266,6 +274,9 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
             R.id.saveAction -> {
                 openSaveImage()
             }
+            R.id.saveToGalleryAction -> {
+                openSaveImageToGallery()
+            }
             R.id.imageSize -> {
                 openImageSize()
             }
@@ -365,9 +376,10 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
 
     private fun loadDemo(sourceKey: String, parametersKey: String, mergeParameters: Boolean) {
         val sourceCode = AssetsUtils.readAssetSource(this, sourceKey)
-        val parameters = HashMap<String, String>()
-
+        val parameterSet = AssetsUtils.readAssetParameters(this, parametersKey)
         val currentProperties = bitmapModel.properties
+
+        val parameters = HashMap<String, String>()
 
         val scale: Scale?
         val palettes: List<Palette?>
@@ -376,16 +388,16 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
             Toast.makeText(this, "Merging sample with current parameters", Toast.LENGTH_SHORT).show()
             parameters.putAll(currentProperties.customParameters)
 
-            scale = if(!currentProperties.isDefaultScale) currentProperties.scale else null
+            scale = if(!currentProperties.isDefaultScale) currentProperties.scale else parameterSet.scale
             palettes = (0 until currentProperties.paletteCount).map {
                 if(currentProperties.isDefaultPalette(it)) null else currentProperties.getPalette(it)
             }
         } else {
-            scale = null
+            scale = parameterSet.scale
             palettes = emptyList()
         }
 
-        parameters.putAll(AssetsUtils.readAssetParameters(this, parametersKey))
+        parameters.putAll(parameterSet.parameters)
 
         try {
             val properties = FractProperties.create(sourceCode, parameters, scale, currentProperties.shaderProperties, palettes)

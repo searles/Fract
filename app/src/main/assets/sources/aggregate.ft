@@ -57,6 +57,8 @@ class Calculator {
         }
     }
 
+    extern useBailout: useBailoutLabel = "true";
+
     /*
     * Performs one full calculation step
     * z, lastZ and n are modified.
@@ -70,7 +72,8 @@ class Calculator {
         dz = nextZ - z;
         radDz = rad dz;
 
-        extern aggregateFunction: aggregateFunctionLabel = "aggregateValue + exp(-radZ - 0.5 / radDz)";
+        extern aggregateFunction: aggregateFunctionLabel =  "aggregateValue + exp(-radZ - 0.5 / radDz)"
+
         extern startIndex: startIndexLabel = "0";
 
         if(n > startIndex) {
@@ -83,10 +86,14 @@ class Calculator {
         z = nextZ;
     }
 
-    val lakePaletteIndex = addPalette(bailoutPaletteLabel, 6, 1,
-       [0, 0, #ff000000], [1, 0, #ff4400aa], [5, 0, #ff4400aa], [2, 0, #ffffdd22], [4, 0, #ffffdd22], [3, 0, #ffffffff]);
+    val lakePaletteIndex = addPalette(bailoutPaletteLabel, 4, 2,
+       [0, 0, #ff000000], [1, 0, #ff4400aa], [2, 0, #ffffdd22], [3, 0, #ffffffff],
+       [0, 1, #ffffffff], [1, 1, #ff444444], [2, 1, #ffcccccc], [3, 1, #ff000000]
+   );
 
-    extern lakeValue: lakeValueLabel = "log1p abs aggregateValue";
+
+    extern lakeValue: lakeValueLabel = "log1p re aggregateValue"
+
     extern lakeColorValue: lakeColorValueLabel = "value";
     extern lakeHeight: lakeHeightLabel = "re value";
 
@@ -113,8 +120,6 @@ class Calculator {
         }
     }
 
-    extern useBailout: useBailoutLabel = "true";
-
     fun isBailout() {
         val paletteIndex = addPalette(bailoutPaletteLabel, 6, 1,
             [0, 0, #ff000000], [1, 0, #ff4400aa], [5, 0, #ff4400aa], [2, 0, #ffffdd22], [4, 0, #ffffdd22], [3, 0, #ffffffff]);
@@ -122,7 +127,7 @@ class Calculator {
         extern bailoutRadius: bailoutRadiusLabel = "80";
 
         if(radZ >= bailoutRadius) {
-            extern bailoutValue: bailoutValueLabel = "log1p abs aggregateValue";
+            extern bailoutValue: bailoutValueLabel = "log1p re aggregateValue";
             extern bailoutColorValue: bailoutColorValueLabel = "value";
             extern bailoutHeight: bailoutHeightLabel = "re value";
 

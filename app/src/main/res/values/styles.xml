@@ -5,5 +5,6 @@
         <item name="colorPrimary">@color/primaryColor</item> <!-- background title bar -->
         <item name="colorPrimaryDark">@color/primaryDarkColor</item> <!-- background status bar -->
         <item name="colorAccent">@color/secondaryColor</item> <!-- used for eg cursor color. light version is text selection-->
+        <item name="windowActionModeOverlay">true</item>
     </style>
 </resources>

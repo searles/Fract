@@ -17,6 +17,9 @@
         android:id="@+id/saveAction"
         android:title="@string/saveImage" />
     <item
+        android:id="@+id/saveToGalleryAction"
+        android:title="@string/saveImageToGallery" />
+    <item
         android:id="@+id/imageSize"
         android:title="@string/setImageSize" />
     <item

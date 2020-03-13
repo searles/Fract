@@ -11,4 +11,7 @@
         android:title="@string/editProperties"
         android:icon="@drawable/ic_settings_black_24dp"
         app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/bulkCreateIcons"
+        android:title="Bulk-Create Asset Icons" />
 </menu>

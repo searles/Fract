@@ -1,15 +1,13 @@
 package at.searles.fract.favorites
 
-import android.app.Activity
 import android.content.Context
 import android.graphics.*
+import android.util.Log
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import at.searles.android.storage.data.InvalidNameException
 import at.searles.android.storage.data.PathContentProvider
 import at.searles.android.storage.dialog.ReplaceExistingDialogFragment
-import at.searles.fract.R
 import at.searles.fractbitmapmodel.FractBitmapModel
 import at.searles.fractbitmapmodel.FractPropertiesAdapter
 import org.json.JSONObject
@@ -23,8 +21,13 @@ class FavoritesProvider(private val context: Context): PathContentProvider(conte
     private val thumbnailCache = WeakHashMap<String, Bitmap>()
 
     override fun setImageInView(name: String, imageView: ImageView) {
-        val thumbnail = loadThumbnail(name)
-        imageView.setImageBitmap(thumbnail)
+        try {
+            val thumbnail = loadThumbnail(name)
+            imageView.setImageBitmap(thumbnail)
+        } catch(e: Exception) {
+            Log.i("FavoritesProvider", "Error setting thumbnail of image: $name. Maybe the file was just deleted.")
+            e.printStackTrace()
+        }
 
         // TODO Glide.with(context).load(custom).into(imageView)
     }
