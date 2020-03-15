@@ -514,14 +514,6 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
         bitmapModel.scheduleCalcPropertiesChange(ScaleChange(scale))
     }
 
-    fun resetScale() {
-        bitmapModel.scheduleCalcPropertiesChange(object: CalcPropertiesChange {
-            override fun accept(properties: FractProperties): FractProperties {
-                return FractProperties(properties.program, null, properties.customShaderProperties, properties.customPalettes)
-            }
-        })
-    }
-
     fun setParameter(key: String, value: String) {
         try {
             bitmapModel.scheduleCalcPropertiesChange(ParameterChange(key, value))
@@ -530,16 +522,8 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
         }
     }
 
-    fun resetParameter(key: String) {
-        try {
-            bitmapModel.scheduleCalcPropertiesChange(ParameterResetChange(key))
-        } catch(e: SemanticAnalysisException) {
-            Toast.makeText(this, getString(R.string.compileError, e.message), Toast.LENGTH_LONG).show()
-        }
-    }
-
     fun openParameterEditor(name: String) {
-        ParameterEditDialogFragment.newInstance(name, bitmapModel.properties.getParameter(name)).
+        ParameterDialogFragment.newInstance(name, bitmapModel.properties.getParameter(name)).
             show(supportFragmentManager, "dialog")
     }
 
@@ -632,7 +616,8 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
     }
 
     fun openPaletteContext(index: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        PaletteContextDialogFragment.newInstance(index, bitmapModel.properties.getPalette(index)).
+            show(supportFragmentManager, "dialog")
     }
 
     fun openScaleContext() {
@@ -641,9 +626,51 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
     }
 
     fun openShaderPropertiesContext() {
+        ShaderPropertiesContextDialogFragment.newInstance(bitmapModel.properties.shaderProperties).
+            show(supportFragmentManager, "dialog")
+    }
+
+    fun resetScale() {
+        bitmapModel.scheduleCalcPropertiesChange(object: CalcPropertiesChange {
+            override fun accept(properties: FractProperties): FractProperties {
+                return FractProperties(properties.program, null, properties.customShaderProperties, properties.customPalettes)
+            }
+        })
+    }
+
+    fun setParameterToCenter(key: String) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
+    fun resetParameter(key: String) {
+        try {
+            bitmapModel.scheduleCalcPropertiesChange(ParameterResetChange(key))
+        } catch(e: SemanticAnalysisException) {
+            Toast.makeText(this, getString(R.string.compileError, e.message), Toast.LENGTH_LONG).show()
+        }
+    }
+
+    fun resetShaderProperties() {
+        bitmapModel.applyBitmapPropertiesChange(object: BitmapPropertiesChange {
+            override fun accept(properties: FractProperties): FractProperties {
+                return FractProperties(properties.program, properties.customScale, null, properties.customPalettes)
+            }
+        })
+    }
+
+    fun resetPalette(index: Int) {
+        bitmapModel.applyBitmapPropertiesChange(object: BitmapPropertiesChange {
+            override fun accept(properties: FractProperties): FractProperties {
+                val customPalettes = properties.customPalettes.toMutableList()
+
+                if(customPalettes.size >= index) {
+                    customPalettes[index] = null
+                }
+
+                return FractProperties(properties.program, properties.customScale, properties.customShaderProperties, customPalettes)
+            }
+        })
+    }
 
     companion object {
         private const val progessBarFactor = 900

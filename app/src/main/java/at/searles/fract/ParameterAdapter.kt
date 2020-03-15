@@ -25,6 +25,7 @@ class ParameterAdapter(private val activity: FractMainActivity): RecyclerView.Ad
             val view = LayoutInflater.from(activity).inflate(R.layout.parameter_simple_item, parent, false)
             ViewHolder(view).also {
                 view.setOnClickListener(it)
+                view.setOnLongClickListener(it)
             }
         }
     }

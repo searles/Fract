@@ -5,15 +5,14 @@ import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
-import at.searles.commons.math.Scale
 import at.searles.fract.FractMainActivity
 import at.searles.fract.R
-import at.searles.fractbitmapmodel.FractPropertiesAdapter
+import at.searles.fractbitmapmodel.ShaderProperties
 
 /**
  * Opens for now menu to reset a parameter.
  */
-class ScaleContextDialogFragment: DialogFragment() {
+class ShaderPropertiesContextDialogFragment: DialogFragment() {
     private lateinit var key: String
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -21,14 +20,14 @@ class ScaleContextDialogFragment: DialogFragment() {
 
         builder
             .setView(R.layout.reset_context_dialog)
-            .setTitle(resources.getString(R.string.editScale))
+            .setTitle(resources.getString(R.string.editShaderProperties))
             .setNegativeButton(android.R.string.cancel) { _, _ -> dismiss() }
             .setCancelable(true)
 
         val dialog = builder.show()
 
         dialog.findViewById<Button>(R.id.resetButton)!!.setOnClickListener {
-            (activity as FractMainActivity).resetScale()
+            (activity as FractMainActivity).resetShaderProperties()
             dismiss()
         }
 
@@ -36,13 +35,13 @@ class ScaleContextDialogFragment: DialogFragment() {
     }
 
     companion object {
-        private const val scaleKey = "scale"
+        private const val shaderPropertiesKey = "shaderProperties"
 
-        fun newInstance(scale: Scale): ScaleDialogFragment {
+        fun newInstance(shaderProperties: ShaderProperties): ScaleDialogFragment {
             val dialogFragment = ScaleDialogFragment()
 
             dialogFragment.arguments = Bundle().apply {
-                putDoubleArray(scaleKey, FractPropertiesAdapter.scaleToArray(scale))
+                putBundle(shaderPropertiesKey, shaderProperties.toBundle())
             }
 
             return dialogFragment

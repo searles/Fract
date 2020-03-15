@@ -5,30 +5,30 @@ import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
-import at.searles.commons.math.Scale
+import at.searles.commons.color.Palette
 import at.searles.fract.FractMainActivity
 import at.searles.fract.R
-import at.searles.fractbitmapmodel.FractPropertiesAdapter
+import at.searles.paletteeditor.PaletteAdapter
 
 /**
  * Opens for now menu to reset a parameter.
  */
-class ScaleContextDialogFragment: DialogFragment() {
-    private lateinit var key: String
-
+class PaletteContextDialogFragment: DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val index = arguments!!.getInt(indexKey)
+
         val builder = AlertDialog.Builder(activity!!)
 
         builder
             .setView(R.layout.reset_context_dialog)
-            .setTitle(resources.getString(R.string.editScale))
+            .setTitle(resources.getString(R.string.editPalette))
             .setNegativeButton(android.R.string.cancel) { _, _ -> dismiss() }
             .setCancelable(true)
 
         val dialog = builder.show()
 
         dialog.findViewById<Button>(R.id.resetButton)!!.setOnClickListener {
-            (activity as FractMainActivity).resetScale()
+            (activity as FractMainActivity).resetPalette(index)
             dismiss()
         }
 
@@ -36,13 +36,15 @@ class ScaleContextDialogFragment: DialogFragment() {
     }
 
     companion object {
-        private const val scaleKey = "scale"
+        private const val paletteKey = "palette"
+        private const val indexKey = "index"
 
-        fun newInstance(scale: Scale): ScaleDialogFragment {
-            val dialogFragment = ScaleDialogFragment()
+        fun newInstance(index: Int, palette: Palette): PaletteContextDialogFragment {
+            val dialogFragment = PaletteContextDialogFragment()
 
             dialogFragment.arguments = Bundle().apply {
-                putDoubleArray(scaleKey, FractPropertiesAdapter.scaleToArray(scale))
+                putBundle(paletteKey, PaletteAdapter.toBundle(palette))
+                putInt(indexKey, index)
             }
 
             return dialogFragment

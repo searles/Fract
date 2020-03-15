@@ -44,4 +44,7 @@
     <string name="showGrid">Show Grid</string>
     <string name="resetParameter">Reset to Default</string>
     <string name="saveImageToGallery">Save Image to Gallery</string>
+    <string name="editPalette">Edit Palette</string>
+    <string name="editShaderProperties">Edit Shader Properties</string>
+    <string name="setToCenter">Set to Center</string>
 </resources>

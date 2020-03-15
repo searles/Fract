@@ -12,7 +12,7 @@ import at.searles.fract.R
 import at.searles.fractlang.semanticanalysis.SemanticAnalysisException
 
 
-class ParameterEditDialogFragment: DialogFragment() {
+class ParameterDialogFragment: DialogFragment() {
 
     private lateinit var key: String
 
@@ -60,8 +60,8 @@ class ParameterEditDialogFragment: DialogFragment() {
         private const val nameKey = "name"
         private const val valueKey = "value"
 
-        fun newInstance(name: String, value: String): ParameterEditDialogFragment {
-            val dialogFragment = ParameterEditDialogFragment()
+        fun newInstance(name: String, value: String): ParameterDialogFragment {
+            val dialogFragment = ParameterDialogFragment()
 
             dialogFragment.arguments = Bundle().apply {
                 putString(nameKey, name)

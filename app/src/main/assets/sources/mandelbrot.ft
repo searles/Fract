@@ -5,7 +5,7 @@ val maxExponentLabel = "Maximum Exponent";
 val isJuliaSetLabel = "Julia Set";
 val juliaSetParameterLabel = "Julia Set Parameter";
 val z0Label = "Start Value (z[0])";
-val useBailoutLabel = "Use Bailout (unset for eg Newton Fractals)";
+val isBoundLabel = "All Points are bound";
 val bailoutRadiusLabel = "Bailout Radius";
 val bailoutValueLabel = "Bailout Value";
 val bailoutColorValueLabel = "Bailout Color Value";
@@ -48,7 +48,7 @@ class Calculator {
         }
     }
 
-    extern useBailout: useBailoutLabel = "true";
+    extern isBound: isBoundLabel = "false";
 
     /*
     * Performs one full calculation step
@@ -69,18 +69,14 @@ class Calculator {
         z = nextZ;
     }
 
-    val lakePaletteIndex = if(useBailout) {
+    val lakePaletteIndex = if(not isBound) {
             addPalette(lakePaletteLabel, 1, 1, [0, 0, #ff000000])
         } else {
-            addPalette(lakePaletteLabel, 6, 1,
-                [0, 0, #ff000000], [1, 0, #ff4400aa], [5, 0, #ff4400aa], [2, 0, #ffffdd22], [4, 0, #ffffdd22], [3, 0, #ffffffff]);
+            addPalette(lakePaletteLabel, 2, 2,
+                [1, 0, #ff000000], [0, 0, #ff4400aa], [1, 1, #ffffdd22], [0, 1, #ffffffff]);
         };
 
-    if(useBailout) {
-        extern lakeValue: lakeValueLabel = "norm z";
-    } else {
-        extern lakeValue: lakeValueLabel = "argnorm z : (1 - /(1 + radZ))";
-    }
+    extern lakeValue: lakeValueLabel = "log1p rad z : argnorm z";
     extern lakeColorValue: lakeColorValueLabel = "value";
     extern lakeHeight: lakeHeightLabel = "re value";
 
@@ -134,7 +130,7 @@ class Calculator {
     }
 
     fun isBreak() {
-        (if(useBailout) isBailout() else false) or
+        (if(not isBound) isBailout() else false) or
         isEpsilon() or
         isMaxIteration()
     }
