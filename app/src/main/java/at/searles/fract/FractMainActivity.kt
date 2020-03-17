@@ -639,7 +639,12 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
     }
 
     fun setParameterToCenter(key: String) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        try {
+            val scaleString = "${bitmapModel.properties.scale.cx} : ${bitmapModel.properties.scale.cy}"
+            bitmapModel.scheduleCalcPropertiesChange(ParameterChange(key, scaleString))
+        } catch(e: SemanticAnalysisException) {
+            Toast.makeText(this, getString(R.string.compileError, e.message), Toast.LENGTH_LONG).show()
+        }
     }
 
     fun resetParameter(key: String) {

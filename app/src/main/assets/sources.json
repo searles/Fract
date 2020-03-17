@@ -4,6 +4,11 @@
     "description": "A program suitable for fractals based on polynoms.",
     "tags": "default,polynom,convergent"
   },
+  "orbittrap": {
+    "title": "Orbit Trap",
+    "description": "A program for fractals based on polynoms with additional Orbit Trap capabilities",
+    "tags": "default,polynom,convergent"
+  },
   "aggregate": {
     "title": "Aggregate Orbit",
     "description": "Suitable also for exponential functions and Newton/Nova-fractals",
@@ -12,7 +17,7 @@
   "branching": {
     "title": "Branching Addend",
     "description": "Suitable for polynom functions with average branching.",
-    "tags": "default,polynom"
+    "tags": "default,polynom,branching"
   },
   "lyapunov": {
     "title": "Lyapunov Fractals",
