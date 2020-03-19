@@ -7,6 +7,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import at.searles.fract.FractMainActivity
 import at.searles.fract.R
+import at.searles.fractlang.FractlangProgram
+import at.searles.fractlang.parsing.FractlangParser
 
 /**
  * Opens for now menu to reset a parameter.
@@ -21,6 +23,8 @@ class ParameterContextDialogFragment: DialogFragment() {
 
         key = name
 
+        val value = arguments!!.getString(valueKey)!!
+
         builder
             .setView(R.layout.parameter_context_dialog)
             .setTitle(resources.getString(R.string.editParameterName, name))
@@ -34,14 +38,10 @@ class ParameterContextDialogFragment: DialogFragment() {
             dismiss()
         }
 
-        dialog.findViewById<Button>(R.id.setToCenterButton)!!.setOnClickListener {
-            (activity as FractMainActivity).setParameterToCenter(key)
-            dismiss()
-        }
-
-        /*
-        val value = arguments!!.getString(valueKey)!!
-         */
+// TODO: based on value        dialog.findViewById<Button>(R.id.setToCenterButton)!!.setOnClickListener {
+//            (activity as FractMainActivity).setParameterToCenter(key)
+//            dismiss()
+//        }
 
         return dialog
     }

@@ -519,6 +519,7 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
             bitmapModel.scheduleCalcPropertiesChange(ParameterChange(key, value))
         } catch(e: SemanticAnalysisException) {
             Toast.makeText(this, getString(R.string.compileError, e.message), Toast.LENGTH_LONG).show()
+            parameterAdapter.updateFrom(bitmapModel)
         }
     }
 
@@ -611,6 +612,11 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
 
 
     fun openParameterContext(name: String) {
+        ParameterContextDialogFragment.newInstance(name, bitmapModel.properties.getParameter(name)).
+            show(supportFragmentManager, "dialog")
+    }
+
+    fun openParameterBoolContext(name: String) {
         ParameterContextDialogFragment.newInstance(name, bitmapModel.properties.getParameter(name)).
             show(supportFragmentManager, "dialog")
     }

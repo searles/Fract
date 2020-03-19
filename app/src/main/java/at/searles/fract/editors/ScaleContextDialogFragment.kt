@@ -14,8 +14,6 @@ import at.searles.fractbitmapmodel.FractPropertiesAdapter
  * Opens for now menu to reset a parameter.
  */
 class ScaleContextDialogFragment: DialogFragment() {
-    private lateinit var key: String
-
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val builder = AlertDialog.Builder(activity!!)
 
@@ -38,8 +36,8 @@ class ScaleContextDialogFragment: DialogFragment() {
     companion object {
         private const val scaleKey = "scale"
 
-        fun newInstance(scale: Scale): ScaleDialogFragment {
-            val dialogFragment = ScaleDialogFragment()
+        fun newInstance(scale: Scale): ScaleContextDialogFragment {
+            val dialogFragment = ScaleContextDialogFragment()
 
             dialogFragment.arguments = Bundle().apply {
                 putDoubleArray(scaleKey, FractPropertiesAdapter.scaleToArray(scale))

@@ -86,21 +86,25 @@ class Calculator {
         z = nextZ;
     }
 
-    val lakePaletteIndex = addPalette(bailoutPaletteLabel, 4, 2,
-       [0, 0, #ff000000], [1, 0, #ff4400aa], [2, 0, #ffffdd22], [3, 0, #ffffffff],
-       [0, 1, #ffffffff], [1, 1, #ff444444], [2, 1, #ffcccccc], [3, 1, #ff000000]
-   );
 
 
-    extern lakeValue: lakeValueLabel = "log1p re aggregateValue"
+    fun setLakeValues() {
+        val lakePaletteIndex = addPalette(lakePaletteLabel, 4, 2,
+           [0, 0, #ff000000], [1, 0, #ff4400aa], [2, 0, #ffffdd22], [3, 0, #ffffffff],
+           [0, 1, #ffffffff], [1, 1, #ff444444], [2, 1, #ffcccccc], [3, 1, #ff000000]
+        );
 
-    extern lakeColorValue: lakeColorValueLabel = "value";
-    extern lakeHeight: lakeHeightLabel = "re value";
+        extern lakeValue: lakeValueLabel = "log1p re aggregateValue";
+        extern lakeColorValue: lakeColorValueLabel = "value";
+        extern lakeHeight: lakeHeightLabel = "re value";
+
+        var value = lakeValue;
+        setResult(lakePaletteIndex, lakeColorValue, lakeHeight);
+    }
 
     fun isMaxIteration() {
         if(not next(maxIteration, n)) {
-            var value = lakeValue;
-            setResult(lakePaletteIndex, lakeColorValue, lakeHeight);
+            setLakeValues();
             true
         } else {
             false
@@ -111,29 +115,30 @@ class Calculator {
         extern epsilonRadius: epsilonRadiusLabel = "1e-9";
 
         if(radDz < epsilonRadius) {
-            var value = lakeValue;
-            setResult(lakePaletteIndex, lakeColorValue, lakeHeight);
-
+            setLakeValues();
             true
         } else {
             false
         }
     }
 
-    fun isBailout() {
+    fun setBailoutValues() {
         val paletteIndex = addPalette(bailoutPaletteLabel, 6, 1,
             [0, 0, #ff000000], [1, 0, #ff4400aa], [5, 0, #ff4400aa], [2, 0, #ffffdd22], [4, 0, #ffffdd22], [3, 0, #ffffffff]);
 
+        extern bailoutValue: bailoutValueLabel = "log1p re aggregateValue";
+        extern bailoutColorValue: bailoutColorValueLabel = "value";
+        extern bailoutHeight: bailoutHeightLabel = "re value";
+
+        var value = bailoutValue;
+        setResult(paletteIndex, bailoutColorValue, bailoutHeight);
+    }
+
+    fun isBailout() {
         extern bailoutRadius: bailoutRadiusLabel = "80";
 
         if(radZ >= bailoutRadius) {
-            extern bailoutValue: bailoutValueLabel = "log1p re aggregateValue";
-            extern bailoutColorValue: bailoutColorValueLabel = "value";
-            extern bailoutHeight: bailoutHeightLabel = "re value";
-
-            var value = bailoutValue;
-            setResult(paletteIndex, bailoutColorValue, bailoutHeight);
-
+            setBailoutValues();
             true
         } else {
             false

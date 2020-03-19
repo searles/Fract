@@ -2,15 +2,16 @@ package at.searles.fract.editors
 
 import android.app.Dialog
 import android.os.Bundle
+import android.view.View
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
-import at.searles.commons.math.Scale
 import at.searles.fract.FractMainActivity
 import at.searles.fract.R
 import at.searles.fractbitmapmodel.ShaderProperties
+import com.google.android.material.textfield.TextInputLayout
 import java.lang.NumberFormatException
 
 class ShaderPropertiesDialogFragment: DialogFragment() {
@@ -26,8 +27,10 @@ class ShaderPropertiesDialogFragment: DialogFragment() {
 
         val dialog = builder.show()
 
+        val checkBox = dialog.findViewById<CheckBox>(R.id.useShaderCheckBox)!!
+
         if(savedInstanceState == null) {
-            dialog.findViewById<CheckBox>(R.id.useShaderCheckBox)!!.isChecked = arguments!!.getBoolean(useLightEffectKey)
+            checkBox.isChecked = arguments!!.getBoolean(useLightEffectKey)
 
             dialog.findViewById<EditText>(R.id.polarEditText)!!.setText(arguments!!.getDouble(polarKey).toString())
             dialog.findViewById<EditText>(R.id.azimuthEditText)!!.setText(arguments!!.getDouble(azimuthKey).toString())
@@ -37,7 +40,21 @@ class ShaderPropertiesDialogFragment: DialogFragment() {
             dialog.findViewById<EditText>(R.id.shininessEditText)!!.setText(arguments!!.getInt(shininessKey).toString())
         }
 
+        checkBox.setOnCheckedChangeListener { _, isChecked -> updateLightEffectsEnabledStatus(isChecked, this.dialog!!) }
+        updateLightEffectsEnabledStatus(checkBox.isChecked, dialog)
+
         return dialog
+    }
+
+    private fun updateLightEffectsEnabledStatus(isChecked: Boolean, dialog: Dialog) {
+        val visibility = if(isChecked) View.VISIBLE else View.INVISIBLE
+
+        dialog.findViewById<TextInputLayout>(R.id.polarInputLayout)!!.visibility = visibility
+        dialog.findViewById<TextInputLayout>(R.id.azimuthInputLayout)!!.visibility = visibility
+        dialog.findViewById<TextInputLayout>(R.id.ambientReflectionInputLayout)!!.visibility = visibility
+        dialog.findViewById<TextInputLayout>(R.id.diffuseReflectionInputLayout)!!.visibility = visibility
+        dialog.findViewById<TextInputLayout>(R.id.specularReflectionInputLayout)!!.visibility = visibility
+        dialog.findViewById<TextInputLayout>(R.id.shininessInputLayout)!!.visibility = visibility
     }
 
     /**

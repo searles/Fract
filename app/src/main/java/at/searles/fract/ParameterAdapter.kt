@@ -18,8 +18,15 @@ class ParameterAdapter(private val activity: FractMainActivity): RecyclerView.Ad
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return if(parameterBoolType == viewType) {
             val view = LayoutInflater.from(activity).inflate(R.layout.parameter_bool_item, parent, false)
-            val vh = ViewHolder(view)
-            view.findViewById<CheckBox>(R.id.parameterNameCheckBox).setOnCheckedChangeListener(vh)
+            val vh = ViewHolder(view).also {
+                view.setOnLongClickListener(it)
+            }
+
+            view.findViewById<CheckBox>(R.id.parameterNameCheckBox).apply {
+                setOnCheckedChangeListener(vh)
+                setOnLongClickListener(vh)
+            }
+
             vh
         } else {
             val view = LayoutInflater.from(activity).inflate(R.layout.parameter_simple_item, parent, false)
@@ -66,6 +73,7 @@ class ParameterAdapter(private val activity: FractMainActivity): RecyclerView.Ad
                 sourceCodeType -> return false
                 scaleType -> activity.openScaleContext()
                 shaderPropertiesType -> activity.openShaderPropertiesContext()
+                parameterBoolType -> activity.openParameterBoolContext(item.name)
                 else -> error("unknown type: ${item.type}")
             }
 

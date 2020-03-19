@@ -150,10 +150,10 @@
     "title": "Generic Mandelbrot of Power 3",
     "description": "Mandelbrot Set of Power 3 with three freely selectable parameters",
     "parameters": {
-      "function": "(z - alpha) * (z - beta) * (z - gamma) + c",
+      "function": "(z - alpha) * (z - beta) * (z - gamma)",
       "maxExponent": "3",
       "z0": "(alpha + beta + gamma + sqrt((alpha + beta + gamma)^2 - 3:0 * (alpha * beta + alpha * gamma + beta * gamma))) / 3",
-      "alpha": "/(c - 0.707)",
+      "alpha": "c",
       "beta": "-1",
       "gamma": "1"
     },
@@ -196,26 +196,25 @@
   },
   "fractional_mandel": {
     "title": "Fractional mandelbrot formula",
-    "description": "A variation of the Multibrot Fractal (source: element90 blog)",
+    "description": "A variation of the Multibrot Fractal",
     "parameters": {
-      "function": "(z^alpha + beta) / (z^gamma + delta) + c",
+      "function": "(z^alpha + beta) / (z^gamma + delta) * c",
       "maxExponent": "alpha - gamma",
-      "isBound": "true",
-      "alpha": "2",
-      "beta": "1",
+      "alpha": "4",
+      "beta": "-2",
       "gamma": "2",
-      "delta": "-1",
+      "delta": "1",
       "z0": "0"
     },
-    "tags": "polynom,convergent"
+    "tags": "polynom"
   },
   "cczcpaczcp": {
     "title": "Cczcpaczcp",
     "description": "A Multibrot variation that combines two powers (source: element90 blog)",
     "scale": ["1", "0", "0", "1", "0", "0"],
     "parameters": {
-      "function": "(alpha * z ^ beta + gamma * z ^ delta) c",
-      "z0": "(-gamma delta / alpha beta)^/(beta - delta)",
+      "function": "(alpha * z ^ beta + gamma * z ^ delta) * c",
+      "z0": "(-gamma delta / alpha beta) ^ /(beta - delta)",
       "alpha": "1",
       "beta": "3",
       "gamma": "1",
