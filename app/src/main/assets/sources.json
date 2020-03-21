@@ -9,6 +9,11 @@
     "description": "A program for fractals based on polynoms with additional Orbit Trap capabilities",
     "tags": "default,polynom,convergent"
   },
+  "minmaxtrap": {
+    "title": "Min/Max Trap",
+    "description": "A program for fractals that determines the minimum and maximum distance to an Orbit Trap",
+    "tags": "default,polynom,nonpolynom,convergent"
+  },
   "aggregate": {
     "title": "Aggregate Orbit",
     "description": "Suitable also for exponential functions and Newton/Nova-fractals",

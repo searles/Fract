@@ -27,6 +27,7 @@ val lakeTrapValueLabel = "Lake Orbit Trap Value";
 val lakeTrapColorValueLabel = "Lake Orbit Trap Color Value";
 val lakeTrapHeightLabel = "Lake Orbit Trap Height";
 val lakeTrapPaletteLabel = "Lake Orbit Trap Palette";
+val startIndexLabel = "Start Index of Orbit Trap";
 
 setScale(2, 0, 0, 2, 0, 0); // Default Scale
 
@@ -70,21 +71,7 @@ class Calculator {
 
     extern isBound: isBoundLabel = "false";
 
-    /*
-    * Performs one full calculation step
-    * z, lastZ and n are modified.
-    * true is returned if none of the break conditions succeeds.
-    */
-    fun step() {
-        extern function: functionLabel = "z^2 + c";
-        nextZ = function;
-
-        radZ = rad nextZ;
-        dz = nextZ - z;
-        radDz = rad dz;
-    }
-
-    fun advance() {
+    fun updateTrap() {
         extern trapFunction: trapFunctionLabel = "0.66 - 6 * circle(0 : 0, 1.42, nextZ)";
 
         var trapDistance: Real = trapFunction;
@@ -100,7 +87,29 @@ class Calculator {
             lastTrapDistance = trapDistance;
             lastTrapPoint = nextZ;
         }
+    }
 
+    /*
+    * Performs one full calculation step
+    * z, lastZ and n are modified.
+    * true is returned if none of the break conditions succeeds.
+    */
+    fun step() {
+        extern function: functionLabel = "z^2 + c";
+        nextZ = function;
+
+        radZ = rad nextZ;
+        dz = nextZ - z;
+        radDz = rad dz;
+
+        extern startIndex: startIndexLabel = "0";
+
+        if(n >= startIndex) {
+            updateTrap();
+        }
+    }
+
+    fun advance() {
         lastZ = z;
         z = nextZ;
     }

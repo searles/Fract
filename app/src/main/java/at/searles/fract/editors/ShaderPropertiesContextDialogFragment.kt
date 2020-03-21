@@ -37,8 +37,8 @@ class ShaderPropertiesContextDialogFragment: DialogFragment() {
     companion object {
         private const val shaderPropertiesKey = "shaderProperties"
 
-        fun newInstance(shaderProperties: ShaderProperties): ScaleDialogFragment {
-            val dialogFragment = ScaleDialogFragment()
+        fun newInstance(shaderProperties: ShaderProperties): ShaderPropertiesContextDialogFragment {
+            val dialogFragment = ShaderPropertiesContextDialogFragment()
 
             dialogFragment.arguments = Bundle().apply {
                 putBundle(shaderPropertiesKey, shaderProperties.toBundle())

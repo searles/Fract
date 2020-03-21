@@ -1,0 +1,182 @@
+// Labels of of extern parameters
+val maxIterationLabel = "Maximum Iteration Count";
+val functionLabel = "Function (z[n])";
+val maxExponentLabel = "Maximum Exponent";
+val isJuliaSetLabel = "Julia Set";
+val juliaSetParameterLabel = "Julia Set Parameter";
+val z0Label = "Start Value (z[0])";
+val isBoundLabel = "All Points are bound";
+val bailoutRadiusLabel = "Bailout Radius";
+val bailoutValueLabel = "Bailout Value";
+val bailoutColorValueLabel = "Bailout Color Value";
+val bailoutHeightLabel = "Bailout Height";
+val bailoutPaletteLabel = "Bailout Palette";
+val epsilonRadiusLabel = "Epsilon Radius";
+val lakeValueLabel = "Lake Value";
+val lakeColorValueLabel = "Lake Color Value";
+val lakeHeightLabel = "Lake Height";
+val lakePaletteLabel = "Lake Palette";
+val trapFunctionLabel = "Orbit Trap Function";
+val startIndexLabel = "Start Index of Orbit Trap";
+
+setScale(2, 0, 0, 2, 0, 0); // Default Scale
+
+class Calculator {
+    extern maxIteration: maxIterationLabel = "250";
+
+    var n: Int = 0; // count iterations
+    var c: Cplx;    // parameter
+    var z: Cplx;
+    var lastZ: Cplx = 0:0; // z[n-1]
+    var nextZ: Cplx; // z[n+1]
+    var radZ: Real; // |z[n]|
+    var dz: Cplx;   // z[n+1] - z[n]
+    var radDz: Real; //  |dz|
+
+    var minTrapIndex: Int = -1;
+    var maxTrapIndex: Int = -1;
+
+    var minTrapDistance: Real;
+    var maxTrapDistance: Real;
+
+    var minTrapPoint: Cplx;
+    var maxTrapPoint: Cplx;
+
+    fun init() {
+        extern isJuliaSet: isJuliaSetLabel = "false";
+        c = if(isJuliaSet) {
+            extern juliaSetParameter: juliaSetParameterLabel = "-0.75: 0.25";
+            juliaSetParameter
+        } else {
+            point;
+        }
+
+        z = if(isJuliaSet) {
+            point
+        } else {
+            extern z0: z0Label = "0";
+            z0;
+        }
+    }
+
+    extern isBound: isBoundLabel = "false";
+
+    fun updateTrap() {
+        extern trapFunction: trapFunctionLabel = "circle(0 : 0, 1.42, nextZ)";
+
+        var trapDistance: Real = trapFunction;
+
+        if(minTrapIndex < 0 or trapDistance < minTrapDistance) {
+            minTrapIndex = n;
+            minTrapDistance = trapDistance;
+            minTrapPoint = nextZ;
+        }
+
+        if(maxTrapIndex < 0 or trapDistance > minTrapDistance) {
+            maxTrapIndex = n;
+            maxTrapDistance = trapDistance;
+            maxTrapPoint = nextZ;
+        }
+    }
+
+    /*
+    * Performs one full calculation step
+    * z, lastZ and n are modified.
+    * true is returned if none of the break conditions succeeds.
+    */
+    fun step() {
+        extern function: functionLabel = "z^2 + c";
+        nextZ = function;
+
+        radZ = rad nextZ;
+        dz = nextZ - z;
+        radDz = rad dz;
+
+        extern startIndex: startIndexLabel = "0";
+
+        if(n >= startIndex) {
+            updateTrap();
+        }
+    }
+
+    fun advance() {
+        lastZ = z;
+        z = nextZ;
+    }
+
+    fun setLakeValues() {
+        val lakePaletteIndex = if(not isBound) {
+            addPalette(lakePaletteLabel, 1, 1, [0, 0, #ff000000])
+        } else {
+            addPalette(lakePaletteLabel, 2, 2,
+                [1, 0, #ff000000], [0, 0, #ff4400aa], [1, 1, #ffffdd22], [0, 1, #ffffffff]);
+        };
+
+        extern lakeValue: lakeValueLabel = "/(1 + minTrapDistance) : argnorm minTrapPoint";
+        extern lakeColorValue: lakeColorValueLabel = "value";
+        extern lakeHeight: lakeHeightLabel = "re value";
+
+        var value = lakeValue;
+        setResult(lakePaletteIndex, lakeColorValue, lakeHeight);
+    }
+
+    fun isMaxIteration() {
+        if(not next(maxIteration, n)) {
+            setLakeValues();
+            true
+        } else {
+            false
+        }
+    }
+
+    fun isEpsilon() {
+        extern epsilonRadius: epsilonRadiusLabel = "1e-9";
+
+        if(radDz < epsilonRadius) {
+            setLakeValues();
+            true
+        } else {
+            false
+        }
+    }
+
+    fun setBailoutValues() {
+        val paletteIndex = addPalette(bailoutPaletteLabel, 6, 1,
+            [0, 0, #ff000000], [1, 0, #ff4400aa], [5, 0, #ff4400aa], [2, 0, #ffffdd22], [4, 0, #ffffdd22], [3, 0, #ffffffff]);
+
+        extern bailoutValue: bailoutValueLabel = "/(1 + minTrapDistance) : argnorm minTrapPoint";
+        extern bailoutColorValue: bailoutColorValueLabel = "value";
+        extern bailoutHeight: bailoutHeightLabel = "re value";
+
+        var value = bailoutValue;
+        setResult(paletteIndex, bailoutColorValue, bailoutHeight);
+    }
+
+    fun isBailout() {
+        extern bailoutRadius: bailoutRadiusLabel = "64";
+
+        if(radZ >= bailoutRadius) {
+            setBailoutValues();
+            true
+        } else {
+            false
+        }
+    }
+
+    fun isBreak() {
+        (if(not isBound) isBailout() else false) or
+        isEpsilon() or
+        isMaxIteration()
+    }
+}
+
+val calculator = Calculator();
+
+calculator.init();
+
+while ({
+    calculator.step();
+    not calculator.isBreak()
+}) {
+    calculator.advance();
+}

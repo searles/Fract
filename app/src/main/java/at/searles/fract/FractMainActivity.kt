@@ -113,6 +113,11 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        connectBitmapModelFragment()
+    }
+
     private fun initSettings(savedInstanceState: Bundle?) {
         if(savedInstanceState != null) {
             settings = savedInstanceState.getParcelable(settingsKey)!!
@@ -150,11 +155,6 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
             }
             else -> error("bad item: $item")
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        connectBitmapModelFragment()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
