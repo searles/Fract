@@ -255,6 +255,7 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
         }
 
         bitmapModel.applyBitmapPropertiesChange(change)
+        parameterAdapter.updateFrom(bitmapModel)
     }
 
     private fun openMainMenuItem(menuItem: MenuItem) {
@@ -600,6 +601,7 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
         }
 
         bitmapModel.applyBitmapPropertiesChange(change)
+        parameterAdapter.updateFrom(bitmapModel)
     }
 
     fun saveToFavorites(name: String) {
@@ -667,6 +669,8 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
                 return FractProperties(properties.program, properties.customScale, null, properties.customPalettes)
             }
         })
+
+        parameterAdapter.updateFrom(bitmapModel)
     }
 
     fun resetPalette(index: Int) {
@@ -681,6 +685,8 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
                 return FractProperties(properties.program, properties.customScale, properties.customShaderProperties, customPalettes)
             }
         })
+
+        parameterAdapter.updateFrom(bitmapModel)
     }
 
     companion object {
