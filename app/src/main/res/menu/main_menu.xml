@@ -13,5 +13,6 @@
         app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/bulkCreateIcons"
-        android:title="Bulk-Create Asset Icons" />
+        android:title="Bulk-Create Asset Icons"
+        android:visible="false"/>
 </menu>

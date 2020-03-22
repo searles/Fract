@@ -3,8 +3,8 @@ package at.searles.fract
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
-import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -46,6 +46,9 @@ import org.json.JSONObject
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.HashMap
 
 
 class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, ReplaceExistingDialogFragment.Callback {
@@ -330,25 +333,11 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
     }
 
     private fun openSaveImageToGallery() {
-        // FIXME title/description
-        //MediaStore.Images.Media.insertImage(contentResolver, bitmapModel.bitmap, "TODO", "TODO");
+        // TODO Create Fract folder?
+        val format = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+        val timestamp = format.format(System.currentTimeMillis())
 
-
-        val outFile = File.createTempFile(
-            "fract_${System.currentTimeMillis()}",
-            ".png",
-            externalCacheDir
-        )
-
-        saveImage(FileOutputStream(outFile))
-
-        val contentUri = Uri.fromFile(outFile)
-
-        val mediaScanIntent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE).apply {
-            data = contentUri
-        }
-
-        sendBroadcast(mediaScanIntent)
+        MediaStore.Images.Media.insertImage(contentResolver, bitmapModel.bitmap, "Fract-$timestamp", "Image created in Fract on $timestamp");
     }
 
     private fun openSaveImage() {

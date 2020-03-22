@@ -62,7 +62,7 @@ class Calculator {
     extern isBound: isBoundLabel = "false";
 
     fun updateTrap() {
-        extern trapFunction: trapFunctionLabel = "circle(0 : 0, 1.42, nextZ)";
+        extern trapFunction: trapFunctionLabel = "circle(0 : 0, 2, nextZ)";
 
         var trapDistance: Real = trapFunction;
 
@@ -105,12 +105,10 @@ class Calculator {
     }
 
     fun setLakeValues() {
-        val lakePaletteIndex = if(not isBound) {
-            addPalette(lakePaletteLabel, 1, 1, [0, 0, #ff000000])
-        } else {
-            addPalette(lakePaletteLabel, 2, 2,
-                [1, 0, #ff000000], [0, 0, #ff4400aa], [1, 1, #ffffdd22], [0, 1, #ffffffff]);
-        };
+        val lakePaletteIndex = addPalette(lakePaletteLabel, 4, 2,
+            [0, 0, #ff000000], [1, 0, #ff4400aa], [2, 0, #ffffdd22], [3, 0, #ffffffff],
+            [3, 1, #ff000000], [1, 1, #ff4400aa], [2, 1, #ffffdd22], [0, 1, #ffffffff]
+        );
 
         extern lakeValue: lakeValueLabel = "/(1 + minTrapDistance) : argnorm minTrapPoint";
         extern lakeColorValue: lakeColorValueLabel = "value";
@@ -141,8 +139,10 @@ class Calculator {
     }
 
     fun setBailoutValues() {
-        val paletteIndex = addPalette(bailoutPaletteLabel, 6, 1,
-            [0, 0, #ff000000], [1, 0, #ff4400aa], [5, 0, #ff4400aa], [2, 0, #ffffdd22], [4, 0, #ffffdd22], [3, 0, #ffffffff]);
+        val paletteIndex = addPalette(lakePaletteLabel, 4, 2,
+            [0, 0, #ff000000], [1, 0, #ff4400aa], [2, 0, #ffffdd22], [3, 0, #ffffffff],
+            [3, 1, #ff000000], [1, 1, #ff4400aa], [2, 1, #ffffdd22], [0, 1, #ffffffff]
+        );
 
         extern bailoutValue: bailoutValueLabel = "/(1 + minTrapDistance) : argnorm minTrapPoint";
         extern bailoutColorValue: bailoutColorValueLabel = "value";

@@ -11,8 +11,8 @@ android {
         applicationId "at.searles.fract"
         minSdkVersion 26
         targetSdkVersion 29
-        versionCode 4
-        versionName "0.9.8"
+        versionCode 5
+        versionName "0.9.9"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

@@ -131,12 +131,8 @@ class Calculator {
             var value = lakeTrapValue;
             setResult(paletteIndex, lakeTrapColorValue, lakeTrapHeight);
         } else {
-            val lakePaletteIndex = if(not isBound) {
-                addPalette(lakePaletteLabel, 1, 1, [0, 0, #ff000000])
-            } else {
-                addPalette(lakePaletteLabel, 2, 2,
-                    [1, 0, #ff000000], [0, 0, #ff4400aa], [1, 1, #ffffdd22], [0, 1, #ffffffff]);
-            };
+            val lakePaletteIndex =
+                addPalette(lakePaletteLabel, 2, 2, [0, 0, #ff000000], [0, 1, #ffffffff], [1, 1, #ff000000], [1, 0, #ffffffff]);
 
             extern lakeValue: lakeValueLabel = "log1p rad z : argnorm z";
             extern lakeColorValue: lakeColorValueLabel = "value";
@@ -184,8 +180,8 @@ class Calculator {
             var value = bailoutTrapValue;
             setResult(paletteIndex, bailoutTrapColorValue, bailoutTrapHeight);
         } else {
-            val paletteIndex = addPalette(bailoutPaletteLabel, 6, 1,
-                [0, 0, #ff000000], [1, 0, #ff4400aa], [5, 0, #ff4400aa], [2, 0, #ffffdd22], [4, 0, #ffffdd22], [3, 0, #ffffffff]);
+            val paletteIndex = addPalette(bailoutPaletteLabel, 2, 2,
+                                [0, 0, #ff000000], [0, 1, #ffffffff], [1, 1, #ff000000], [1, 0, #ffffffff]);
 
             extern maxExponent: maxExponentLabel = "2";
 
