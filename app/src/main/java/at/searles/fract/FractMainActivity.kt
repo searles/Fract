@@ -334,6 +334,8 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
 
     private fun openSaveImageToGallery() {
         // TODO Create Fract folder?
+        // TODO https://stackoverflow.com/questions/60798804/store-image-via-android-media-store-in-new-folder
+        // TODO https://stackoverflow.com/questions/57726896/mediastore-images-media-insertimage-deprecated
         val format = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
         val timestamp = format.format(System.currentTimeMillis())
 
