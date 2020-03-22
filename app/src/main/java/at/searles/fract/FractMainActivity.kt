@@ -695,6 +695,6 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
         private val settingsKey = "settings"
         private val propertiesKey = "properties"
 
-        const val FILE_PROVIDER = "at.searles.fract.fileprovider"
+        const val FILE_PROVIDER = "at.searles.storage.fileprovider"
     }
 }

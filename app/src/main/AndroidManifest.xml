@@ -17,7 +17,7 @@
         </activity>
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="at.searles.fract.fileprovider"
+            android:authorities="at.searles.storage.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
