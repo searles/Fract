@@ -139,9 +139,9 @@ class Calculator {
     }
 
     fun setBailoutValues() {
-        val paletteIndex = addPalette(lakePaletteLabel, 4, 2,
-            [0, 0, #ff000000], [1, 0, #ff4400aa], [2, 0, #ffffdd22], [3, 0, #ffffffff],
-            [3, 1, #ff000000], [1, 1, #ff4400aa], [2, 1, #ffffdd22], [0, 1, #ffffffff]
+        val paletteIndex = addPalette(bailoutPaletteLabel, 5, 2,
+            [0, 0, #ff000000], [1, 0, #ffff0000], [2, 0, #ffffaa00], [3, 0, #ffffff00], [4, 0, #ffffffff],
+            [0, 1, #ffffffff], [1, 1, #ff6600ff], [2, 1, #ff0044ff], [3, 1, #ff00aa44], [4, 1, #ff000000]
         );
 
         extern bailoutValue: bailoutValueLabel = "/(1 + minTrapDistance) : argnorm minTrapPoint";

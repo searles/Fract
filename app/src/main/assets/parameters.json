@@ -150,12 +150,12 @@
     "title": "Generic Mandelbrot of Power 3",
     "description": "Mandelbrot Set of Power 3 with three freely selectable parameters",
     "parameters": {
-      "function": "(z - alpha) * (z - beta) * (z - gamma)",
+      "function": "(z - alpha) * (z - beta) * (z - gamma) * c",
       "maxExponent": "3",
       "z0": "(alpha + beta + gamma + sqrt((alpha + beta + gamma)^2 - 3:0 * (alpha * beta + alpha * gamma + beta * gamma))) / 3",
-      "alpha": "c",
-      "beta": "-1",
-      "gamma": "1"
+      "alpha": "-1",
+      "beta": "exp(i * -0.425)",
+      "gamma": "conj beta"
     },
     "tags": "polynom"
   },
@@ -339,14 +339,6 @@
     "description": "Exponential Smoothing for unbound points",
     "parameters": {
       "aggregateFunction": "aggregateValue + exp(-radZ)"
-    },
-    "tags": "aggregate"
-  },
-  "aggegateboundexpsmoothing": {
-    "title": "Exponential Smoothing for bound points",
-    "description": "Exponential Smoothing for bound points",
-    "parameters": {
-      "aggregateFunction": "aggregateValue + exp(-/radDz)"
     },
     "tags": "aggregate"
   },

@@ -124,7 +124,7 @@ class Calculator {
                 [2, 0, #ffffffff], [2, 1, #ffffffff], [2, 2, #ffffffff], [2, 3, #ffffffff]
             );
 
-            extern lakeTrapValue: lakeTrapValueLabel = "firstTrapDistance : log(firstTrapIndex + 6.35)";
+            extern lakeTrapValue: lakeTrapValueLabel = "firstTrapDistance : log(firstTrapIndex + e)";
             extern lakeTrapColorValue: lakeTrapColorValueLabel = "value";
             extern lakeTrapHeight: lakeTrapHeightLabel = "re value";
 
@@ -173,7 +173,7 @@ class Calculator {
                 [2, 0, #ffffffff], [2, 1, #ffffffff], [2, 2, #ffffffff], [2, 3, #ffffffff]
             );
 
-            extern bailoutTrapValue: bailoutTrapValueLabel = "lastTrapDistance : log(lastTrapIndex + 6.35)";
+            extern bailoutTrapValue: bailoutTrapValueLabel = "lastTrapDistance : log(lastTrapIndex + e)";
             extern bailoutTrapColorValue: bailoutTrapColorValueLabel = "value";
             extern bailoutTrapHeight: bailoutTrapHeightLabel = "re value";
 

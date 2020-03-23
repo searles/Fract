@@ -72,7 +72,7 @@ class Calculator {
         dz = nextZ - z;
         radDz = rad dz;
 
-        extern aggregateFunction: aggregateFunctionLabel =  "aggregateValue + exp(-radZ - 0.5 / radDz)"
+        extern aggregateFunction: aggregateFunctionLabel =  "aggregateValue + /(1 + radZ) * (1 - /(1 + radDz))"
 
         extern startIndex: startIndexLabel = "0";
 
@@ -86,15 +86,13 @@ class Calculator {
         z = nextZ;
     }
 
-
-
     fun setLakeValues() {
         val lakePaletteIndex = addPalette(lakePaletteLabel, 4, 2,
-           [0, 0, #ff000000], [1, 0, #ff4400aa], [2, 0, #ffffdd22], [3, 0, #ffffffff],
-           [0, 1, #ffffffff], [1, 1, #ff444444], [2, 1, #ffcccccc], [3, 1, #ff000000]
+           [0, 0, #ff000000], [1, 0, #ff0044aa], [2, 0, #ffffff22], [3, 0, #ffffffff],
+           [3, 1, #ff000000], [1, 1, #ff0044aa], [2, 1, #ffffff22], [0, 1, #ffffffff]
         );
 
-        extern lakeValue: lakeValueLabel = "log1p re aggregateValue";
+        extern lakeValue: lakeValueLabel = "log1p abs aggregateValue : argnorm aggregateValue";
         extern lakeColorValue: lakeColorValueLabel = "value";
         extern lakeHeight: lakeHeightLabel = "re value";
 
@@ -123,10 +121,12 @@ class Calculator {
     }
 
     fun setBailoutValues() {
-        val paletteIndex = addPalette(bailoutPaletteLabel, 6, 1,
-            [0, 0, #ff000000], [1, 0, #ff4400aa], [5, 0, #ff4400aa], [2, 0, #ffffdd22], [4, 0, #ffffdd22], [3, 0, #ffffffff]);
+        val paletteIndex = addPalette(bailoutPaletteLabel, 4, 2,
+           [0, 0, #ff000000], [1, 0, #ff0044aa], [2, 0, #ffffff22], [3, 0, #ffffffff],
+           [3, 1, #ff000000], [1, 1, #ff0044aa], [2, 1, #ffffff22], [0, 1, #ffffffff]
+        );
 
-        extern bailoutValue: bailoutValueLabel = "log1p re aggregateValue";
+        extern bailoutValue: bailoutValueLabel = "log1p abs aggregateValue : argnorm aggregateValue";
         extern bailoutColorValue: bailoutColorValueLabel = "value";
         extern bailoutHeight: bailoutHeightLabel = "re value";
 
@@ -135,7 +135,7 @@ class Calculator {
     }
 
     fun isBailout() {
-        extern bailoutRadius: bailoutRadiusLabel = "80";
+        extern bailoutRadius: bailoutRadiusLabel = "1000";
 
         if(radZ >= bailoutRadius) {
             setBailoutValues();
