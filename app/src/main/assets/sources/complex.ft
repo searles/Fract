@@ -1,0 +1,25 @@
+// Labels of of extern parameters
+val functionLabel = "Function f(z)";
+val colorValueLabel = "Color Value";
+val heightLabel = "Height";
+val paletteLabel = "Palette";
+
+setScale(2, 0, 0, 2, 0, 0); // Default Scale
+
+var z: Cplx = point;
+
+// from https://en.wikipedia.org/wiki/Domain_coloring
+extern function: functionLabel = "(z ^ 2 - 1) * (z - 2 - i) ^ 2 / (z ^ 2 + 2 + 2 i)";
+
+val paletteIndex = addPalette(paletteLabel, 4, 3,
+        [0, 0, #ff000000], [1, 0, #ff000000], [2, 0, #ff000000], [3, 0, #ff000000],
+        [0, 1, #ffff0000], [1, 1, #ffffff00], [2, 1, #ff00aa22], [3, 1, #ff0000ff],
+        [0, 2, #ffffffff], [1, 2, #ffffffff], [2, 2, #ffffffff], [3, 2, #ffffffff]
+);
+
+var value: Cplx = function;
+
+extern colorValue: colorValueLabel = "argnorm value : 0.6667 (1 - /(1 + abs value))";
+extern height: heightLabel = "abs value";
+
+setResult(paletteIndex, colorValue, height);

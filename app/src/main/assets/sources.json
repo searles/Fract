@@ -28,5 +28,10 @@
     "title": "Lyapunov Fractals",
     "description": "Highly customizable program for Lyapunov Fractals.",
     "tags": "default,lyapunov"
+  },
+  "complex": {
+    "title": "Complex Function Visualizer",
+    "description": "Simple program to draw complex functions.",
+    "tags": "default,complex"
   }
 }

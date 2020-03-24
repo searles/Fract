@@ -150,12 +150,12 @@
     "title": "Generic Mandelbrot of Power 3",
     "description": "Mandelbrot Set of Power 3 with three freely selectable parameters",
     "parameters": {
-      "function": "(z - alpha) * (z - beta) * (z - gamma) * c",
+      "function": "(z - alpha) * (z - beta) * (z - gamma) + c",
       "maxExponent": "3",
       "z0": "(alpha + beta + gamma + sqrt((alpha + beta + gamma)^2 - 3:0 * (alpha * beta + alpha * gamma + beta * gamma))) / 3",
-      "alpha": "-1",
-      "beta": "exp(i * -0.425)",
-      "gamma": "conj beta"
+      "alpha": "0",
+      "beta": "i",
+      "gamma": "-i"
     },
     "tags": "polynom"
   },
@@ -335,14 +335,22 @@
     "tags": "lyapunov"
   },
   "aggegateunboundexpsmoothing": {
-    "title": "Exponential Smoothing for unbound points",
-    "description": "Exponential Smoothing for unbound points",
+    "title": "Exponential Smoothing for Unbound Points",
+    "description": "Exponential Smoothing for the Bailout Area",
     "parameters": {
       "aggregateFunction": "aggregateValue + exp(-radZ)"
     },
     "tags": "aggregate"
   },
-  "branchingaggegateboundexpsmoothing": {
+  "aggegateboundexpsmoothing": {
+    "title": "Exponential Smoothing for Bound Points",
+    "description": "Exponential Smoothing for Fractals like Newton Sets",
+    "parameters": {
+      "aggregateFunction": "aggregateValue + exp(-0.5 / radDz)"
+    },
+    "tags": "aggregate"
+  },
+  "curvatureavg": {
     "title": "Curvature Average",
     "description": "Curvature Average",
     "parameters": {
@@ -350,6 +358,22 @@
       "addendFunction": "argnorm(dz / (z - lastZ))"
     },
     "tags": "branching"
+  },
+  "domaincoloring1": {
+    "title": "Domain Coloring 1",
+    "description": "Domain Coloring of Complex Function with Stepsize 1",
+    "parameters": {
+      "colorValue": "argnorm value : 0.66667 (abs value - floor abs value)"
+    },
+    "tags": "complex"
+  },
+  "domaincoloringlog2": {
+    "title": "Domain Coloring using log2",
+    "description": "Domain Coloring of Complex Function with stepsize times 2",
+    "parameters": {
+      "colorValue": "argnorm value : 0.66667 (log abs value / log 2 - floor (log abs value / log 2))"
+    },
+    "tags": "complex"
   },
   "todo": {
     "title": "Things to do",
