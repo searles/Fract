@@ -346,8 +346,8 @@
     "title": "Curvature Average",
     "description": "Curvature Average",
     "parameters": {
-      "startIndex": "1",
-      "addendFunction": "norm(dz / (z - lastZ))"
+      "startIndex": "2",
+      "addendFunction": "argnorm(dz / (z - lastZ))"
     },
     "tags": "branching"
   },

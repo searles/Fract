@@ -3,6 +3,7 @@ package at.searles.fract
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.Menu
@@ -287,9 +288,21 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
             R.id.openSettingsAction -> {
                 openSettings()
             }
+            R.id.openBlog -> {
+                openBlog()
+            }
         }
 
         drawerLayout.closeDrawers()
+    }
+
+    private fun openBlog() {
+        startActivity(
+            Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse(WEB_PAGE_URI)
+            )
+        )
     }
 
     private fun openSettings() {
@@ -696,5 +709,7 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
         private val propertiesKey = "properties"
 
         const val FILE_PROVIDER = "at.searles.storage.fileprovider"
+
+        const val WEB_PAGE_URI = "http://fractapp.wordpress.com/"
     }
 }

@@ -47,4 +47,5 @@
     <string name="editPalette">Edit Palette</string>
     <string name="editShaderProperties">Edit Shader Properties</string>
     <string name="setToCenter">Set to Center</string>
+    <string name="openBlog">Help (in Web Browser)</string>
 </resources>

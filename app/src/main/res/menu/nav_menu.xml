@@ -25,4 +25,7 @@
     <item
         android:id="@+id/openSettingsAction"
         android:title="@string/settings" />
+    <item
+        android:id="@+id/openBlog"
+        android:title="@string/openBlog" />
 </menu>
