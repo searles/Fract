@@ -19,7 +19,8 @@
             android:ems="10"
             android:hint="@string/editParameter"
             android:importantForAutofill="no"
-            android:inputType="textFilter|textNoSuggestions" />
+            android:inputType="textFilter|textNoSuggestions|textMultiLine"
+            android:scrollHorizontally="false"/>
     </com.google.android.material.textfield.TextInputLayout>
 
 </LinearLayout>

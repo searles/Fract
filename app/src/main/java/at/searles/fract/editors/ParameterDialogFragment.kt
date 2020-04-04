@@ -1,15 +1,15 @@
 package at.searles.fract.editors
 
 import android.app.Dialog
+import android.content.DialogInterface
 import android.os.Bundle
-import android.view.View
 import android.widget.EditText
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import at.searles.fract.FractMainActivity
 import at.searles.fract.R
 import at.searles.fractlang.semanticanalysis.SemanticAnalysisException
+import com.google.android.material.textfield.TextInputLayout
 
 
 class ParameterDialogFragment: DialogFragment() {
@@ -26,7 +26,7 @@ class ParameterDialogFragment: DialogFragment() {
         builder
             .setView(R.layout.parameter_edit_dialog)
             .setTitle(resources.getString(R.string.editParameterName, name))
-            .setPositiveButton(android.R.string.ok) { _, _ -> run { setParameter(); dismiss() } }
+            .setPositiveButton(android.R.string.ok) { _, _ -> run {} } // will be modified later
             .setNegativeButton(android.R.string.cancel) { _, _ -> dismiss() }
             .setCancelable(true)
 
@@ -38,22 +38,30 @@ class ParameterDialogFragment: DialogFragment() {
             getValueEditText(dialog).setText(value)
         }
 
-        return dialog
-    }
+        val okButton = dialog.getButton(DialogInterface.BUTTON_POSITIVE)
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        okButton.setOnClickListener {
+            try {
+                setParameter()
+                dismiss()
+            } catch(e: SemanticAnalysisException) {
+                setErrorMessage(e.message)
+            }
+        }
+
+        return dialog
     }
 
     private fun getValueEditText(dialog: Dialog) = dialog.findViewById<EditText>(R.id.valueEditText)!!
 
+    private fun setErrorMessage(msg: String?) {
+        val inputLayout = dialog!!.findViewById<TextInputLayout>(R.id.parameterInputLayout)
+        inputLayout.error = "Error: $msg"
+    }
+
     private fun setParameter() {
-        try {
-            val value = getValueEditText(dialog!!).text.toString()
-            (activity as FractMainActivity).setParameter(key, value)
-        } catch(e: SemanticAnalysisException) {
-            Toast.makeText(activity, getString(R.string.compileError, e.localizedMessage), Toast.LENGTH_LONG).show()
-        }
+        val value = getValueEditText(dialog!!).text.toString()
+        (activity as FractMainActivity).setParameter(key, value)
     }
 
     companion object {

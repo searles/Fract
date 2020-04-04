@@ -7,8 +7,10 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.CompoundButton
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import at.searles.fractbitmapmodel.FractBitmapModel
+import at.searles.fractlang.semanticanalysis.SemanticAnalysisException
 
 class ParameterAdapter(private val activity: FractMainActivity): RecyclerView.Adapter<ParameterAdapter.ViewHolder>() {
 
@@ -83,7 +85,13 @@ class ParameterAdapter(private val activity: FractMainActivity): RecyclerView.Ad
         override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
             val item = items[adapterPosition]
             require(item.type == parameterBoolType)
-            activity.setParameter(item.name, isChecked.toString())
+
+            try {
+                activity.setParameter(item.name, isChecked.toString())
+            } catch(e: SemanticAnalysisException) {
+                Toast.makeText(activity, activity.getString(R.string.compileError, e.message), Toast.LENGTH_LONG).show()
+                activity.updateParameterAdapter()
+            }
         }
 
         internal fun bindTo(item: Item) {

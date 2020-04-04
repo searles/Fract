@@ -7,7 +7,9 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import at.searles.fract.FractMainActivity
 import at.searles.fract.R
+import at.searles.fractlang.FractlangExpr
 import at.searles.fractlang.FractlangProgram
+import at.searles.fractlang.nodes.Node
 import at.searles.fractlang.parsing.FractlangParser
 
 /**
@@ -15,6 +17,7 @@ import at.searles.fractlang.parsing.FractlangParser
  */
 class ParameterContextDialogFragment: DialogFragment() {
     private lateinit var key: String
+    private var expr: Node? = null
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val builder = AlertDialog.Builder(activity!!)
@@ -24,6 +27,13 @@ class ParameterContextDialogFragment: DialogFragment() {
         key = name
 
         val value = arguments!!.getString(valueKey)!!
+
+        try {
+            // Try to parse value into a number.
+            expr = FractlangExpr.fromString(value)
+        } catch(e: Exception) {
+            // did not succeed. No big deal.
+        }
 
         builder
             .setView(R.layout.parameter_context_dialog)

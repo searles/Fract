@@ -11,8 +11,8 @@ android {
         applicationId "at.searles.fract"
         minSdkVersion 26
         targetSdkVersion 29
-        versionCode 8
-        versionName "1.0.0"
+        versionCode 9
+        versionName "1.0.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -34,8 +34,8 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'com.google.android.material:material:1.1.0'
-    implementation 'com.github.searles:fractlang:1.2.3'
-    implementation 'com.github.searles:fractbitmapmodel:1.0.0'
+    implementation 'com.github.searles:fractlang:1.2.5'
+    implementation 'com.github.searles:fractbitmapmodel:5aeaf7d3f33a016be97838d3136bc1231c6f9d14'
     implementation 'com.github.searles:scalableimageview:0.0.5'
     implementation 'com.github.searles:paletteeditor:1.0.0'
     implementation 'com.github.searles:ColorPicker:0.9.4'
