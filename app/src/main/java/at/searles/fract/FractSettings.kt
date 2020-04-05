@@ -9,7 +9,8 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 class FractSettings(
     val isRotationLock: Boolean = FactorySettings.factoryIsRotationLock,
-    val isTouchEnabled: Boolean = FactorySettings.factoryIsTouchEnabled, // TODO: indicate this on-screen
+    val isTouchEnabled: Boolean = FactorySettings.factoryIsTouchEnabled,
     val isConfirmZoom: Boolean = FactorySettings.factoryIsConfirmZoom,
-    val isGridEnabled: Boolean = FactorySettings.factoryIsGridEnabled
+    val isGridEnabled: Boolean = FactorySettings.factoryIsGridEnabled,
+    val isEditLightsOnScreenEnabled: Boolean = FactorySettings.factoryIsEditLightsOnScreenEnabled
 ) : Parcelable

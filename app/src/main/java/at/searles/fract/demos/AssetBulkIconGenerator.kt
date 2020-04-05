@@ -4,7 +4,6 @@ import android.content.Context
 import at.searles.fract.experimental.BulkCalculator
 import at.searles.fractbitmapmodel.FractProperties
 import at.searles.itemselector.model.Item
-import java.lang.Math.sinh
 
 class AssetBulkIconGenerator(private val context: Context): Iterable<FractProperties> {
     override fun iterator(): Iterator<FractProperties> {

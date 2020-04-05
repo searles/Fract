@@ -8,9 +8,7 @@ import androidx.fragment.app.DialogFragment
 import at.searles.fract.FractMainActivity
 import at.searles.fract.R
 import at.searles.fractlang.FractlangExpr
-import at.searles.fractlang.FractlangProgram
 import at.searles.fractlang.nodes.Node
-import at.searles.fractlang.parsing.FractlangParser
 
 /**
  * Opens for now menu to reset a parameter.

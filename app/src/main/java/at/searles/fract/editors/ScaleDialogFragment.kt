@@ -9,7 +9,6 @@ import androidx.fragment.app.DialogFragment
 import at.searles.commons.math.Scale
 import at.searles.fract.FractMainActivity
 import at.searles.fract.R
-import java.lang.NumberFormatException
 
 class ScaleDialogFragment: DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {

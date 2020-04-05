@@ -135,7 +135,7 @@ class Calculator {
     }
 
     fun isBailout() {
-        extern bailoutRadius: bailoutRadiusLabel = "1000";
+        extern bailoutRadius: bailoutRadiusLabel = "256";
 
         if(radZ >= bailoutRadius) {
             setBailoutValues();

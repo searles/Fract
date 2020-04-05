@@ -12,7 +12,6 @@ import at.searles.fractbitmapmodel.FractBitmapModel
 import at.searles.fractbitmapmodel.FractPropertiesAdapter
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
-import java.lang.Exception
 import java.util.*
 import kotlin.math.min
 

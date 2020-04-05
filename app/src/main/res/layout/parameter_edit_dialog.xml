@@ -21,6 +21,7 @@
             android:importantForAutofill="no"
             android:inputType="textFilter|textNoSuggestions|textMultiLine"
             android:scrollHorizontally="false"/>
+
     </com.google.android.material.textfield.TextInputLayout>
 
 </LinearLayout>

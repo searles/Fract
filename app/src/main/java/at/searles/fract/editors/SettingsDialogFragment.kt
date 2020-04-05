@@ -2,7 +2,6 @@ package at.searles.fract.editors
 
 import android.app.Dialog
 import android.os.Bundle
-import android.view.View
 import android.widget.CheckBox
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -10,10 +9,16 @@ import androidx.fragment.app.DialogFragment
 import at.searles.fract.FractMainActivity
 import at.searles.fract.FractSettings
 import at.searles.fract.R
-import java.lang.NumberFormatException
+import kotlinx.android.synthetic.main.settings_dialog.*
 
 
 class SettingsDialogFragment: DialogFragment() {
+
+    private lateinit var touchEnabledCheckBox: CheckBox
+    private lateinit var confirmZoomCheckBox: CheckBox
+    private lateinit var rotationLockCheckBox: CheckBox
+    private lateinit var showGridCheckBox: CheckBox
+    private lateinit var editLightsOnScreenCheckBox: CheckBox
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val builder = AlertDialog.Builder(activity!!)
@@ -31,6 +36,7 @@ class SettingsDialogFragment: DialogFragment() {
         confirmZoomCheckBox = dialog.findViewById(R.id.confirmZoomCheckBox)!!
         rotationLockCheckBox = dialog.findViewById(R.id.rotationLockCheckBox)!!
         showGridCheckBox = dialog.findViewById(R.id.showGridCheckBox)!!
+        editLightsOnScreenCheckBox = dialog.findViewById(R.id.editLightsOnScreenCheckBox)!!
 
         initializeFields(savedInstanceState)
 
@@ -45,13 +51,9 @@ class SettingsDialogFragment: DialogFragment() {
             rotationLockCheckBox.isChecked = settings.isRotationLock
             confirmZoomCheckBox.isChecked = settings.isConfirmZoom
             showGridCheckBox.isChecked = settings.isGridEnabled
+            editLightsOnScreenCheckBox.isChecked = settings.isEditLightsOnScreenEnabled
         }
     }
-
-    private lateinit var touchEnabledCheckBox: CheckBox
-    private lateinit var confirmZoomCheckBox: CheckBox
-    private lateinit var rotationLockCheckBox: CheckBox
-    private lateinit var showGridCheckBox: CheckBox
 
     private fun setPropertiesInActivity() {
         try {
@@ -59,8 +61,9 @@ class SettingsDialogFragment: DialogFragment() {
             val isRotationLock = rotationLockCheckBox.isChecked
             val isConfirmZoom = confirmZoomCheckBox.isChecked
             val isGridEnabled = showGridCheckBox.isChecked
+            val isEditLightsOnScreen = editLightsOnScreenCheckBox.isChecked
 
-            val fractSettings = FractSettings(isRotationLock, isTouchEnabled, isConfirmZoom, isGridEnabled)
+            val fractSettings = FractSettings(isRotationLock, isTouchEnabled, isConfirmZoom, isGridEnabled, isEditLightsOnScreen)
 
             (activity as FractMainActivity).setSettings(fractSettings)
         } catch(e: NumberFormatException) {

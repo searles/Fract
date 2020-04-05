@@ -29,6 +29,7 @@ import at.searles.fract.demos.AssetsUtils
 import at.searles.fract.demos.DemosFolderHolder
 import at.searles.fract.editors.*
 import at.searles.fract.experimental.BulkCalculator
+import at.searles.fract.experimental.MoveLightPlugin
 import at.searles.fract.favorites.AddToFavoritesDialogFragment
 import at.searles.fract.favorites.FavoritesProvider
 import at.searles.fractbitmapmodel.*
@@ -120,17 +121,19 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
     override fun onStart() {
         super.onStart()
         connectBitmapModelFragment()
+        updateSettings()
     }
 
     private fun initSettings(savedInstanceState: Bundle?) {
         if(savedInstanceState != null) {
             settings = savedInstanceState.getParcelable(settingsKey)!!
-            updateSettings()
             return
         }
 
         settings = FractSettings()
-        updateSettings()
+
+        // Some settings require the bitmap model that is only available after calling
+        // onStart, therefore no call to updateSettings here.
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -555,8 +558,9 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
         }
     }
 
-    // XXX: If there are more plugins, manage them in a different way.
+    // TODO: There will be more plugins. Manage them in a different way.
     var gridPlugin: GridPlugin? = null
+    var moveLightPlugin: MoveLightPlugin? = null
 
     fun setSettings(settings: FractSettings) {
         this.settings = settings
@@ -581,6 +585,24 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
                 if(this != null) {
                     mainImageView.removePlugin(this)
                     gridPlugin = null
+                    mainImageView.invalidate()
+                }
+            }
+        }
+
+        if(settings.isEditLightsOnScreenEnabled) {
+            if(moveLightPlugin == null) {
+                MoveLightPlugin(this, bitmapModel).also {
+                    moveLightPlugin = it
+                    mainImageView.addPlugin(it)
+                    mainImageView.invalidate()
+                }
+            }
+        } else {
+            with(moveLightPlugin) {
+                if(this != null) {
+                    mainImageView.removePlugin(this)
+                    moveLightPlugin = null
                     mainImageView.invalidate()
                 }
             }

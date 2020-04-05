@@ -240,8 +240,7 @@
     "scale": ["4", "0", "0", "4", "0", "0"],
     "parameters": {
       "function": "c * sinh z",
-      "z0": "i * pi / 2",
-      "lakeValue": "0"
+      "z0": "i * pi / 2"
     },
     "tags": "nonpolynom"
   },
@@ -338,7 +337,17 @@
     "title": "Exponential Smoothing for Unbound Points",
     "description": "Exponential Smoothing for the Bailout Area",
     "parameters": {
-      "aggregateFunction": "aggregateValue + exp(-radZ)"
+      "aggregateFunction": "aggregateValue + exp(-radZ)",
+      "lakeValue": "0"
+    },
+    "tags": "aggregate"
+  },
+  "aggegateunboundexpsmoothinglog": {
+    "title": "Exponential Smoothing for Unbound Points with Branching",
+    "description": "Exponential Smoothing for the Bailout Area with Branching based on the complex logarithm",
+    "parameters": {
+      "aggregateFunction": "aggregateValue + exp(-radZ) * log nextZ",
+      "lakeValue": "0"
     },
     "tags": "aggregate"
   },

@@ -36,7 +36,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.1.0'
     implementation 'com.github.searles:fractlang:1.2.5'
     implementation 'com.github.searles:fractbitmapmodel:5aeaf7d3f33a016be97838d3136bc1231c6f9d14'
-    implementation 'com.github.searles:scalableimageview:0.0.5'
+    implementation 'com.github.searles:scalableimageview:0.0.7'
     implementation 'com.github.searles:paletteeditor:1.0.0'
     implementation 'com.github.searles:ColorPicker:0.9.4'
     implementation 'com.github.searles:sourceeditor:0.9.5'

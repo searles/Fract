@@ -8,7 +8,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import at.searles.fract.FractMainActivity
 import at.searles.fract.R
-import java.lang.NumberFormatException
 
 
 class ImageSizeDialogFragment: DialogFragment() {

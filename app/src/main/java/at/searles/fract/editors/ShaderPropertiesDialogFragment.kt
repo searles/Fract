@@ -12,7 +12,6 @@ import at.searles.fract.FractMainActivity
 import at.searles.fract.R
 import at.searles.fractbitmapmodel.ShaderProperties
 import com.google.android.material.textfield.TextInputLayout
-import java.lang.NumberFormatException
 
 class ShaderPropertiesDialogFragment: DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
