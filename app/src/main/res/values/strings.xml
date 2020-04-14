@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Fract</string>
     <string name="compileError">ERROR: %s</string>
-    <string name="openDemo">Open Sample</string>
+    <string name="openDemo">Samples</string>
     <string name="openFavorites">Favorites</string>
     <string name="addToFavorites">Add to Favorites</string>
     <string name="shareImage">Share Image</string>

@@ -3,7 +3,6 @@ package at.searles.fract.experimental
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.PointF
 import android.util.TypedValue
@@ -37,7 +36,7 @@ class MoveLightPlugin(private val context: Context, private val bitmapModel: Fra
 
         val r = dpToPx(touchDistanceDp, context.resources)
 
-        val transparency = if(isDragging) 0x80000000.toInt() else 0x40000000
+        val transparency = if(isDragging) 0xbb000000.toInt() else 0x66000000
 
         canvas.drawLine(pt.x - r / sqrt(2f), pt.y - r / sqrt(2f), pt.x + r / sqrt(2f), pt.y + r / sqrt(2f), paint.apply { color = 0xffffff or transparency; strokeWidth *= 2f })
         canvas.drawLine(pt.x - r / sqrt(2f), pt.y - r / sqrt(2f), pt.x + r / sqrt(2f), pt.y + r / sqrt(2f), paint.apply { color = 0x000000 or transparency; strokeWidth /= 2f })

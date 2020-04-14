@@ -9,7 +9,6 @@ import androidx.fragment.app.DialogFragment
 import at.searles.fract.FractMainActivity
 import at.searles.fract.FractSettings
 import at.searles.fract.R
-import kotlinx.android.synthetic.main.settings_dialog.*
 
 
 class SettingsDialogFragment: DialogFragment() {

@@ -3,15 +3,16 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- TODO <Button
-        android:id="@+id/setToCenterButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/setToCenter" /-->
-
     <Button
         android:id="@+id/resetButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/resetParameter" />
+
+    <Button
+        android:id="@+id/setToCenterButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/setToCenter" />
+
 </LinearLayout>

@@ -36,6 +36,7 @@ import at.searles.fractbitmapmodel.*
 import at.searles.fractbitmapmodel.changes.*
 import at.searles.fractimageview.DrawBitmapBoundsPlugin
 import at.searles.fractimageview.GridPlugin
+import at.searles.fractimageview.IconIfFlippedPlugin
 import at.searles.fractimageview.PluginScalableImageView
 import at.searles.fractlang.FractlangProgram
 import at.searles.fractlang.semanticanalysis.SemanticAnalysisException
@@ -149,7 +150,6 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
                 true
             } else {
                 Toast.makeText(this, "No further elements in the history", Toast.LENGTH_LONG).show()
-                // TODO Disable menu
                 false
             }
             R.id.openPropertiesDrawer -> {
@@ -355,7 +355,7 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
         val format = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
         val timestamp = format.format(System.currentTimeMillis())
 
-        MediaStore.Images.Media.insertImage(contentResolver, bitmapModel.bitmap, "Fract-$timestamp", "Image created in Fract on $timestamp");
+        MediaStore.Images.Media.insertImage(contentResolver, bitmapModel.bitmap, "Fract-$timestamp", "Image created in Fract on $timestamp")
     }
 
     private fun openSaveImage() {
@@ -474,6 +474,7 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
         mainImageView.invalidate()
 
         mainImageView.addPlugin(DrawBitmapBoundsPlugin())
+        mainImageView.addPlugin(IconIfFlippedPlugin(this))
 
         taskProgressBar.apply {
             min = -progressBarZero

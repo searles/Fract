@@ -333,6 +333,14 @@
     },
     "tags": "lyapunov"
   },
+  "aggegatebranching": {
+    "title": "Branching Method for Aggregate",
+    "description": "Branching for Bound and Unbound points",
+    "parameters": {
+      "aggregateFunction": "aggregateValue + /(12 + radZ + /radDz) * cabs(norm dz ^ 2)"
+    },
+    "tags": "aggregate"
+  },
   "aggegateunboundexpsmoothing": {
     "title": "Exponential Smoothing for Unbound Points",
     "description": "Exponential Smoothing for the Bailout Area",

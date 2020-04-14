@@ -2,12 +2,14 @@ package at.searles.fract.editors
 
 import android.app.Dialog
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import at.searles.fract.FractMainActivity
 import at.searles.fract.R
 import at.searles.fractlang.FractlangExpr
+import at.searles.fractlang.nodes.CplxNode
 import at.searles.fractlang.nodes.Node
 
 /**
@@ -15,7 +17,6 @@ import at.searles.fractlang.nodes.Node
  */
 class ParameterContextDialogFragment: DialogFragment() {
     private lateinit var key: String
-    private var expr: Node? = null
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val builder = AlertDialog.Builder(activity!!)
@@ -25,6 +26,8 @@ class ParameterContextDialogFragment: DialogFragment() {
         key = name
 
         val value = arguments!!.getString(valueKey)!!
+
+        var expr: Node? = null
 
         try {
             // Try to parse value into a number.
@@ -46,10 +49,15 @@ class ParameterContextDialogFragment: DialogFragment() {
             dismiss()
         }
 
-// TODO: based on value        dialog.findViewById<Button>(R.id.setToCenterButton)!!.setOnClickListener {
-//            (activity as FractMainActivity).setParameterToCenter(key)
-//            dismiss()
-//        }
+        if(expr is CplxNode) {
+            dialog.findViewById<Button>(R.id.setToCenterButton)!!.setOnClickListener {
+                (activity as FractMainActivity).setParameterToCenter(key)
+                dismiss()
+            }
+        } else {
+            dialog.findViewById<Button>(R.id.setToCenterButton)!!.visibility = View.INVISIBLE
+        }
+
 
         return dialog
     }
