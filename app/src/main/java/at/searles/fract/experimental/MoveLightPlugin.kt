@@ -36,7 +36,7 @@ class MoveLightPlugin(private val context: Context, private val bitmapModel: Fra
 
         val r = dpToPx(touchDistanceDp, context.resources)
 
-        val transparency = if(isDragging) 0xbb000000.toInt() else 0x66000000
+        val transparency = lightSourceTransparency
 
         canvas.drawLine(pt.x - r / sqrt(2f), pt.y - r / sqrt(2f), pt.x + r / sqrt(2f), pt.y + r / sqrt(2f), paint.apply { color = 0xffffff or transparency; strokeWidth *= 2f })
         canvas.drawLine(pt.x - r / sqrt(2f), pt.y - r / sqrt(2f), pt.x + r / sqrt(2f), pt.y + r / sqrt(2f), paint.apply { color = 0x000000 or transparency; strokeWidth /= 2f })
@@ -117,5 +117,6 @@ class MoveLightPlugin(private val context: Context, private val bitmapModel: Fra
     companion object {
         private const val strokeWidthDp = 2f
         private const val touchDistanceDp = 18f
+        private const val lightSourceTransparency = 0xaa000000.toInt()
     }
 }
