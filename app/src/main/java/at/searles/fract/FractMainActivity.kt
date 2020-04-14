@@ -352,10 +352,19 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
         // TODO Create Fract folder?
         // TODO https://stackoverflow.com/questions/60798804/store-image-via-android-media-store-in-new-folder
         // TODO https://stackoverflow.com/questions/57726896/mediastore-images-media-insertimage-deprecated
+
+        val outFile = File.createTempFile(
+            "fract_${System.currentTimeMillis()}",
+            ".png",
+            externalCacheDir
+        )
+
+        saveImage(FileOutputStream(outFile))
+
         val format = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
         val timestamp = format.format(System.currentTimeMillis())
 
-        MediaStore.Images.Media.insertImage(contentResolver, bitmapModel.bitmap, "Fract-$timestamp", "Image created in Fract on $timestamp")
+        MediaStore.Images.Media.insertImage(contentResolver, outFile.path, "Fract-$timestamp", "Image created with Fract for Android on $timestamp")
     }
 
     private fun openSaveImage() {
