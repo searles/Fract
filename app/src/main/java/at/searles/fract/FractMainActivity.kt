@@ -709,7 +709,7 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
             override fun accept(properties: FractProperties): FractProperties {
                 val customPalettes = properties.customPalettes.toMutableList()
 
-                if(customPalettes.size >= index) {
+                if(customPalettes.size > index) {
                     customPalettes[index] = null
                 }
 
