@@ -15,7 +15,7 @@ import at.searles.paletteeditor.PaletteAdapter
  */
 class PaletteContextDialogFragment: DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val index = arguments!!.getInt(indexKey)
+        val label = arguments!!.getString(labelKey)!!
 
         val builder = AlertDialog.Builder(activity!!)
 
@@ -28,7 +28,7 @@ class PaletteContextDialogFragment: DialogFragment() {
         val dialog = builder.show()
 
         dialog.findViewById<Button>(R.id.resetButton)!!.setOnClickListener {
-            (activity as FractMainActivity).resetPalette(index)
+            (activity as FractMainActivity).resetPalette(label)
             dismiss()
         }
 
@@ -37,14 +37,14 @@ class PaletteContextDialogFragment: DialogFragment() {
 
     companion object {
         private const val paletteKey = "palette"
-        private const val indexKey = "index"
+        private const val labelKey = "index"
 
-        fun newInstance(index: Int, palette: Palette): PaletteContextDialogFragment {
+        fun newInstance(label: String, palette: Palette): PaletteContextDialogFragment {
             val dialogFragment = PaletteContextDialogFragment()
 
             dialogFragment.arguments = Bundle().apply {
                 putBundle(paletteKey, PaletteAdapter.toBundle(palette))
-                putInt(indexKey, index)
+                putString(labelKey, label)
             }
 
             return dialogFragment

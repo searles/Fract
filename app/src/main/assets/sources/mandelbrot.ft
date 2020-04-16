@@ -11,11 +11,13 @@ val bailoutValueLabel = "Bailout Value";
 val bailoutColorValueLabel = "Bailout Color Value";
 val bailoutHeightLabel = "Bailout Height";
 val bailoutPaletteLabel = "Bailout Palette";
+val bailoutPaletteDescription = "Palette for Unbound Points";
 val epsilonRadiusLabel = "Epsilon Radius";
 val lakeValueLabel = "Lake Value";
 val lakeColorValueLabel = "Lake Color Value";
 val lakeHeightLabel = "Lake Height";
 val lakePaletteLabel = "Lake Palette";
+val lakePaletteDescription = "Palette for Bound Points";
 
 setScale(2, 0, 0, 2, 0, 0); // Default Scale
 
@@ -71,9 +73,9 @@ class Calculator {
 
     fun setLakeValues() {
         val lakePaletteIndex = if(not isBound) {
-            addPalette(lakePaletteLabel, 1, 1, [0, 0, #ff000000])
+            putPalette(lakePaletteLabel, lakePaletteDescription, 1, 1, [0, 0, #ff000000])
         } else {
-            addPalette(lakePaletteLabel, 2, 2,
+            putPalette(lakePaletteLabel, lakePaletteDescription, 2, 2,
                 [1, 0, #ff000000], [0, 0, #ff4400aa], [1, 1, #ffffdd22], [0, 1, #ffffffff]);
         };
 
@@ -106,7 +108,7 @@ class Calculator {
     }
 
     fun setBailoutValues() {
-        val paletteIndex = addPalette(bailoutPaletteLabel, 6, 1,
+        val paletteIndex = putPalette(bailoutPaletteLabel, bailoutPaletteDescription, 6, 1,
             [0, 0, #ff000000], [1, 0, #ff4400aa], [5, 0, #ff4400aa], [2, 0, #ffffdd22], [4, 0, #ffffdd22], [3, 0, #ffffffff]);
 
         extern maxExponent: maxExponentLabel = "2";

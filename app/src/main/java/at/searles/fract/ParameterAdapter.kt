@@ -58,7 +58,7 @@ class ParameterAdapter(private val activity: FractMainActivity): RecyclerView.Ad
 
             when(item.type) {
                 parameterType -> activity.openParameterEditor(item.name)
-                paletteType -> activity.openPaletteEditor(adapterPosition - paletteStartPosition)
+                paletteType -> activity.openPaletteEditor(item.name)
                 sourceCodeType -> activity.openSourceEditor()
                 scaleType -> activity.openScaleEditor()
                 shaderPropertiesType -> activity.openShaderPropertiesEditor()
@@ -71,7 +71,7 @@ class ParameterAdapter(private val activity: FractMainActivity): RecyclerView.Ad
 
             when(item.type) {
                 parameterType -> activity.openParameterContext(item.name)
-                paletteType -> activity.openPaletteContext(adapterPosition - paletteStartPosition)
+                paletteType -> activity.openPaletteContext(item.name)
                 sourceCodeType -> return false
                 scaleType -> activity.openScaleContext()
                 shaderPropertiesType -> activity.openShaderPropertiesContext()
@@ -144,8 +144,8 @@ class ParameterAdapter(private val activity: FractMainActivity): RecyclerView.Ad
 
         require(list.size == paletteStartPosition)
 
-        repeat(properties.paletteCount) {
-            list.add(Item("Palette $it", paletteType, properties.getPaletteDescription(it), properties.isDefaultPalette(it), properties.getPalette(it)))
+        properties.paletteLabels.forEach { label ->
+            list.add(Item(label, paletteType, properties.getPaletteDescription(label), properties.isDefaultPalette(label), properties.getPalette(label)))
         }
 
         properties.parameterIds.forEach {

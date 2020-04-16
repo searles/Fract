@@ -191,9 +191,9 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
             }
             paletteRequestCode -> {
                 val palette = PaletteAdapter.toPalette(intent!!.getBundleExtra(PaletteEditorActivity.paletteKey)!!)
-                val index = intent.getIntExtra(paletteIndexKey, -1)
+                val label = intent.getStringExtra(paletteLabelKey)!!
 
-                setPalette(index, palette)
+                setPalette(label, palette)
                 return
             }
             favoritesRequestCode -> {
@@ -246,16 +246,12 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
         }
     }
 
-    private fun setPalette(index: Int, palette: Palette) {
+    private fun setPalette(label: String, palette: Palette) {
         val change = object: BitmapPropertiesChange {
             override fun accept(properties: FractProperties): FractProperties {
-                val palettes = properties.customPalettes.toMutableList()
+                val palettes = properties.customPalettes.toMutableMap()
 
-                while(palettes.size <= index) {
-                    palettes.add(null)
-                }
-
-                palettes[index] = palette
+                palettes[label] = palette
 
                 return properties.createWithNewBitmapProperties(palettes, null)
             }
@@ -399,19 +395,17 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
         val parameters = HashMap<String, String>()
 
         val scale: Scale?
-        val palettes: List<Palette?>
+        val palettes: Map<String, Palette>
 
         if(mergeParameters) {
             Toast.makeText(this, "Merging sample with current parameters", Toast.LENGTH_SHORT).show()
             parameters.putAll(currentProperties.customParameters)
 
             scale = if(!currentProperties.isDefaultScale) currentProperties.scale else parameterSet.scale
-            palettes = (0 until currentProperties.paletteCount).map {
-                if(currentProperties.isDefaultPalette(it)) null else currentProperties.getPalette(it)
-            }
+            palettes = currentProperties.customPalettes
         } else {
             scale = parameterSet.scale
-            palettes = emptyList()
+            palettes = emptyMap()
         }
 
         parameters.putAll(parameterSet.parameters)
@@ -558,12 +552,12 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
         }
     }
 
-    fun openPaletteEditor(index: Int) {
-        val palette = bitmapModel.properties.getPalette(index)
+    fun openPaletteEditor(label: String) {
+        val palette = bitmapModel.properties.getPalette(label)
 
         Intent(this, PaletteEditorActivity::class.java).also {
             it.putExtra(PaletteEditorActivity.paletteKey, PaletteAdapter.toBundle(palette))
-            it.putExtra(paletteIndexKey, index)
+            it.putExtra(paletteLabelKey, label)
             startActivityForResult(it, paletteRequestCode)
         }
     }
@@ -654,8 +648,8 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
             show(supportFragmentManager, "dialog")
     }
 
-    fun openPaletteContext(index: Int) {
-        PaletteContextDialogFragment.newInstance(index, bitmapModel.properties.getPalette(index)).
+    fun openPaletteContext(label: String) {
+        PaletteContextDialogFragment.newInstance(label, bitmapModel.properties.getPalette(label)).
             show(supportFragmentManager, "dialog")
     }
 
@@ -704,15 +698,11 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
         parameterAdapter.updateFrom(bitmapModel)
     }
 
-    fun resetPalette(index: Int) {
+    fun resetPalette(label: String) {
         bitmapModel.applyBitmapPropertiesChange(object: BitmapPropertiesChange {
             override fun accept(properties: FractProperties): FractProperties {
-                val customPalettes = properties.customPalettes.toMutableList()
-
-                if(customPalettes.size > index) {
-                    customPalettes[index] = null
-                }
-
+                val customPalettes = properties.customPalettes.toMutableMap()
+                customPalettes.remove(label)
                 return FractProperties(properties.program, properties.customScale, properties.customShaderProperties, customPalettes)
             }
         })
@@ -733,7 +723,7 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
         private const val pngMimeType = "image/png"
         private const val sourceRequestCode = 124
         private const val paletteRequestCode = 571
-        private const val paletteIndexKey = "paletteIndex"
+        private const val paletteLabelKey = "paletteIndex"
         private const val favoritesRequestCode = 412
 
         private val settingsKey = "settings"

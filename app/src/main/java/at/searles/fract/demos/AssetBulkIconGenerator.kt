@@ -34,7 +34,7 @@ class AssetBulkIconGenerator(private val context: Context): Iterable<FractProper
                     put(BulkCalculator.filenameKey, "${folder.key}-${item.key}")
                 }
 
-                return FractProperties.create(sourceCode, parameters, item.scale, null, emptyList())
+                return FractProperties.create(sourceCode, parameters, item.scale, null, emptyMap())
             }
         }
     }

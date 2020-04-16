@@ -18,6 +18,6 @@ object FactorySettings {
     // use default source
     fun getStartupFractal(context: Context): FractProperties {
         val sourceCode = AssetsUtils.readAssetSource(context, "mandelbrot")
-        return FractProperties.create(sourceCode, emptyMap(), null, null, emptyList())
+        return FractProperties.create(sourceCode, emptyMap(), null, null, emptyMap())
     }
 }
