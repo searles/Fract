@@ -36,8 +36,7 @@
     <string name="scale">Scale</string>
     <string name="shaderProperties">Shader Properties</string>
     <string name="lockRotation">Lock Rotation</string>
-    <string name="confirmZoom">Confirm Zoom</string>
-    <string name="touchEnabled">Touch Gestures Enabled</string>
+    <string name="confirmZoom">Confirm with single tap</string>
     <string name="invalidName">Invalid name</string>
     <string name="forward">Forward</string>
     <string name="editProperties">Edit</string>
@@ -49,4 +48,8 @@
     <string name="setToCenter">Set to Center</string>
     <string name="openBlog">Help (in Web Browser)</string>
     <string name="editLightsOnScreen">Edit Light Direction on Screen</string>
+    <string name="editScaleOnScreen">Scale</string>
+    <string name="editLightDirectionOnScreen">Light Direction</string>
+    <string name="editPaletteOffsetOnScreen">Palette Offset</string>
+    <string name="noneOnScreen">None</string>
 </resources>

@@ -8,9 +8,10 @@ import kotlinx.android.parcel.Parcelize
  */
 @Parcelize
 class FractSettings(
+    val mode: Mode = FactorySettings.mode,
     val isRotationLock: Boolean = FactorySettings.factoryIsRotationLock,
-    val isTouchEnabled: Boolean = FactorySettings.factoryIsTouchEnabled,
     val isConfirmZoom: Boolean = FactorySettings.factoryIsConfirmZoom,
-    val isGridEnabled: Boolean = FactorySettings.factoryIsGridEnabled,
-    val isEditLightsOnScreenEnabled: Boolean = FactorySettings.factoryIsEditLightsOnScreenEnabled
-) : Parcelable
+    val isGridEnabled: Boolean = FactorySettings.factoryIsGridEnabled
+) : Parcelable {
+    enum class Mode { None, Scale, Light, Palette }
+}

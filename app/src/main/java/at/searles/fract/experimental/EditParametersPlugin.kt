@@ -4,13 +4,16 @@ import android.content.Context
 import android.graphics.Canvas
 import android.view.MotionEvent
 import at.searles.fractbitmapmodel.FractBitmapModel
+import at.searles.fractimageview.Plugin
 import at.searles.fractimageview.ScalableImageView
 
 // TODO it is much easier if they are stateful
 // TODO: This requires a savings mechanism though.
 // TODO: Which means that there should be a plugin service.
 // TODO: On the other hand, I want to show the color of parameters on screen
-class EditParametersPlugin(private val context: Context, private val bitmapModel: FractBitmapModel): ScalableImageView.Plugin {
+class EditParametersPlugin(private val context: Context, private val bitmapModel: FractBitmapModel): Plugin {
+
+    override val isEnabled = true
 
     override fun onDraw(source: ScalableImageView, canvas: Canvas) {
         TODO("Not yet implemented")

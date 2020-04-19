@@ -30,14 +30,16 @@ import at.searles.fract.demos.DemosFolderHolder
 import at.searles.fract.editors.*
 import at.searles.fract.experimental.BulkCalculator
 import at.searles.fract.experimental.MoveLightPlugin
+import at.searles.fract.experimental.MovePaletteOffsetPlugin
 import at.searles.fract.favorites.AddToFavoritesDialogFragment
 import at.searles.fract.favorites.FavoritesProvider
 import at.searles.fractbitmapmodel.*
 import at.searles.fractbitmapmodel.changes.*
-import at.searles.fractimageview.DrawBitmapBoundsPlugin
-import at.searles.fractimageview.GridPlugin
-import at.searles.fractimageview.IconIfFlippedPlugin
 import at.searles.fractimageview.PluginScalableImageView
+import at.searles.fractimageview.plugins.DrawBitmapBoundsPlugin
+import at.searles.fractimageview.plugins.GestureBlockPlugin
+import at.searles.fractimageview.plugins.GridPlugin
+import at.searles.fractimageview.plugins.IconIfFlippedPlugin
 import at.searles.fractlang.FractlangProgram
 import at.searles.fractlang.semanticanalysis.SemanticAnalysisException
 import at.searles.itemselector.ItemSelectorActivity
@@ -61,6 +63,12 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
     private lateinit var bitmapModel: FractBitmapModel
 
     private lateinit var settings: FractSettings
+
+    // plugins that are controlled via settings
+    private lateinit var touchBlockPlugin: GestureBlockPlugin
+    private lateinit var lightPlugin: MoveLightPlugin
+    private lateinit var palettePlugin: MovePaletteOffsetPlugin
+    private lateinit var gridPlugin: GridPlugin
 
     private val menuNavigationView: NavigationView by lazy {
         findViewById<NavigationView>(R.id.menuNavigationView)
@@ -121,7 +129,8 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
 
     override fun onStart() {
         super.onStart()
-        connectBitmapModelFragment()
+        attachBitmapModelFragment() // create bitmapModel
+        setUpMainImageView()
         updateSettings()
     }
 
@@ -201,6 +210,7 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
                 loadFavorite(favoriteKey)
                 return
             }
+            // TODO if returning from Save Image, check return code and print message if not saved!
         }
 
         super.onActivityResult(requestCode, resultCode, intent)
@@ -467,17 +477,9 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
         bitmapModelFragment = createNewBitmapModelFragment(FactorySettings.getStartupFractal(this))
     }
 
-    private fun connectBitmapModelFragment() {
+    private fun attachBitmapModelFragment() {
         bitmapModel = bitmapModelFragment.bitmapModel
         bitmapModel.listener = this
-        mainImageView.scalableBitmapModel = bitmapModel
-        parameterAdapter.updateFrom(bitmapModel)
-        
-        mainImageView.visibility = View.VISIBLE
-        mainImageView.invalidate()
-
-        mainImageView.addPlugin(DrawBitmapBoundsPlugin())
-        mainImageView.addPlugin(IconIfFlippedPlugin(this))
 
         taskProgressBar.apply {
             min = -progressBarZero
@@ -487,6 +489,29 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
         if(!bitmapModel.isTaskRunning) {
             taskProgressBar.visibility = View.INVISIBLE
         }
+    }
+
+    private fun setUpMainImageView() {
+        mainImageView.scalableBitmapModel = bitmapModel
+        parameterAdapter.updateFrom(bitmapModel)
+
+        mainImageView.visibility = View.VISIBLE
+
+        mainImageView.addPlugin(IconIfFlippedPlugin(this))
+        mainImageView.addPlugin(DrawBitmapBoundsPlugin())
+
+        touchBlockPlugin = GestureBlockPlugin()
+
+        lightPlugin = MoveLightPlugin(this, bitmapModel)
+        palettePlugin = MovePaletteOffsetPlugin(bitmapModel)
+
+        gridPlugin = GridPlugin(this)
+
+        mainImageView.addPlugin(touchBlockPlugin)
+        mainImageView.addPlugin(lightPlugin)
+        mainImageView.addPlugin(palettePlugin)
+
+        mainImageView.addPlugin(gridPlugin)
     }
 
     override fun started() {
@@ -562,10 +587,6 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
         }
     }
 
-    // TODO: There will be more plugins. Manage them in a different way.
-    var gridPlugin: GridPlugin? = null
-    var moveLightPlugin: MoveLightPlugin? = null
-
     fun setSettings(settings: FractSettings) {
         this.settings = settings
         updateSettings()
@@ -573,44 +594,15 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
 
     private fun updateSettings() {
         mainImageView.hasRotationLock = settings.isRotationLock
-        mainImageView.isTouchEnabled = settings.isTouchEnabled
         mainImageView.mustConfirmZoom = settings.isConfirmZoom
 
-        if(settings.isGridEnabled) {
-            if(gridPlugin == null) {
-                GridPlugin(this).also {
-                    gridPlugin = it
-                    mainImageView.addPlugin(it)
-                    mainImageView.invalidate()
-                }
-            }
-        } else {
-            with(gridPlugin) {
-                if(this != null) {
-                    mainImageView.removePlugin(this)
-                    gridPlugin = null
-                    mainImageView.invalidate()
-                }
-            }
-        }
+        touchBlockPlugin.isEnabled = settings.mode == FractSettings.Mode.None
+        lightPlugin.isEnabled = settings.mode == FractSettings.Mode.Light
+        palettePlugin.isEnabled = settings.mode == FractSettings.Mode.Palette
 
-        if(settings.isEditLightsOnScreenEnabled) {
-            if(moveLightPlugin == null) {
-                MoveLightPlugin(this, bitmapModel).also {
-                    moveLightPlugin = it
-                    mainImageView.addPlugin(it)
-                    mainImageView.invalidate()
-                }
-            }
-        } else {
-            with(moveLightPlugin) {
-                if(this != null) {
-                    mainImageView.removePlugin(this)
-                    moveLightPlugin = null
-                    mainImageView.invalidate()
-                }
-            }
-        }
+        gridPlugin.isEnabled = settings.isGridEnabled
+
+        mainImageView.invalidate()
     }
 
     fun openShaderPropertiesEditor() {

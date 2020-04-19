@@ -3,34 +3,56 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <CheckBox
-        android:id="@+id/touchEnabledCheckBox"
+    <RadioGroup
+        android:id="@+id/modeRadioGroup"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/touchEnabled" />
+        android:layout_height="wrap_content">
 
-    <CheckBox
-        android:id="@+id/rotationLockCheckBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/lockRotation" />
+        <RadioButton
+            android:id="@+id/noneRadioButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/noneOnScreen" />
 
-    <CheckBox
-        android:id="@+id/confirmZoomCheckBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/confirmZoom" />
+        <RadioButton
+            android:id="@+id/scaleRadioButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/editScaleOnScreen" />
+
+        <CheckBox
+            android:id="@+id/confirmZoomCheckBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:text="@string/confirmZoom" />
+
+        <CheckBox
+            android:id="@+id/rotationLockCheckBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:text="@string/lockRotation" />
+
+        <RadioButton
+            android:id="@+id/lightRadioButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/editLightDirectionOnScreen" />
+
+        <RadioButton
+            android:id="@+id/paletteRadioButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/editPaletteOffsetOnScreen" />
+
+    </RadioGroup>
 
     <CheckBox
         android:id="@+id/showGridCheckBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
         android:text="@string/showGrid" />
-
-    <CheckBox
-        android:id="@+id/editLightsOnScreenCheckBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/editLightsOnScreen" />
 
 </LinearLayout>

@@ -1,68 +1,82 @@
 package at.searles.fract.editors
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.os.Bundle
 import android.widget.CheckBox
+import android.widget.RadioButton
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import at.searles.fract.FractMainActivity
 import at.searles.fract.FractSettings
 import at.searles.fract.R
-
+import kotlinx.android.synthetic.main.settings_dialog.*
 
 class SettingsDialogFragment: DialogFragment() {
 
-    private lateinit var touchEnabledCheckBox: CheckBox
+    private lateinit var noneRadioButton: RadioButton
+    private lateinit var scaleRadioButton: RadioButton
     private lateinit var confirmZoomCheckBox: CheckBox
     private lateinit var rotationLockCheckBox: CheckBox
+    private lateinit var lightRadioButton: RadioButton
+    private lateinit var paletteRadioButton: RadioButton
     private lateinit var showGridCheckBox: CheckBox
-    private lateinit var editLightsOnScreenCheckBox: CheckBox
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val builder = AlertDialog.Builder(activity!!)
 
+        @SuppressLint("InflateParams") // ok in this context
+        val view = activity!!.layoutInflater.inflate(R.layout.settings_dialog, null)!!
+
+        noneRadioButton = view.findViewById(R.id.noneRadioButton)!!
+        scaleRadioButton = view.findViewById(R.id.scaleRadioButton)!!
+        confirmZoomCheckBox = view.findViewById(R.id.confirmZoomCheckBox)!!
+        rotationLockCheckBox = view.findViewById(R.id.rotationLockCheckBox)!!
+        showGridCheckBox = view.findViewById(R.id.showGridCheckBox)!!
+        lightRadioButton = view.findViewById(R.id.lightRadioButton)!!
+        paletteRadioButton = view.findViewById(R.id.paletteRadioButton)!!
+
+        initializeFields(savedInstanceState)
+
         builder
-            .setView(R.layout.settings_dialog)
+            .setView(view)
             .setTitle(R.string.settings)
             .setPositiveButton(android.R.string.ok) { _, _ -> run { setPropertiesInActivity(); dismiss() } }
             .setNegativeButton(android.R.string.cancel) { _, _ -> dismiss() }
             .setCancelable(true)
 
-        val dialog = builder.show()
-
-        touchEnabledCheckBox = dialog.findViewById(R.id.touchEnabledCheckBox)!!
-        confirmZoomCheckBox = dialog.findViewById(R.id.confirmZoomCheckBox)!!
-        rotationLockCheckBox = dialog.findViewById(R.id.rotationLockCheckBox)!!
-        showGridCheckBox = dialog.findViewById(R.id.showGridCheckBox)!!
-        editLightsOnScreenCheckBox = dialog.findViewById(R.id.editLightsOnScreenCheckBox)!!
-
-        initializeFields(savedInstanceState)
-
-        return dialog
+        return builder.show()
     }
 
     private fun initializeFields(savedInstanceState: Bundle?) {
         if(savedInstanceState == null) {
             val settings = arguments!!.getParcelable<FractSettings>(settingsKey)!!
 
-            touchEnabledCheckBox.isChecked = settings.isTouchEnabled
+            noneRadioButton.isChecked = settings.mode == FractSettings.Mode.None
+            scaleRadioButton.isChecked = settings.mode == FractSettings.Mode.Scale
             rotationLockCheckBox.isChecked = settings.isRotationLock
             confirmZoomCheckBox.isChecked = settings.isConfirmZoom
+            lightRadioButton.isChecked = settings.mode == FractSettings.Mode.Light
+            paletteRadioButton.isChecked = settings.mode == FractSettings.Mode.Palette
             showGridCheckBox.isChecked = settings.isGridEnabled
-            editLightsOnScreenCheckBox.isChecked = settings.isEditLightsOnScreenEnabled
         }
     }
 
     private fun setPropertiesInActivity() {
         try {
-            val isTouchEnabled = touchEnabledCheckBox.isChecked
+            val mode = when {
+                scaleRadioButton.isChecked -> FractSettings.Mode.Scale
+                lightRadioButton.isChecked -> FractSettings.Mode.Light
+                paletteRadioButton.isChecked -> FractSettings.Mode.Palette
+                else -> FractSettings.Mode.None
+            }
+
             val isRotationLock = rotationLockCheckBox.isChecked
             val isConfirmZoom = confirmZoomCheckBox.isChecked
             val isGridEnabled = showGridCheckBox.isChecked
-            val isEditLightsOnScreen = editLightsOnScreenCheckBox.isChecked
 
-            val fractSettings = FractSettings(isRotationLock, isTouchEnabled, isConfirmZoom, isGridEnabled, isEditLightsOnScreen)
+            val fractSettings = FractSettings(mode, isRotationLock, isConfirmZoom, isGridEnabled)
 
             (activity as FractMainActivity).setSettings(fractSettings)
         } catch(e: NumberFormatException) {

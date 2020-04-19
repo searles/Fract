@@ -11,20 +11,22 @@ import at.searles.fractbitmapmodel.FractBitmapModel
 import at.searles.fractbitmapmodel.FractProperties
 import at.searles.fractbitmapmodel.ShaderProperties
 import at.searles.fractbitmapmodel.changes.BitmapPropertiesChange
+import at.searles.fractimageview.Plugin
 import at.searles.fractimageview.ScalableBitmapViewUtils
 import at.searles.fractimageview.ScalableImageView
 import kotlin.math.*
 
-class MoveLightPlugin(private val context: Context, private val bitmapModel: FractBitmapModel): ScalableImageView.Plugin {
+class MoveLightPlugin(private val context: Context, private val bitmapModel: FractBitmapModel): Plugin {
 
-    /**
-     *
-    x = (sin(polarAngle) * cos(azimuthAngle)).toFloat(),
-    y = -(sin(polarAngle) * sin(azimuthAngle)).toFloat(),
-    z = cos(polarAngle).toFloat()
+    override var isEnabled = false
+
+    /*
+        x = (sin(polarAngle) * cos(azimuthAngle)).toFloat(),
+        y = -(sin(polarAngle) * sin(azimuthAngle)).toFloat(),
+        z = cos(polarAngle).toFloat()
      */
 
-    private var isDragging = false
+    private var isActive = false
 
     private val paint: Paint = Paint().apply {
         this.strokeWidth = dpToPx(strokeWidthDp, context.resources)
@@ -32,40 +34,34 @@ class MoveLightPlugin(private val context: Context, private val bitmapModel: Fra
     }
 
     override fun onDraw(source: ScalableImageView, canvas: Canvas) {
-        val pt = getLightPoint(source)
+        if(isActive) {
+            val pt = getLightPoint(source)
 
-        val r = dpToPx(touchDistanceDp, context.resources)
+            val r = dpToPx(touchDistanceDp, context.resources)
 
-        val transparency = lightSourceTransparency
+            val transparency = lightSourceTransparency
 
-        canvas.drawLine(pt.x - r / sqrt(2f), pt.y - r / sqrt(2f), pt.x + r / sqrt(2f), pt.y + r / sqrt(2f), paint.apply { color = 0xffffff or transparency; strokeWidth *= 2f })
-        canvas.drawLine(pt.x - r / sqrt(2f), pt.y - r / sqrt(2f), pt.x + r / sqrt(2f), pt.y + r / sqrt(2f), paint.apply { color = 0x000000 or transparency; strokeWidth /= 2f })
-        canvas.drawLine(pt.x + r / sqrt(2f), pt.y - r / sqrt(2f), pt.x - r / sqrt(2f), pt.y + r / sqrt(2f), paint.apply { color = 0xffffff or transparency; strokeWidth *= 2f })
-        canvas.drawLine(pt.x + r / sqrt(2f), pt.y - r / sqrt(2f), pt.x - r / sqrt(2f), pt.y + r / sqrt(2f), paint.apply { color = 0x000000 or transparency; strokeWidth /= 2f })
+            canvas.drawLine(pt.x - r / sqrt(2f), pt.y - r / sqrt(2f), pt.x + r / sqrt(2f), pt.y + r / sqrt(2f), paint.apply { color = 0xffffff or transparency; strokeWidth *= 2f })
+            canvas.drawLine(pt.x - r / sqrt(2f), pt.y - r / sqrt(2f), pt.x + r / sqrt(2f), pt.y + r / sqrt(2f), paint.apply { color = 0x000000 or transparency; strokeWidth /= 2f })
+            canvas.drawLine(pt.x + r / sqrt(2f), pt.y - r / sqrt(2f), pt.x - r / sqrt(2f), pt.y + r / sqrt(2f), paint.apply { color = 0xffffff or transparency; strokeWidth *= 2f })
+            canvas.drawLine(pt.x + r / sqrt(2f), pt.y - r / sqrt(2f), pt.x - r / sqrt(2f), pt.y + r / sqrt(2f), paint.apply { color = 0x000000 or transparency; strokeWidth /= 2f })
 
-        canvas.drawCircle(pt.x, pt.y, r, paint.apply { color = 0xffffff or transparency })
-        canvas.drawCircle(pt.x, pt.y, r - paint.strokeWidth, paint.apply { color = transparency })
+            canvas.drawCircle(pt.x, pt.y, r, paint.apply { color = 0xffffff or transparency })
+            canvas.drawCircle(pt.x, pt.y, r - paint.strokeWidth, paint.apply { color = transparency })
+        }
     }
 
     override fun onTouchEvent(source: ScalableImageView, event: MotionEvent): Boolean {
-        if(!isDragging) {
+        if(!isActive) {
             if(event.action == MotionEvent.ACTION_DOWN) {
-                val pt = getLightPoint(source)
-
-                val r = dpToPx(touchDistanceDp, context.resources)
-
-                if(hypot(event.x - pt.x, event.y - pt.y) >= r) {
-                    return false
-                }
-
-                isDragging = true
+                isActive = true
             } else {
                 return false
             }
         }
 
         if(event.action == MotionEvent.ACTION_UP) {
-            isDragging = false
+            isActive = false
             return true
         }
 
