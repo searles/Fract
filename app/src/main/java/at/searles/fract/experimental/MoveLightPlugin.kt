@@ -16,7 +16,7 @@ import at.searles.fractimageview.ScalableBitmapViewUtils
 import at.searles.fractimageview.ScalableImageView
 import kotlin.math.*
 
-class MoveLightPlugin(private val context: Context, private val bitmapModel: FractBitmapModel): Plugin {
+class MoveLightPlugin(private val context: Context, private val bitmapModel: () -> FractBitmapModel): Plugin {
 
     override var isEnabled = false
 
@@ -73,33 +73,33 @@ class MoveLightPlugin(private val context: Context, private val bitmapModel: Fra
             }
         }
 
-        bitmapModel.applyBitmapPropertiesChange(change)
+        bitmapModel().applyBitmapPropertiesChange(change)
         source.invalidate()
         return true
     }
 
     private fun getLightPoint(source: ScalableImageView): PointF {
         // First get normalized point.
-        val lightVector = bitmapModel.properties.shaderProperties.lightVector
+        val lightVector = bitmapModel().properties.shaderProperties.lightVector
 
         val lightPt = PointF(lightVector.x, lightVector.y)
 
         return ScalableBitmapViewUtils.invNorm(lightPt,
-            bitmapModel.width.toFloat(), bitmapModel.height.toFloat(),
+            bitmapModel().width.toFloat(), bitmapModel().height.toFloat(),
             source.width.toFloat(), source.height.toFloat()
         )
     }
 
     private fun getShaderPropertiesForPoint(source: ScalableImageView, pt: PointF): ShaderProperties {
         val pt0 = ScalableBitmapViewUtils.norm(pt,
-            bitmapModel.width.toFloat(), bitmapModel.height.toFloat(),
+            bitmapModel().width.toFloat(), bitmapModel().height.toFloat(),
             source.width.toFloat(), source.height.toFloat()
         )
 
         val azimuth = -atan2(pt0.y, pt0.x).toDouble()
         val polar = asin(max(0f, min(1f, hypot(pt0.x, pt0.y)))).toDouble()
 
-        return bitmapModel.properties.shaderProperties.createWithNewLightVector(polar, azimuth)
+        return bitmapModel().properties.shaderProperties.createWithNewLightVector(polar, azimuth)
     }
 
     private fun dpToPx(dip: Float, resources: Resources): Float {

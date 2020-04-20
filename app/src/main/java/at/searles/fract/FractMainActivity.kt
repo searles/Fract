@@ -125,12 +125,14 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
         }
+
+        // setting up plugins must happen here because of the life cycle.
+        setUpMainImageView()
     }
 
     override fun onStart() {
         super.onStart()
         attachBitmapModelFragment() // create bitmapModel
-        setUpMainImageView()
         updateSettings()
     }
 
@@ -189,7 +191,12 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
             }
             saveImageCode -> {
                 require(intent != null)
-                saveImage(contentResolver.openOutputStream(intent.data!!)!!)
+                val fileUri = intent.data!!
+
+
+                // TODO
+
+                saveImage(contentResolver.openOutputStream(fileUri)!!)
             }
             sourceRequestCode -> {
                 val sourceCode = intent!!.getStringExtra(SourceEditorActivity.sourceKey)!!
@@ -370,6 +377,8 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
         val format = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
         val timestamp = format.format(System.currentTimeMillis())
 
+        // TODO does not work for some!
+
         MediaStore.Images.Media.insertImage(contentResolver, outFile.path, "Fract-$timestamp", "Image created with Fract for Android on $timestamp")
     }
 
@@ -489,12 +498,12 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
         if(!bitmapModel.isTaskRunning) {
             taskProgressBar.visibility = View.INVISIBLE
         }
+
+        parameterAdapter.updateFrom(bitmapModel)
+        mainImageView.scalableBitmapModel = bitmapModel
     }
 
     private fun setUpMainImageView() {
-        mainImageView.scalableBitmapModel = bitmapModel
-        parameterAdapter.updateFrom(bitmapModel)
-
         mainImageView.visibility = View.VISIBLE
 
         mainImageView.addPlugin(IconIfFlippedPlugin(this))
@@ -502,8 +511,8 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
 
         touchBlockPlugin = GestureBlockPlugin()
 
-        lightPlugin = MoveLightPlugin(this, bitmapModel)
-        palettePlugin = MovePaletteOffsetPlugin(bitmapModel)
+        lightPlugin = MoveLightPlugin(this) {bitmapModel}
+        palettePlugin = MovePaletteOffsetPlugin({settings}, {bitmapModel})
 
         gridPlugin = GridPlugin(this)
 
