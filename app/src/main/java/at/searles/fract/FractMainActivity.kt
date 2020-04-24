@@ -1,11 +1,12 @@
 package at.searles.fract
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -14,6 +15,7 @@ import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -29,10 +31,12 @@ import at.searles.fract.demos.AssetsUtils
 import at.searles.fract.demos.DemosFolderHolder
 import at.searles.fract.editors.*
 import at.searles.fract.experimental.BulkCalculator
+import at.searles.fract.experimental.ImageSaver
 import at.searles.fract.experimental.MoveLightPlugin
 import at.searles.fract.experimental.MovePaletteOffsetPlugin
 import at.searles.fract.favorites.AddToFavoritesDialogFragment
 import at.searles.fract.favorites.FavoritesProvider
+import at.searles.fract.favorites.SaveImageDialogFragment
 import at.searles.fractbitmapmodel.*
 import at.searles.fractbitmapmodel.changes.*
 import at.searles.fractimageview.PluginScalableImageView
@@ -51,16 +55,15 @@ import org.json.JSONObject
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
-import java.text.SimpleDateFormat
-import java.util.*
-import kotlin.collections.HashMap
 
 
 class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, ReplaceExistingDialogFragment.Callback {
 
     private lateinit var parameterAdapter: ParameterAdapter
     private lateinit var bitmapModelFragment: FractBitmapModelFragment
-    private lateinit var bitmapModel: FractBitmapModel
+
+    lateinit var bitmapModel: FractBitmapModel
+        private set
 
     private lateinit var settings: FractSettings
 
@@ -144,6 +147,8 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
 
         settings = FractSettings()
 
+        // TODO: Permanently save settings
+
         // Some settings require the bitmap model that is only available after calling
         // onStart, therefore no call to updateSettings here.
     }
@@ -151,6 +156,9 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater = menuInflater
         inflater.inflate(R.menu.main_menu, menu)
+
+        updateModeMenuIcon(settings.mode)
+
         return true
     }
 
@@ -171,7 +179,27 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
                 BulkCalculator(this, AssetBulkIconGenerator(this)).start()
                 true
             }
-            else -> error("bad item: $item")
+            R.id.none -> {
+                settings = settings.withMode(FractSettings.Mode.None)
+                updateSettings()
+                true
+            }
+            R.id.scale -> {
+                settings = settings.withMode(FractSettings.Mode.Scale)
+                updateSettings()
+                true
+            }
+            R.id.light -> {
+                settings = settings.withMode(FractSettings.Mode.Light)
+                updateSettings()
+                true
+            }
+            R.id.palette -> {
+                settings = settings.withMode(FractSettings.Mode.Palette)
+                updateSettings()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
@@ -188,15 +216,6 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
                 val merge = intent.getBooleanExtra(ItemSelectorActivity.specialKey, false)
 
                 loadDemo(sourceId, parameterId, merge)
-            }
-            saveImageCode -> {
-                require(intent != null)
-                val fileUri = intent.data!!
-
-
-                // TODO
-
-                saveImage(contentResolver.openOutputStream(fileUri)!!)
             }
             sourceRequestCode -> {
                 val sourceCode = intent!!.getStringExtra(SourceEditorActivity.sourceKey)!!
@@ -217,7 +236,6 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
                 loadFavorite(favoriteKey)
                 return
             }
-            // TODO if returning from Save Image, check return code and print message if not saved!
         }
 
         super.onActivityResult(requestCode, resultCode, intent)
@@ -292,9 +310,6 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
             R.id.shareAction -> {
                 openShareImage()
             }
-            R.id.saveAction -> {
-                openSaveImage()
-            }
             R.id.saveToGalleryAction -> {
                 openSaveImageToGallery()
             }
@@ -362,36 +377,19 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
     }
 
     private fun openSaveImageToGallery() {
-        // TODO Create Fract folder?
-        // TODO https://stackoverflow.com/questions/60798804/store-image-via-android-media-store-in-new-folder
-        // TODO https://stackoverflow.com/questions/57726896/mediastore-images-media-insertimage-deprecated
+        // Check permissions
+        if (android.os.Build.VERSION.SDK_INT < 29) {
+            if(ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 1
+                )
 
-        val outFile = File.createTempFile(
-            "fract_${System.currentTimeMillis()}",
-            ".png",
-            externalCacheDir
-        )
+                return
+            }
+        }
 
-        saveImage(FileOutputStream(outFile))
-
-        val format = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
-        val timestamp = format.format(System.currentTimeMillis())
-
-        // TODO does not work for some!
-
-        MediaStore.Images.Media.insertImage(contentResolver, outFile.path, "Fract-$timestamp", "Image created with Fract for Android on $timestamp")
-    }
-
-    private fun openSaveImage() {
-        startActivityForResult(
-            Intent().apply {
-                action = Intent.ACTION_CREATE_DOCUMENT
-                addCategory(Intent.CATEGORY_OPENABLE)
-                flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION
-                type = pngMimeType
-            },
-            saveImageCode
-        )
+        SaveImageDialogFragment.newInstance().show(supportFragmentManager, "dialog")
     }
 
     private fun openAddToFavoritesDialog() {
@@ -463,13 +461,13 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
 
     private fun createNewBitmapModelFragment(properties: FractProperties): FractBitmapModelFragment {
         // use default source
-        // TODO manage dimensions via settings
-        return FractBitmapModelFragment.createInstance(properties, FactorySettings.factoryWidth, FactorySettings.factoryHeight).apply {
+        return FractBitmapModelFragment.createInstance(properties, settings.width, settings.height).apply {
             supportFragmentManager.beginTransaction().add(this, fractBitmapModelFragmentTag).commit()
         }
     }
 
     private fun initBitmapModelFragment(savedInstanceState: Bundle?) {
+        // Settings must be initialized
         val fragment = supportFragmentManager.findFragmentByTag(fractBitmapModelFragmentTag)
 
         if(fragment != null) {
@@ -511,7 +509,7 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
 
         touchBlockPlugin = GestureBlockPlugin()
 
-        lightPlugin = MoveLightPlugin(this) {bitmapModel}
+        lightPlugin = MoveLightPlugin {bitmapModel}
         palettePlugin = MovePaletteOffsetPlugin({settings}, {bitmapModel})
 
         gridPlugin = GridPlugin(this)
@@ -553,7 +551,10 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
     // Callbacks from Fragments
 
     fun setImageSize(width: Int, height: Int) {
-        bitmapModelFragment.addImageSizeChange(width, height)
+        if(bitmapModelFragment.addImageSizeChange(width, height)) {
+            // no need to call updateSettings
+            settings = settings.withSize(width, height)
+        }
     }
 
     fun setScale(scale: Scale) {
@@ -596,9 +597,30 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
         }
     }
 
+    fun getSettings(): FractSettings {
+        return settings
+    }
+
+    fun getBitmap(): Bitmap {
+        return bitmapModel.bitmap
+    }
+
     fun setSettings(settings: FractSettings) {
         this.settings = settings
         updateSettings()
+    }
+
+    private fun updateModeMenuIcon(mode: FractSettings.Mode) {
+        val menu = toolbar.menu.findItem(R.id.modeMenu) ?: return
+
+        menu.setIcon(
+            when(settings.mode) {
+                FractSettings.Mode.None -> R.drawable.ic_none
+                FractSettings.Mode.Scale -> R.drawable.ic_zoom
+                FractSettings.Mode.Light -> R.drawable.ic_light
+                else -> R.drawable.ic_color
+            }
+        )
     }
 
     private fun updateSettings() {
@@ -608,6 +630,27 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
         touchBlockPlugin.isEnabled = settings.mode == FractSettings.Mode.None
         lightPlugin.isEnabled = settings.mode == FractSettings.Mode.Light
         palettePlugin.isEnabled = settings.mode == FractSettings.Mode.Palette
+
+        updateModeMenuIcon(settings.mode)
+
+        if(settings.mode == FractSettings.Mode.Light) {
+            val oldShaderProperties = bitmapModel.properties.shaderProperties
+            if(!oldShaderProperties.useLightEffect) {
+                val newShaderProperties =
+                    ShaderProperties(true, oldShaderProperties.polarAngle,
+                        oldShaderProperties.azimuthAngle, oldShaderProperties.ambientReflection,
+                        oldShaderProperties.diffuseReflection, oldShaderProperties.specularReflection,
+                        oldShaderProperties.shininess)
+
+                val change = object : BitmapPropertiesChange {
+                    override fun accept(properties: FractProperties): FractProperties {
+                        return properties.createWithNewBitmapProperties(null, newShaderProperties)
+                    }
+                }
+
+                bitmapModel.applyBitmapPropertiesChange(change)
+            }
+        }
 
         gridPlugin.isEnabled = settings.isGridEnabled
 
@@ -637,7 +680,6 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
     override fun replaceExistingAndSave(name: String) {
         FavoritesProvider(this).saveToFavorites(name, bitmapModel, true)
     }
-
 
     fun openParameterContext(name: String) {
         ParameterContextDialogFragment.newInstance(name, bitmapModel.properties.getParameter(name)).

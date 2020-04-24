@@ -12,8 +12,9 @@ object FactorySettings {
 
     const val factoryIsGridEnabled = false
 
-    const val factoryWidth = 1600
-    const val factoryHeight = 900
+    // default is 720p
+    const val factoryWidth = 1280
+    const val factoryHeight = 720
 
     // use default source
     fun getStartupFractal(context: Context): FractProperties {

@@ -52,4 +52,15 @@
     <string name="editLightDirectionOnScreen">Light Direction</string>
     <string name="editPaletteOffsetOnScreen">Palette Offset</string>
     <string name="noneOnScreen">None</string>
+    <string name="customResolution">Custom</string>
+    <string name="mode">Mode</string>
+    <string name="paletteMode">Palette Mode</string>
+    <string name="lightMode">Light Mode</string>
+    <string name="scaleMode">Scale Mode</string>
+    <string name="none">None</string>
+    <string name="noPaletteMode">Exclude from Palette Mode</string>
+    <string name="imageFileName">Image filename</string>
+    <string name="close">Close</string>
+    <string name="contentProviderCouldNotSaveImage">Content provider could not save image</string>
+    <string name="successfullySavedImage">Successfully saved image as %s</string>
 </resources>

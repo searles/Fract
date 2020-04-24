@@ -2,6 +2,30 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/modeMenu"
+        android:title="@string/mode"
+        android:icon="@drawable/ic_zoom"
+        app:showAsAction="ifRoom">
+        <menu>
+            <item
+                android:id="@+id/none"
+                android:title="@string/none"
+                android:icon="@drawable/ic_none" />
+            <item
+                android:id="@+id/scale"
+                android:title="@string/scaleMode"
+                android:icon="@drawable/ic_zoom" />
+            <item
+                android:id="@+id/light"
+                android:title="@string/lightMode"
+                android:icon="@drawable/ic_light" />
+            <item
+                android:id="@+id/palette"
+                android:title="@string/paletteMode"
+                android:icon="@drawable/ic_color" />
+        </menu>
+    </item>
+    <item
         android:id="@+id/forward"
         android:title="@string/forward"
         android:icon="@drawable/ic_arrow_forward_black_24dp"

@@ -46,12 +46,6 @@
             android:layout_height="wrap_content"
             android:text="@string/editPaletteOffsetOnScreen" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/selectPalettesRecyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginStart="32dp" />
-
     </RadioGroup>
 
     <CheckBox
