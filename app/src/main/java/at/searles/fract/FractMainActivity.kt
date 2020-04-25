@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -116,7 +117,17 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
         }
 
         initSettings(savedInstanceState)
-        initBitmapModelFragment(savedInstanceState)
+
+        try {
+            // TODO work around around crash
+            initBitmapModelFragment(savedInstanceState)
+        } catch(e: IllegalArgumentException) {
+            if(e.cause is NoSuchMethodException) {
+                val nsme = e.cause as NoSuchMethodException
+                Log.e("ERROR", "Reflection not working?", nsme)
+                Toast.makeText(this, "Please report to the developer with this message: ${nsme.message}. Thank you.", Toast.LENGTH_LONG).show()
+            }
+        }
 
         mainImageView.visibility = View.INVISIBLE
 
@@ -130,6 +141,8 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
 
         // setting up plugins must happen here because of the life cycle.
         setUpMainImageView()
+
+        // TODO Catch error on reflection.
     }
 
     override fun onStart() {
@@ -156,7 +169,7 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
         val inflater = menuInflater
         inflater.inflate(R.menu.main_menu, menu)
 
-        updateModeMenuIcon(settings.mode)
+        updateModeMenuIcon()
 
         return true
     }
@@ -624,7 +637,7 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
         updateSettings()
     }
 
-    private fun updateModeMenuIcon(mode: FractSettings.Mode) {
+    private fun updateModeMenuIcon() {
         val menu = toolbar.menu.findItem(R.id.modeMenu) ?: return
 
         menu.setIcon(
@@ -645,7 +658,7 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
         lightPlugin.isEnabled = settings.mode == FractSettings.Mode.Light
         palettePlugin.isEnabled = settings.mode == FractSettings.Mode.Palette
 
-        updateModeMenuIcon(settings.mode)
+        updateModeMenuIcon()
 
         if(settings.mode == FractSettings.Mode.Light) {
             val oldShaderProperties = bitmapModel.properties.shaderProperties
@@ -776,8 +789,6 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
         private const val progressBarZero = 100
         private const val demoSelectorRequestCode = 152
         private const val fractBitmapModelFragmentTag = "bitmapModel"
-        private const val saveImageCode = 342
-        private const val pngMimeType = "image/png"
         private const val sourceRequestCode = 124
         private const val paletteRequestCode = 571
         private const val paletteLabelKey = "paletteIndex"
