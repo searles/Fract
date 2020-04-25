@@ -48,8 +48,6 @@ class AddToFavoritesDialogFragment: DialogFragment() {
 
     companion object {
         fun newInstance(): AddToFavoritesDialogFragment {
-            // TODO Propose a name.
-
             val dialogFragment = AddToFavoritesDialogFragment()
             dialogFragment.arguments = Bundle()
             return dialogFragment

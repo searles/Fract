@@ -63,4 +63,6 @@
     <string name="close">Close</string>
     <string name="contentProviderCouldNotSaveImage">Content provider could not save image</string>
     <string name="successfullySavedImage">Successfully saved image as %s</string>
+    <string name="lightEffects">Light Effects</string>
+    <string name="grantPermissionExplanation">Write permission is needed to write image files. Please grant permission and try again.</string>
 </resources>

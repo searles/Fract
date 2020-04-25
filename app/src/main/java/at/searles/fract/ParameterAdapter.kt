@@ -137,10 +137,11 @@ class ParameterAdapter(private val activity: FractMainActivity): RecyclerView.Ad
 
         val properties = model.properties
 
-        // TODO Strings!
-        list.add(Item(activity.resources.getString(R.string.sourceCode), sourceCodeType, "Source Code", false, properties.sourceCode))
-        list.add(Item(activity.resources.getString(R.string.scale), scaleType, "Scale", properties.isDefaultScale, properties.scale))
-        list.add(Item(activity.resources.getString(R.string.shaderProperties), shaderPropertiesType, "Light Effects",model.properties.isDefaultShaderProperties, properties.shaderProperties))
+        list.add(Item(activity.resources.getString(R.string.sourceCode), sourceCodeType, activity.getString(
+                    R.string.sourceCode), false, properties.sourceCode))
+        list.add(Item(activity.resources.getString(R.string.scale), scaleType, activity.getString(R.string.scale), properties.isDefaultScale, properties.scale))
+        list.add(Item(activity.resources.getString(R.string.shaderProperties), shaderPropertiesType, activity.getString(
+                    R.string.lightEffects), model.properties.isDefaultShaderProperties, properties.shaderProperties))
 
         require(list.size == paletteStartPosition)
 

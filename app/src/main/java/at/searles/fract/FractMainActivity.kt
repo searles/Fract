@@ -31,7 +31,6 @@ import at.searles.fract.demos.AssetsUtils
 import at.searles.fract.demos.DemosFolderHolder
 import at.searles.fract.editors.*
 import at.searles.fract.experimental.BulkCalculator
-import at.searles.fract.experimental.ImageSaver
 import at.searles.fract.experimental.MoveLightPlugin
 import at.searles.fract.experimental.MovePaletteOffsetPlugin
 import at.searles.fract.favorites.AddToFavoritesDialogFragment
@@ -275,9 +274,7 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
             }
         } catch (e: Exception) {
             e.printStackTrace()
-
-            // TODO String extract!
-            Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, resources.getText(R.string.error, e.message), Toast.LENGTH_LONG).show()
         }
     }
 
@@ -390,6 +387,23 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
         }
 
         SaveImageDialogFragment.newInstance().show(supportFragmentManager, "dialog")
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        when (requestCode) {
+            1 -> {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                ) {
+                    // TODO If permission is needed for anything else
+                    openSaveImageToGallery()
+                } else {
+                    Toast.makeText(this, getString(R.string.grantPermissionExplanation), Toast.LENGTH_LONG).show()
+                }
+
+                return
+            }
+        }
     }
 
     private fun openAddToFavoritesDialog() {
