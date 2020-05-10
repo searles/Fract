@@ -4,18 +4,21 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.widget.AutoCompleteTextView
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
+import at.searles.android.storage.StorageEditorCallback
+import at.searles.android.storage.dialog.ItemsAdapter
 import at.searles.fract.FractMainActivity
 import at.searles.fract.R
 import at.searles.fract.experimental.ImageSaver
 
 class SaveImageDialogFragment: DialogFragment() {
 
-    private lateinit var nameEditText: EditText
+    private lateinit var nameEditText: AutoCompleteTextView
     private lateinit var addToFavoritesCheckBox: CheckBox
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -24,14 +27,16 @@ class SaveImageDialogFragment: DialogFragment() {
         @SuppressLint("InflateParams")
         val view = LayoutInflater.from(context).inflate(R.layout.save_image_dialog, null)
 
-        nameEditText = view.findViewById<EditText>(R.id.nameEditText)!!
-        nameEditText.requestFocus()
+        nameEditText = view.findViewById(R.id.nameEditText)!!
 
-        addToFavoritesCheckBox = view.findViewById<CheckBox>(R.id.addToFavoritesCheckBox)!!
+        nameEditText.requestFocus()
+        nameEditText.setAdapter(ItemsAdapter(activity!!, (activity as StorageEditorCallback<*>).storageEditor.storageDataCache))
+
+        addToFavoritesCheckBox = view.findViewById(R.id.addToFavoritesCheckBox)!!
 
         builder
             .setView(view)
-            .setTitle(R.string.saveImage)
+            .setTitle(R.string.saveImageAs)
             .setPositiveButton(android.R.string.ok) { _, _ -> run { saveImage(); dismiss() } }
             .setNegativeButton(android.R.string.cancel) { _, _ -> dismiss() }
             .setCancelable(true)
@@ -74,8 +79,6 @@ class SaveImageDialogFragment: DialogFragment() {
 
     companion object {
         fun newInstance(): SaveImageDialogFragment {
-            // TODO Propose a name.
-
             val dialogFragment = SaveImageDialogFragment()
             dialogFragment.arguments = Bundle()
             return dialogFragment

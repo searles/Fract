@@ -15,7 +15,7 @@
         android:title="@string/shareImage" />
     <item
         android:id="@+id/saveToGalleryAction"
-        android:title="@string/saveImage" />
+        android:title="@string/saveImageAs" />
     <item
         android:id="@+id/imageSize"
         android:title="@string/setImageSize" />

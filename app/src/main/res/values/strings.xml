@@ -5,10 +5,9 @@
     <string name="openFavorites">Favorites</string>
     <string name="addToFavorites">Add to Favorites</string>
     <string name="shareImage">Share Image</string>
-    <string name="saveImage">Save Image</string>
+    <string name="saveImageAs">Save Image as</string>
     <string name="setImageSize">Set Image Size</string>
     <string name="settings">Settings</string>
-    <string name="nameOfFavorite">Enter Name for favorite</string>
     <string name="imageWidthInPixel">Width (px)</string>
     <string name="imageHeightInPixel">Height (px)</string>
     <string name="xxLabel">[a] Horizontal-X</string>
@@ -65,4 +64,5 @@
     <string name="successfullySavedImage">Successfully saved image as %s</string>
     <string name="lightEffects">Light Effects</string>
     <string name="grantPermissionExplanation">Write permission is needed to write image files. Please grant permission and try again.</string>
+    <string name="lastModified">last modified: %s</string>
 </resources>

@@ -22,9 +22,10 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import at.searles.android.storage.StorageActivity
-import at.searles.android.storage.data.PathContentProvider
-import at.searles.android.storage.dialog.ReplaceExistingDialogFragment
+import at.searles.android.storage.StorageEditor
+import at.searles.android.storage.StorageEditorCallback
+import at.searles.android.storage.StorageManagerActivity
+import at.searles.android.storage.data.StorageProvider
 import at.searles.commons.color.Palette
 import at.searles.commons.math.Scale
 import at.searles.fract.demos.AssetBulkIconGenerator
@@ -34,9 +35,7 @@ import at.searles.fract.editors.*
 import at.searles.fract.experimental.BulkCalculator
 import at.searles.fract.experimental.MoveLightPlugin
 import at.searles.fract.experimental.MovePaletteOffsetPlugin
-import at.searles.fract.favorites.AddToFavoritesDialogFragment
-import at.searles.fract.favorites.FavoritesProvider
-import at.searles.fract.favorites.SaveImageDialogFragment
+import at.searles.fract.favorites.*
 import at.searles.fractbitmapmodel.*
 import at.searles.fractbitmapmodel.changes.*
 import at.searles.fractimageview.PluginScalableImageView
@@ -51,13 +50,19 @@ import at.searles.paletteeditor.PaletteAdapter
 import at.searles.paletteeditor.PaletteEditorActivity
 import at.searles.sourceeditor.SourceEditorActivity
 import com.google.android.material.navigation.NavigationView
-import org.json.JSONObject
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
 
-
-class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, ReplaceExistingDialogFragment.Callback {
+// TODO
+// * If there is a selection in main image view and back is pressed, the selection should be cancelled
+// * Crash if palette mode is used right after rotation
+// * Plugin Coordinates
+//     + Calculate 3 corners -1:-1 x 1:1
+// * Plugin Move parameters
+//     + Show color of dot in parameter view
+// * New functions 'ray' and 'straight'[?] and 'plot'
+class FractMainActivity : AppCompatActivity(), StorageEditorCallback<FavoriteEntry>, FractBitmapModel.Listener {
 
     private lateinit var parameterAdapter: ParameterAdapter
     private lateinit var bitmapModelFragment: FractBitmapModelFragment
@@ -99,6 +104,8 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
         findViewById<Toolbar>(R.id.toolbar)
     }
 
+    override lateinit var storageProvider: StorageProvider
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -127,6 +134,8 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
                 Log.e("ERROR", "Reflection not working?", nsme)
                 Toast.makeText(this, "Please report to the developer with this message: ${nsme.message}. Thank you.", Toast.LENGTH_LONG).show()
             }
+
+            throw e
         }
 
         mainImageView.visibility = View.INVISIBLE
@@ -142,7 +151,7 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
         // setting up plugins must happen here because of the life cycle.
         setUpMainImageView()
 
-        // TODO Catch error on reflection.
+        storageProvider = StorageProvider(FavoritesStorageManagerActivity.pathName, this)
     }
 
     override fun onStart() {
@@ -244,7 +253,8 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
                 return
             }
             favoritesRequestCode -> {
-                val favoriteKey = intent!!.getStringExtra(StorageActivity.nameKey)!!
+                val favoriteKey = intent!!.getStringExtra(StorageManagerActivity.nameKey)!!
+
                 loadFavorite(favoriteKey)
                 return
             }
@@ -281,10 +291,7 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
 
     private fun loadFavorite(favoriteKey: String) {
         try {
-            FavoritesProvider(this).load(favoriteKey) {
-                val obj = JSONObject(it)
-                bitmapModel.scheduleCalcPropertiesChange(PropertiesFromJsonChange(obj))
-            }
+            storageEditor.forceOpen(favoriteKey)
         } catch (e: Exception) {
             e.printStackTrace()
             Toast.makeText(this, resources.getText(R.string.error, e.message), Toast.LENGTH_LONG).show()
@@ -380,7 +387,7 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
         val shareIntent = Intent().apply {
             action = Intent.ACTION_SEND
             putExtra(Intent.EXTRA_STREAM, contentUri)
-            type = PathContentProvider.mimeType
+            type = pngMimeType
         }
 
         startActivity(Intent.createChooser(shareIntent, resources.getString(R.string.shareImage)))
@@ -420,15 +427,11 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
     }
 
     private fun openAddToFavoritesDialog() {
-        AddToFavoritesDialogFragment.newInstance().show(supportFragmentManager, "dialog")
+        storageEditor.onSaveAs()
     }
 
     private fun openFavorites() {
-        Intent(this, StorageActivity::class.java).also {
-            it.putExtra(StorageActivity.titleKey, resources.getString(R.string.openFavorites))
-            it.putExtra(StorageActivity.providerClassNameKey, FavoritesProvider::class.java.canonicalName)
-            startActivityForResult(it, favoritesRequestCode)
-        }
+        storageEditor.onOpen(favoritesRequestCode)
     }
 
     private fun loadDemo(sourceKey: String, parametersKey: String, mergeParameters: Boolean) {
@@ -517,7 +520,7 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
 
         taskProgressBar.apply {
             min = -progressBarZero
-            max = progessBarFactor
+            max = progressBarFactor
         }
 
         if(!bitmapModel.isTaskRunning) {
@@ -570,7 +573,7 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
     override fun setProgress(progress: Float) {
         with(taskProgressBar) {
             visibility = View.VISIBLE
-            this.progress = (progessBarFactor * progress).toInt()
+            this.progress = (progressBarFactor * progress).toInt()
             isIndeterminate = false
         }
     }
@@ -701,11 +704,8 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
     }
 
     fun saveToFavorites(name: String) {
-        FavoritesProvider(this).saveToFavorites(name, bitmapModel, false)
-    }
-
-    override fun replaceExistingAndSave(name: String) {
-        FavoritesProvider(this).saveToFavorites(name, bitmapModel, true)
+        // this is called from save image-dialog
+        storageEditor.saveAs(name)
     }
 
     fun openParameterContext(name: String) {
@@ -784,8 +784,22 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
         parameterAdapter.updateFrom(bitmapModel)
     }
 
+    override val storageEditor: StorageEditor<FavoriteEntry>
+        get() = FavoritesStorageEditor(this, this, storageProvider)
+
+    override var value: FavoriteEntry
+        get() = FavoriteEntry.create(bitmapModel)
+        set(value) {
+            bitmapModel.scheduleCalcPropertiesChange(NewFractPropertiesChange(value.properties))
+        }
+
+    override fun onStorageItemChanged(name: String?, isModified: Boolean) {
+        // ignore.
+        // TODO Maybe keep name?
+    }
+
     companion object {
-        private const val progessBarFactor = 900
+        private const val progressBarFactor = 900
         private const val progressBarZero = 100
         private const val demoSelectorRequestCode = 152
         private const val fractBitmapModelFragmentTag = "bitmapModel"
@@ -794,11 +808,13 @@ class FractMainActivity : AppCompatActivity(), FractBitmapModel.Listener, Replac
         private const val paletteLabelKey = "paletteIndex"
         private const val favoritesRequestCode = 412
 
-        private val settingsKey = "settings"
-        private val propertiesKey = "properties"
+        private const val settingsKey = "settings"
+        private const val propertiesKey = "properties"
 
         const val FILE_PROVIDER = "at.searles.storage.fileprovider"
 
         const val WEB_PAGE_URI = "http://fractapp.wordpress.com/"
+
+        private const val pngMimeType = "image/png"
     }
 }
