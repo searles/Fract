@@ -9,6 +9,7 @@ import androidx.fragment.app.DialogFragment
 import at.searles.commons.math.Scale
 import at.searles.fract.FractMainActivity
 import at.searles.fract.R
+import at.searles.fractbitmapmodel.FractPropertiesAdapter
 
 class ScaleDialogFragment: DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -79,7 +80,6 @@ class ScaleDialogFragment: DialogFragment() {
         fun newInstance(scale: Scale): ScaleDialogFragment {
             val dialogFragment = ScaleDialogFragment()
 
-            // TODO: Adapter
             dialogFragment.arguments = Bundle().apply {
                 putDouble("a", scale.xx)
                 putDouble("b", scale.xy)

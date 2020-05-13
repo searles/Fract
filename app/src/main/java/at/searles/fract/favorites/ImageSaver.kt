@@ -1,4 +1,4 @@
-package at.searles.fract.experimental
+package at.searles.fract.favorites
 
 import android.annotation.SuppressLint
 import android.content.ContentValues
@@ -19,7 +19,12 @@ object ImageSaver {
         filename: String
     ): Uri? {
         if (android.os.Build.VERSION.SDK_INT < 29) {
-            return savePre29(folderName, filename, bitmap, context)
+            return savePre29(
+                folderName,
+                filename,
+                bitmap,
+                context
+            )
         }
 
         val values = contentValues()
@@ -30,7 +35,10 @@ object ImageSaver {
         val uri: Uri? = context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
 
         if (uri != null) {
-            saveImageToStream(bitmap, context.contentResolver.openOutputStream(uri))
+            saveImageToStream(
+                bitmap,
+                context.contentResolver.openOutputStream(uri)
+            )
             values.put(MediaStore.Images.Media.IS_PENDING, false)
             context.contentResolver.update(uri, values, null, null)
 
@@ -56,7 +64,10 @@ object ImageSaver {
         }
 
         val file = File(directory, "$filename.png")
-        saveImageToStream(bitmap, FileOutputStream(file))
+        saveImageToStream(
+            bitmap,
+            FileOutputStream(file)
+        )
 
         val values = contentValues()
         values.put(MediaStore.Images.Media.DATA, file.absolutePath)

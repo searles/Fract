@@ -13,7 +13,6 @@ import at.searles.android.storage.StorageEditorCallback
 import at.searles.android.storage.dialog.ItemsAdapter
 import at.searles.fract.FractMainActivity
 import at.searles.fract.R
-import at.searles.fract.experimental.ImageSaver
 
 class SaveImageDialogFragment: DialogFragment() {
 

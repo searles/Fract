@@ -1,4 +1,4 @@
-package at.searles.fract.experimental
+package at.searles.fract.plugins
 
 import android.graphics.Canvas
 import at.searles.commons.color.Palette

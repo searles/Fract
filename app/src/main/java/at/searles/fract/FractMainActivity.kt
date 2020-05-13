@@ -35,8 +35,8 @@ import at.searles.fract.demos.AssetsUtils
 import at.searles.fract.demos.DemosFolderHolder
 import at.searles.fract.editors.*
 import at.searles.fract.experimental.BulkCalculator
-import at.searles.fract.experimental.MoveLightPlugin
-import at.searles.fract.experimental.MovePaletteOffsetPlugin
+import at.searles.fract.plugins.MoveLightPlugin
+import at.searles.fract.plugins.MovePaletteOffsetPlugin
 import at.searles.fract.favorites.*
 import at.searles.fractbitmapmodel.*
 import at.searles.fractbitmapmodel.changes.*
@@ -58,13 +58,16 @@ import java.io.OutputStream
 import kotlin.random.Random
 
 // TODO
-// * If there is a selection in main image view and back is pressed, the selection should be cancelled
 // * Crash if palette mode is used right after rotation
 // * Plugin Coordinates
 //     + Calculate 3 corners -1:-1 x 1:1
 // * Plugin Move parameters
 //     + Show color of dot in parameter view
 // * New functions 'ray' and 'straight'[?] and 'plot'
+// * Debug of fractlang:
+//     + NameIterator should use old var as input to observe variables during step.
+// * Center Lock + Set Center to this parameter if it is a complex value.
+// * bitmapUpdate into background thread.
 class FractMainActivity : AppCompatActivity(), StorageEditorCallback<FavoriteEntry>, FractBitmapModel.Listener {
 
     private lateinit var parameterAdapter: ParameterAdapter
@@ -554,8 +557,10 @@ class FractMainActivity : AppCompatActivity(), StorageEditorCallback<FavoriteEnt
 
         touchBlockPlugin = GestureBlockPlugin()
 
-        lightPlugin = MoveLightPlugin {bitmapModel}
-        palettePlugin = MovePaletteOffsetPlugin({settings}, {bitmapModel})
+        lightPlugin = MoveLightPlugin { bitmapModel }
+        palettePlugin =
+            MovePaletteOffsetPlugin({ settings },
+                { bitmapModel })
 
         gridPlugin = GridPlugin(this)
 

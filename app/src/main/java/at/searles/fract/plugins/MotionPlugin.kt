@@ -1,4 +1,4 @@
-package at.searles.fract.experimental
+package at.searles.fract.plugins
 
 import android.view.MotionEvent
 import android.view.MotionEvent.INVALID_POINTER_ID
@@ -46,6 +46,10 @@ abstract class MotionPlugin: Plugin {
 
             MotionEvent.ACTION_MOVE -> {
                 val pointerIndex = event.findPointerIndex(activePointerId)
+
+                if(pointerIndex == -1) {
+                    return false
+                }
 
                 lastTouchX  = currentTouchX
                 lastTouchY = currentTouchY
