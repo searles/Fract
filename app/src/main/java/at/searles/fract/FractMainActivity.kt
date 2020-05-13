@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -12,6 +13,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
+import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -53,6 +55,7 @@ import com.google.android.material.navigation.NavigationView
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
+import kotlin.random.Random
 
 // TODO
 // * If there is a selection in main image view and back is pressed, the selection should be cancelled
@@ -115,7 +118,7 @@ class FractMainActivity : AppCompatActivity(), StorageEditorCallback<FavoriteEnt
         setSupportActionBar(toolbar)
 
         toolbar.setNavigationOnClickListener {
-            drawerLayout.openDrawer(menuNavigationView)
+            openNavigationDrawer()
         }
 
         menuNavigationView.setNavigationItemSelectedListener {
@@ -152,6 +155,14 @@ class FractMainActivity : AppCompatActivity(), StorageEditorCallback<FavoriteEnt
         setUpMainImageView()
 
         storageProvider = StorageProvider(FavoritesStorageManagerActivity.pathName, this)
+    }
+
+    private fun openNavigationDrawer() {
+        val eyeView = menuNavigationView.findViewById<ImageView>(R.id.eyeView)
+        val eyeIds = intArrayOf(R.drawable.eye1, R.drawable.eye2, R.drawable.eye3, R.drawable.eye4, R.drawable.eye5, R.drawable.eye6)
+        eyeView.setImageBitmap(BitmapFactory.decodeResource(resources, eyeIds[Random.nextInt(eyeIds.size)]))
+        drawerLayout.openDrawer(menuNavigationView)
+
     }
 
     override fun onStart() {
@@ -274,6 +285,10 @@ class FractMainActivity : AppCompatActivity(), StorageEditorCallback<FavoriteEnt
             return
         }
 
+        if(mainImageView.cancelMultitouchGesture()) {
+            return
+        }
+
         if(!bitmapModelFragment.bitmapModel.hasBackHistory()) {
             Toast.makeText(this, "History is empty.", Toast.LENGTH_LONG).show()
             return
@@ -294,7 +309,7 @@ class FractMainActivity : AppCompatActivity(), StorageEditorCallback<FavoriteEnt
             storageEditor.forceOpen(favoriteKey)
         } catch (e: Exception) {
             e.printStackTrace()
-            Toast.makeText(this, resources.getText(R.string.error, e.message), Toast.LENGTH_LONG).show()
+            Toast.makeText(this, resources.getText(R.string.errorWithMsg, e.message), Toast.LENGTH_LONG).show()
         }
     }
 

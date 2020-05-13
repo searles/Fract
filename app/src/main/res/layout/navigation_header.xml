@@ -9,10 +9,12 @@
     android:gravity="bottom">
 
     <ImageView
+        android:id="@+id/eyeView"
         android:layout_width="match_parent"
         android:layout_height="120dp"
         android:scaleType="fitCenter"
-        android:src="@drawable/newton_round" />
+        android:src="@drawable/eye5"
+        android:contentDescription="@string/icon" />
 
     <TextView
         android:layout_width="match_parent"

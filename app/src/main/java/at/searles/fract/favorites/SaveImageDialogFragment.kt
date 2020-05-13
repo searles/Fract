@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.widget.AutoCompleteTextView
 import android.widget.CheckBox
-import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
@@ -68,7 +67,7 @@ class SaveImageDialogFragment: DialogFragment() {
                 addToFavorites(name)
             }
         } catch(e: Exception) {
-            Toast.makeText(context, context!!.resources.getText(R.string.error, e.localizedMessage), Toast.LENGTH_LONG).show()
+            Toast.makeText(context, context!!.resources.getText(R.string.errorWithMsg, e.localizedMessage), Toast.LENGTH_LONG).show()
             return
         }
     }
