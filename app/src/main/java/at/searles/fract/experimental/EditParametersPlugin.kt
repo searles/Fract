@@ -5,7 +5,7 @@ import android.graphics.Canvas
 import android.view.MotionEvent
 import at.searles.fractbitmapmodel.FractBitmapModel
 import at.searles.fractimageview.Plugin
-import at.searles.fractimageview.ScalableImageView
+import at.searles.fractimageview.PluginScalableImageView
 
 // TODO it is much easier if they are stateful
 // TODO: This requires a savings mechanism though.
@@ -15,11 +15,11 @@ class EditParametersPlugin(private val context: Context, private val bitmapModel
 
     override val isEnabled = true
 
-    override fun onDraw(source: ScalableImageView, canvas: Canvas) {
+    override fun onDraw(source: PluginScalableImageView, canvas: Canvas) {
         TODO("Not yet implemented")
     }
 
-    override fun onTouchEvent(source: ScalableImageView, event: MotionEvent): Boolean {
+    override fun onTouchEvent(source: PluginScalableImageView, event: MotionEvent): Boolean {
         TODO("Not yet implemented")
     }
 }

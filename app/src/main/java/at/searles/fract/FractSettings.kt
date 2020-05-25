@@ -50,5 +50,5 @@ class FractSettings(
         }
     }
 
-    enum class Mode { None, Scale, Light, Palette }
+    enum class Mode { None, Scale, Light, Palette, Orbit }
 }

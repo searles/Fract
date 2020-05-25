@@ -23,6 +23,10 @@
                 android:id="@+id/palette"
                 android:title="@string/paletteMode"
                 android:icon="@drawable/ic_color" />
+            <item
+                android:id="@+id/orbit"
+                android:title="@string/drawOrbitMode"
+                android:icon="@drawable/ic_orbit" />
         </menu>
     </item>
     <item

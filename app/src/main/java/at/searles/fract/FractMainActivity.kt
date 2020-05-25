@@ -38,6 +38,7 @@ import at.searles.fract.experimental.BulkCalculator
 import at.searles.fract.plugins.MoveLightPlugin
 import at.searles.fract.plugins.MovePaletteOffsetPlugin
 import at.searles.fract.favorites.*
+import at.searles.fract.plugins.OrbitPlugin
 import at.searles.fractbitmapmodel.*
 import at.searles.fractbitmapmodel.changes.*
 import at.searles.fractimageview.PluginScalableImageView
@@ -64,8 +65,6 @@ import kotlin.random.Random
 // * Plugin Move parameters
 //     + Show color of dot in parameter view
 // * New functions 'ray' and 'straight'[?] and 'plot'
-// * Debug of fractlang:
-//     + NameIterator should use old var as input to observe variables during step.
 // * Center Lock + Set Center to this parameter if it is a complex value.
 // * bitmapUpdate into background thread.
 class FractMainActivity : AppCompatActivity(), StorageEditorCallback<FavoriteEntry>, FractBitmapModel.Listener {
@@ -82,6 +81,7 @@ class FractMainActivity : AppCompatActivity(), StorageEditorCallback<FavoriteEnt
     private lateinit var touchBlockPlugin: GestureBlockPlugin
     private lateinit var lightPlugin: MoveLightPlugin
     private lateinit var palettePlugin: MovePaletteOffsetPlugin
+    private lateinit var orbitPlugin: OrbitPlugin
     private lateinit var gridPlugin: GridPlugin
 
     private val menuNavigationView: NavigationView by lazy {
@@ -231,6 +231,11 @@ class FractMainActivity : AppCompatActivity(), StorageEditorCallback<FavoriteEnt
             }
             R.id.palette -> {
                 settings = settings.withMode(FractSettings.Mode.Palette)
+                updateSettings()
+                true
+            }
+            R.id.orbit -> {
+                settings = settings.withMode(FractSettings.Mode.Orbit)
                 updateSettings()
                 true
             }
@@ -546,7 +551,7 @@ class FractMainActivity : AppCompatActivity(), StorageEditorCallback<FavoriteEnt
         }
 
         parameterAdapter.updateFrom(bitmapModel)
-        mainImageView.scalableBitmapModel = bitmapModel
+        mainImageView.bitmapModel = bitmapModel
     }
 
     private fun setUpMainImageView() {
@@ -558,15 +563,14 @@ class FractMainActivity : AppCompatActivity(), StorageEditorCallback<FavoriteEnt
         touchBlockPlugin = GestureBlockPlugin()
 
         lightPlugin = MoveLightPlugin { bitmapModel }
-        palettePlugin =
-            MovePaletteOffsetPlugin({ settings },
-                { bitmapModel })
-
+        palettePlugin = MovePaletteOffsetPlugin({ settings }, { bitmapModel })
+        orbitPlugin = OrbitPlugin(this, mainImageView)
         gridPlugin = GridPlugin(this)
 
         mainImageView.addPlugin(touchBlockPlugin)
         mainImageView.addPlugin(lightPlugin)
         mainImageView.addPlugin(palettePlugin)
+        mainImageView.addPlugin(orbitPlugin)
 
         mainImageView.addPlugin(gridPlugin)
     }
@@ -587,6 +591,7 @@ class FractMainActivity : AppCompatActivity(), StorageEditorCallback<FavoriteEnt
     }
 
     override fun propertiesChanged(src: FractBitmapModel) {
+        // TODO Mediator
         parameterAdapter.updateFrom(src)
     }
 
@@ -668,6 +673,7 @@ class FractMainActivity : AppCompatActivity(), StorageEditorCallback<FavoriteEnt
                 FractSettings.Mode.None -> R.drawable.ic_none
                 FractSettings.Mode.Scale -> R.drawable.ic_zoom
                 FractSettings.Mode.Light -> R.drawable.ic_light
+                FractSettings.Mode.Orbit -> R.drawable.ic_orbit
                 else -> R.drawable.ic_color
             }
         )
@@ -680,10 +686,12 @@ class FractMainActivity : AppCompatActivity(), StorageEditorCallback<FavoriteEnt
         touchBlockPlugin.isEnabled = settings.mode == FractSettings.Mode.None
         lightPlugin.isEnabled = settings.mode == FractSettings.Mode.Light
         palettePlugin.isEnabled = settings.mode == FractSettings.Mode.Palette
+        orbitPlugin.isEnabled = settings.mode == FractSettings.Mode.Orbit
 
         updateModeMenuIcon()
 
         if(settings.mode == FractSettings.Mode.Light) {
+            // TODO move this
             val oldShaderProperties = bitmapModel.properties.shaderProperties
             if(!oldShaderProperties.useLightEffect) {
                 val newShaderProperties =

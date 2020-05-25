@@ -65,4 +65,5 @@
     <string name="lightEffects">Light Effects</string>
     <string name="grantPermissionExplanation">Write permission is needed to write image files. Please grant permission and try again.</string>
     <string name="lastModified">last modified: %s</string>
+    <string name="drawOrbitMode">Draw Orbit</string>
 </resources>

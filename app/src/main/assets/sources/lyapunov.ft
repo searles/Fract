@@ -51,6 +51,8 @@ class Calculator {
 
         var r: Real = lyapunovString[n];
 
+        plot(z);
+
         z = function;
 
         lyapunovExp = lyapunovExp + log abs diff(function, z);

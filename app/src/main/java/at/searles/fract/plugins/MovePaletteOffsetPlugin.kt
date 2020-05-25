@@ -6,7 +6,7 @@ import at.searles.fract.FractSettings
 import at.searles.fractbitmapmodel.FractBitmapModel
 import at.searles.fractbitmapmodel.FractProperties
 import at.searles.fractbitmapmodel.changes.BitmapPropertiesChange
-import at.searles.fractimageview.ScalableImageView
+import at.searles.fractimageview.PluginScalableImageView
 import kotlin.math.floor
 import kotlin.math.min
 
@@ -19,11 +19,11 @@ class MovePaletteOffsetPlugin(private val settings: () -> FractSettings, private
     private var totalDeltaX = 0f
     private var totalDeltaY = 0f
 
-    override fun onDraw(source: ScalableImageView, canvas: Canvas) {
+    override fun onDraw(source: PluginScalableImageView, canvas: Canvas) {
         // Do nothing.
     }
 
-    override fun activatePlugin() {
+    override fun activatePlugin(source: PluginScalableImageView) {
         palettes = bitmapModel().properties.paletteLabels.filter {
             !settings().excludeFromPaletteMode.contains(it)
         }.map { it to bitmapModel().properties.getPalette(it) }.toMap()
@@ -38,7 +38,7 @@ class MovePaletteOffsetPlugin(private val settings: () -> FractSettings, private
         bitmapModel().stopAnimation()
     }
 
-    override fun movePointer(source: ScalableImageView) {
+    override fun movePointer(source: PluginScalableImageView) {
         val size = min(source.width, source.height) * 0.75f
 
         require(size > 0)

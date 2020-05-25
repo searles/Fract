@@ -6,8 +6,7 @@ import at.searles.fractbitmapmodel.FractBitmapModel
 import at.searles.fractbitmapmodel.FractProperties
 import at.searles.fractbitmapmodel.ShaderProperties
 import at.searles.fractbitmapmodel.changes.BitmapPropertiesChange
-import at.searles.fractimageview.ScalableBitmapViewUtils
-import at.searles.fractimageview.ScalableImageView
+import at.searles.fractimageview.PluginScalableImageView
 import kotlin.math.*
 
 class MoveLightPlugin(private val bitmapModel: () -> FractBitmapModel): MotionPlugin() {
@@ -20,10 +19,10 @@ class MoveLightPlugin(private val bitmapModel: () -> FractBitmapModel): MotionPl
         z = cos(polarAngle).toFloat()
      */
 
-    override fun onDraw(source: ScalableImageView, canvas: Canvas) {
+    override fun onDraw(source: PluginScalableImageView, canvas: Canvas) {
     }
 
-    override fun activatePlugin() {
+    override fun activatePlugin(source: PluginScalableImageView) {
         bitmapModel().startAnimation(720) // TODO
     }
 
@@ -31,7 +30,7 @@ class MoveLightPlugin(private val bitmapModel: () -> FractBitmapModel): MotionPl
         bitmapModel().stopAnimation()
     }
 
-    override fun movePointer(source: ScalableImageView) {
+    override fun movePointer(source: PluginScalableImageView) {
         val newShaderProperties = getShaderPropertiesForPoint(source, PointF(currentTouchX, currentTouchY))
 
         val change = object: BitmapPropertiesChange {
@@ -43,11 +42,8 @@ class MoveLightPlugin(private val bitmapModel: () -> FractBitmapModel): MotionPl
         bitmapModel().applyBitmapPropertiesChange(change)
     }
 
-    private fun getShaderPropertiesForPoint(source: ScalableImageView, pt: PointF): ShaderProperties {
-        val pt0 = ScalableBitmapViewUtils.norm(pt,
-            bitmapModel().width.toFloat(), bitmapModel().height.toFloat(),
-            source.width.toFloat(), source.height.toFloat()
-        )
+    private fun getShaderPropertiesForPoint(source: PluginScalableImageView, pt: PointF): ShaderProperties {
+        val pt0 = source.norm(pt)
 
         val azimuth = -atan2(pt0.y, pt0.x).toDouble()
         val polar = asin(max(0f, min(1f, hypot(pt0.x, pt0.y)))).toDouble()

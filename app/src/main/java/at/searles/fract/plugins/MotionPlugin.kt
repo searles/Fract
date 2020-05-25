@@ -3,7 +3,7 @@ package at.searles.fract.plugins
 import android.view.MotionEvent
 import android.view.MotionEvent.INVALID_POINTER_ID
 import at.searles.fractimageview.Plugin
-import at.searles.fractimageview.ScalableImageView
+import at.searles.fractimageview.PluginScalableImageView
 
 /**
  * Check https://developer.android.com/training/gestures/scale
@@ -26,7 +26,7 @@ abstract class MotionPlugin: Plugin {
     val isActive: Boolean
         get() = activePointerId != INVALID_POINTER_ID
 
-    override fun onTouchEvent(source: ScalableImageView, event: MotionEvent): Boolean {
+    override fun onTouchEvent(source: PluginScalableImageView, event: MotionEvent): Boolean {
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
                 event.actionIndex.also { pointerIndex ->
@@ -41,7 +41,7 @@ abstract class MotionPlugin: Plugin {
                 // Save the ID of this pointer (for dragging)
                 activePointerId = event.getPointerId(0)
 
-                activatePlugin()
+                activatePlugin(source)
             }
 
             MotionEvent.ACTION_MOVE -> {
@@ -89,9 +89,9 @@ abstract class MotionPlugin: Plugin {
         return true
     }
 
-    abstract fun movePointer(source: ScalableImageView)
+    abstract fun movePointer(source: PluginScalableImageView)
 
     abstract fun deactivatePlugin()
 
-    abstract fun activatePlugin()
+    abstract fun activatePlugin(source: PluginScalableImageView)
 }
