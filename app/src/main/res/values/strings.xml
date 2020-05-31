@@ -66,4 +66,7 @@
     <string name="grantPermissionExplanation">Write permission is needed to write image files. Please grant permission and try again.</string>
     <string name="lastModified">last modified: %s</string>
     <string name="drawOrbitMode">Draw Orbit</string>
+    <string name="lockCenter">Lock Center</string>
+    <string name="centerOnValue">Center on value</string>
+    <string name="orthogonalize">Orthogonalize</string>
 </resources>

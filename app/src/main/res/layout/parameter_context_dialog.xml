@@ -15,4 +15,10 @@
         android:layout_height="wrap_content"
         android:text="@string/setToCenter" />
 
+    <Button
+        android:id="@+id/centerOnValueButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/centerOnValue" />
+
 </LinearLayout>

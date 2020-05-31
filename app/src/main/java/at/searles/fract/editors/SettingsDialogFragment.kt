@@ -11,7 +11,6 @@ import androidx.fragment.app.DialogFragment
 import at.searles.fract.FractMainActivity
 import at.searles.fract.FractSettings
 import at.searles.fract.R
-import kotlinx.android.synthetic.main.settings_dialog.*
 
 class SettingsDialogFragment: DialogFragment() {
 
@@ -19,6 +18,7 @@ class SettingsDialogFragment: DialogFragment() {
     private lateinit var scaleRadioButton: RadioButton
     private lateinit var confirmZoomCheckBox: CheckBox
     private lateinit var rotationLockCheckBox: CheckBox
+    private lateinit var centerLockCheckBox: CheckBox
     private lateinit var lightRadioButton: RadioButton
     private lateinit var paletteRadioButton: RadioButton
     private lateinit var showGridCheckBox: CheckBox
@@ -33,6 +33,7 @@ class SettingsDialogFragment: DialogFragment() {
         scaleRadioButton = view.findViewById(R.id.scaleRadioButton)!!
         confirmZoomCheckBox = view.findViewById(R.id.confirmZoomCheckBox)!!
         rotationLockCheckBox = view.findViewById(R.id.rotationLockCheckBox)!!
+        centerLockCheckBox = view.findViewById(R.id.centerLockCheckBox)!!
         showGridCheckBox = view.findViewById(R.id.showGridCheckBox)!!
         lightRadioButton = view.findViewById(R.id.lightRadioButton)!!
         paletteRadioButton = view.findViewById(R.id.paletteRadioButton)!!
@@ -56,6 +57,7 @@ class SettingsDialogFragment: DialogFragment() {
             noneRadioButton.isChecked = settings.mode == FractSettings.Mode.None
             scaleRadioButton.isChecked = settings.mode == FractSettings.Mode.Scale
             rotationLockCheckBox.isChecked = settings.isRotationLock
+            centerLockCheckBox.isChecked = settings.isCenterLock
             confirmZoomCheckBox.isChecked = settings.isConfirmZoom
             lightRadioButton.isChecked = settings.mode == FractSettings.Mode.Light
             paletteRadioButton.isChecked = settings.mode == FractSettings.Mode.Palette
@@ -73,10 +75,11 @@ class SettingsDialogFragment: DialogFragment() {
             }
 
             val isRotationLock = rotationLockCheckBox.isChecked
+            val isCenterLock = centerLockCheckBox.isChecked
             val isConfirmZoom = confirmZoomCheckBox.isChecked
             val isGridEnabled = showGridCheckBox.isChecked
 
-            val fractSettings = FractSettings(mode, isRotationLock, isConfirmZoom, isGridEnabled)
+            val fractSettings = FractSettings(mode, isRotationLock, isCenterLock, isConfirmZoom, isGridEnabled)
 
             (activity as FractMainActivity).setSettings(fractSettings)
         } catch(e: NumberFormatException) {

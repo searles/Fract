@@ -1,11 +1,14 @@
 package at.searles.fract.editors
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
+import at.searles.commons.math.Cplx
 import at.searles.fract.FractMainActivity
 import at.searles.fract.R
 import at.searles.fractlang.FractlangExpr
@@ -17,49 +20,51 @@ import at.searles.fractlang.nodes.Node
  */
 class ParameterContextDialogFragment: DialogFragment() {
     private lateinit var key: String
+    private lateinit var setToCenterButton: Button
+    private lateinit var centerOnValueButton: Button
 
+    @SuppressLint("InflateParams")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val builder = AlertDialog.Builder(activity!!)
-
         val name = arguments!!.getString(nameKey)!!
 
         key = name
 
         val value = arguments!!.getString(valueKey)!!
 
-        var expr: Node? = null
-
-        try {
+        val cplxValue = try {
             // Try to parse value into a number.
-            expr = FractlangExpr.fromString(value)
+            (FractlangExpr.fromString(value) as? CplxNode)?.value
         } catch(e: Exception) {
-            // did not succeed. No big deal.
+            // did not succeed. No big deal; it simply isn't a complex number.
+            null
         }
 
-        builder
-            .setView(R.layout.parameter_context_dialog)
-            .setTitle(resources.getString(R.string.editParameterName, name))
-            .setNegativeButton(android.R.string.cancel) { _, _ -> dismiss() }
-            .setCancelable(true)
+        val view = LayoutInflater.from(context).inflate(R.layout.parameter_context_dialog, null)
 
-        val dialog = builder.show()
+        setToCenterButton = view.findViewById(R.id.setToCenterButton)
+        centerOnValueButton = view.findViewById(R.id.centerOnValueButton)
 
-        dialog.findViewById<Button>(R.id.resetButton)!!.setOnClickListener {
-            (activity as FractMainActivity).resetParameter(key)
-            dismiss()
-        }
-
-        if(expr is CplxNode) {
-            dialog.findViewById<Button>(R.id.setToCenterButton)!!.setOnClickListener {
+        if(cplxValue != null) {
+            setToCenterButton.setOnClickListener {
                 (activity as FractMainActivity).setParameterToCenter(key)
                 dismiss()
             }
+
+            centerOnValueButton.setOnClickListener {
+                (activity as FractMainActivity).centerAt(cplxValue)
+                dismiss()
+            }
         } else {
-            dialog.findViewById<Button>(R.id.setToCenterButton)!!.visibility = View.INVISIBLE
+            setToCenterButton.visibility = View.INVISIBLE
+            centerOnValueButton.visibility = View.INVISIBLE
         }
 
-
-        return dialog
+        return AlertDialog.Builder(activity!!)
+            .setView(view)
+            .setTitle(resources.getString(R.string.editParameterName, name))
+            .setNegativeButton(android.R.string.cancel) { _, _ -> dismiss() }
+            .setCancelable(true)
+            .create()
     }
 
     companion object {

@@ -6,27 +6,31 @@ val isJuliaSetLabel = "Julia Set";
 val juliaSetParameterLabel = "Julia Set Parameter";
 val z0Label = "Start Value (z[0])";
 val isBoundLabel = "All Points are bound";
-val bailoutRadiusLabel = "Bailout Radius";
-val bailoutValueLabel = "Bailout Value";
-val bailoutColorValueLabel = "Bailout Color Value";
-val bailoutHeightLabel = "Bailout Height";
+val bailoutRadiusLabel = "Bailout radius";
+val bailoutValueLabel = "Value in bailout area";
+val bailoutColorValueLabel = "Color value in bailout area";
+val bailoutHeightLabel = "Height in bailout area";
 val bailoutPaletteLabel = "Bailout Palette";
-val epsilonRadiusLabel = "Epsilon Radius";
-val lakeValueLabel = "Lake Value";
-val lakeColorValueLabel = "Lake Color Value";
-val lakeHeightLabel = "Lake Height";
+val bailoutPaletteDescription = "Color palette for bailout area";
+val epsilonRadiusLabel = "Epsilon radius";
+val lakeValueLabel = "Value in lake area";
+val lakeColorValueLabel = "Color value in lake area";
+val lakeHeightLabel = "Height in lake area";
 val lakePaletteLabel = "Lake Palette";
+val lakePaletteDescription = "Color palette in lake area";
 val trapFunctionLabel = "Orbit Trap Function";
 val isDrawBailoutTrapLabel = "Draw Orbit Trap in Bailout";
 val bailoutTrapValueLabel = "Bailout Orbit Trap Value";
 val bailoutTrapColorValueLabel = "Bailout Orbit Trap Color Value";
 val bailoutTrapHeightLabel = "Bailout Orbit Trap Height";
 val bailoutTrapPaletteLabel = "Bailout Orbit Trap Palette";
+val bailoutTrapPaletteDescription = "Palette for orbit trap in bailout area";
 val isDrawLakeTrapLabel = "Draw Orbit Trap in Lake";
 val lakeTrapValueLabel = "Lake Orbit Trap Value";
 val lakeTrapColorValueLabel = "Lake Orbit Trap Color Value";
 val lakeTrapHeightLabel = "Lake Orbit Trap Height";
 val lakeTrapPaletteLabel = "Lake Orbit Trap Palette";
+val lakeTrapPaletteDescription = "Palette for orbit trap in lake area";
 val startIndexLabel = "Start Index of Orbit Trap";
 
 setScale(2, 0, 0, 2, 0, 0); // Default Scale
@@ -95,6 +99,8 @@ class Calculator {
     * true is returned if none of the break conditions succeeds.
     */
     fun step() {
+        plot z;
+
         extern function: functionLabel = "z^2 + c";
         nextZ = function;
 
@@ -118,7 +124,7 @@ class Calculator {
         extern isDrawLakeTrap: isDrawLakeTrapLabel = "true";
 
         if(isDrawLakeTrap and firstTrapIndex >= 0) {
-            val paletteIndex = addPalette(lakeTrapPaletteLabel, 3, 4,
+            val paletteIndex = putPalette(lakeTrapPaletteLabel, lakeTrapPaletteDescription, 3, 4,
                 [0, 0, #ff000000], [0, 1, #ff000000], [0, 2, #ff000000], [0, 3, #ff000000],
                 [1, 0, #ffff0000], [1, 1, #ffffff00], [1, 2, #ff00aa00], [1, 3, #ff0000ff],
                 [2, 0, #ffffffff], [2, 1, #ffffffff], [2, 2, #ffffffff], [2, 3, #ffffffff]
@@ -131,8 +137,8 @@ class Calculator {
             var value = lakeTrapValue;
             setResult(paletteIndex, lakeTrapColorValue, lakeTrapHeight);
         } else {
-            val lakePaletteIndex =
-                addPalette(lakePaletteLabel, 2, 2, [0, 0, #ff000000], [0, 1, #ffffffff], [1, 1, #ff000000], [1, 0, #ffffffff]);
+            val lakePaletteIndex = putPalette(lakePaletteLabel, lakePaletteDescription, 2, 2,
+                [0, 0, #ff000000], [0, 1, #ffffffff], [1, 1, #ff000000], [1, 0, #ffffffff]);
 
             extern lakeValue: lakeValueLabel = "log1p rad z : argnorm z";
             extern lakeColorValue: lakeColorValueLabel = "value";
@@ -167,7 +173,7 @@ class Calculator {
         extern isDrawBailoutTrap: isDrawBailoutTrapLabel = "true";
 
         if(isDrawBailoutTrap and firstTrapIndex >= 0) {
-            val paletteIndex = addPalette(bailoutTrapPaletteLabel, 3, 4,
+            val paletteIndex = putPalette(bailoutTrapPaletteLabel, bailoutTrapPaletteDescription, 3, 4,
                 [0, 0, #ff000000], [0, 1, #ff000000], [0, 2, #ff000000], [0, 3, #ff000000],
                 [1, 0, #ffff0000], [1, 1, #ffffff00], [1, 2, #ff00aa00], [1, 3, #ff0000ff],
                 [2, 0, #ffffffff], [2, 1, #ffffffff], [2, 2, #ffffffff], [2, 3, #ffffffff]
@@ -180,8 +186,8 @@ class Calculator {
             var value = bailoutTrapValue;
             setResult(paletteIndex, bailoutTrapColorValue, bailoutTrapHeight);
         } else {
-            val paletteIndex = addPalette(bailoutPaletteLabel, 2, 2,
-                                [0, 0, #ff000000], [0, 1, #ffffffff], [1, 1, #ff000000], [1, 0, #ffffffff]);
+            val paletteIndex = putPalette(bailoutPaletteLabel, bailoutPaletteDescription, 2, 2,
+                [0, 0, #ff000000], [0, 1, #ffffffff], [1, 1, #ff000000], [1, 0, #ffffffff]);
 
             extern maxExponent: maxExponentLabel = "2";
 

@@ -9,6 +9,7 @@ object FactorySettings {
 
     const val factoryIsConfirmZoom = false
     const val factoryIsRotationLock = false
+    const val factoryIsCenterLock: Boolean = false
 
     const val factoryIsGridEnabled = false
 

@@ -29,6 +29,7 @@ import at.searles.android.storage.StorageEditorCallback
 import at.searles.android.storage.StorageManagerActivity
 import at.searles.android.storage.data.StorageProvider
 import at.searles.commons.color.Palette
+import at.searles.commons.math.Cplx
 import at.searles.commons.math.Scale
 import at.searles.fract.demos.AssetBulkIconGenerator
 import at.searles.fract.demos.AssetsUtils
@@ -67,6 +68,7 @@ import kotlin.random.Random
 // * New functions 'ray' and 'straight'[?] and 'plot'
 // * Center Lock + Set Center to this parameter if it is a complex value.
 // * bitmapUpdate into background thread.
+// * Warning: TextClassifier called on main thread
 class FractMainActivity : AppCompatActivity(), StorageEditorCallback<FavoriteEntry>, FractBitmapModel.Listener {
 
     private lateinit var parameterAdapter: ParameterAdapter
@@ -161,17 +163,16 @@ class FractMainActivity : AppCompatActivity(), StorageEditorCallback<FavoriteEnt
     }
 
     private fun openNavigationDrawer() {
-        val eyeView = menuNavigationView.findViewById<ImageView>(R.id.eyeView)
-        val eyeIds = intArrayOf(R.drawable.eye1, R.drawable.eye2, R.drawable.eye3, R.drawable.eye4, R.drawable.eye5, R.drawable.eye6)
-        eyeView.setImageBitmap(BitmapFactory.decodeResource(resources, eyeIds[Random.nextInt(eyeIds.size)]))
+        menuNavigationView.findViewById<ImageView>(R.id.eyeView)?.setImageBitmap(
+            BitmapFactory.decodeResource(resources, eyeIds[Random.nextInt(eyeIds.size)])
+        )
         drawerLayout.openDrawer(menuNavigationView)
-
     }
 
     override fun onStart() {
         super.onStart()
         attachBitmapModelFragment() // create bitmapModel
-        updateSettings()
+        applySettings()
     }
 
     private fun initSettings(savedInstanceState: Bundle?) {
@@ -216,27 +217,27 @@ class FractMainActivity : AppCompatActivity(), StorageEditorCallback<FavoriteEnt
             }
             R.id.none -> {
                 settings = settings.withMode(FractSettings.Mode.None)
-                updateSettings()
+                applySettings()
                 true
             }
             R.id.scale -> {
                 settings = settings.withMode(FractSettings.Mode.Scale)
-                updateSettings()
+                applySettings()
                 true
             }
             R.id.light -> {
                 settings = settings.withMode(FractSettings.Mode.Light)
-                updateSettings()
+                applySettings()
                 true
             }
             R.id.palette -> {
                 settings = settings.withMode(FractSettings.Mode.Palette)
-                updateSettings()
+                applySettings()
                 true
             }
             R.id.orbit -> {
                 settings = settings.withMode(FractSettings.Mode.Orbit)
-                updateSettings()
+                applySettings()
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -662,7 +663,7 @@ class FractMainActivity : AppCompatActivity(), StorageEditorCallback<FavoriteEnt
 
     fun setSettings(settings: FractSettings) {
         this.settings = settings
-        updateSettings()
+        applySettings()
     }
 
     private fun updateModeMenuIcon() {
@@ -679,8 +680,9 @@ class FractMainActivity : AppCompatActivity(), StorageEditorCallback<FavoriteEnt
         )
     }
 
-    private fun updateSettings() {
+    private fun applySettings() {
         mainImageView.hasRotationLock = settings.isRotationLock
+        mainImageView.hasCenterLock = settings.isCenterLock
         mainImageView.mustConfirmZoom = settings.isConfirmZoom
 
         touchBlockPlugin.isEnabled = settings.mode == FractSettings.Mode.None
@@ -769,6 +771,25 @@ class FractMainActivity : AppCompatActivity(), StorageEditorCallback<FavoriteEnt
         })
     }
 
+    fun orthogonalizeScale() {
+        val newScale = bitmapModel.properties.scale.createOrthogonal()
+        bitmapModel.scheduleCalcPropertiesChange(object: CalcPropertiesChange {
+            override fun accept(properties: FractProperties): FractProperties {
+                return FractProperties(properties.program, newScale, properties.customShaderProperties, properties.customPalettes)
+            }
+        })
+    }
+
+    fun centerAt(newCenter: Cplx) {
+        val oldScale = bitmapModel.properties.scale
+        val newScale = Scale(oldScale.xx, oldScale.xy, oldScale.yx, oldScale.yy, newCenter.re(), newCenter.im())
+        bitmapModel.scheduleCalcPropertiesChange(object: CalcPropertiesChange {
+            override fun accept(properties: FractProperties): FractProperties {
+                return FractProperties(properties.program, newScale, properties.customShaderProperties, properties.customPalettes)
+            }
+        })
+    }
+
     fun setParameterToCenter(key: String) {
         try {
             val scaleString = "${bitmapModel.properties.scale.cx} : ${bitmapModel.properties.scale.cy}"
@@ -844,5 +865,8 @@ class FractMainActivity : AppCompatActivity(), StorageEditorCallback<FavoriteEnt
         const val WEB_PAGE_URI = "http://fractapp.wordpress.com/"
 
         private const val pngMimeType = "image/png"
+
+        private val eyeIds = intArrayOf(R.drawable.eye1, R.drawable.eye2, R.drawable.eye3, R.drawable.eye4, R.drawable.eye5, R.drawable.eye6)
+
     }
 }

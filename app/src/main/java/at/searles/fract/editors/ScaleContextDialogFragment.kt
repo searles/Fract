@@ -1,7 +1,9 @@
 package at.searles.fract.editors
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.widget.Button
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
@@ -14,23 +16,33 @@ import at.searles.fractbitmapmodel.FractPropertiesAdapter
  * Opens for now menu to reset a parameter.
  */
 class ScaleContextDialogFragment: DialogFragment() {
+
+    private lateinit var resetButton: Button
+    private lateinit var orthognoalizeButton: Button
+
+    @SuppressLint("InflateParams")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val builder = AlertDialog.Builder(activity!!)
+        val view = LayoutInflater.from(context).inflate(R.layout.reset_context_dialog, null)
 
-        builder
-            .setView(R.layout.reset_context_dialog)
-            .setTitle(resources.getString(R.string.editScale))
-            .setNegativeButton(android.R.string.cancel) { _, _ -> dismiss() }
-            .setCancelable(true)
+        resetButton = view.findViewById(R.id.resetButton)
+        orthognoalizeButton = view.findViewById(R.id.orthogonalizeButton)
 
-        val dialog = builder.show()
-
-        dialog.findViewById<Button>(R.id.resetButton)!!.setOnClickListener {
+        resetButton.setOnClickListener {
             (activity as FractMainActivity).resetScale()
             dismiss()
         }
 
-        return dialog
+        orthognoalizeButton.setOnClickListener {
+            (activity as FractMainActivity).orthogonalizeScale()
+            dismiss()
+        }
+
+        return AlertDialog.Builder(activity!!)
+            .setView(view)
+            .setTitle(resources.getString(R.string.editScale))
+            .setNegativeButton(android.R.string.cancel) { _, _ -> dismiss() }
+            .setCancelable(true)
+            .create()
     }
 
     companion object {

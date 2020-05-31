@@ -58,8 +58,7 @@ class Calculator {
     * true is returned if none of the break conditions succeeds.
     */
     fun step() {
-        plot(z);
-
+        plot z;
         extern function: functionLabel = "z^2 + c";
         nextZ = function;
 

@@ -4,6 +4,7 @@ import android.os.AsyncTask
 import at.searles.commons.math.Cplx
 import at.searles.fractlang.FractlangProgram
 import at.searles.fractlang.interpreter.DebugCallback
+import at.searles.fractlang.interpreter.DebugException
 import at.searles.fractlang.interpreter.Interpreter
 import at.searles.fractlang.interpreter.PlotCallback
 import at.searles.fractlang.nodes.Node
@@ -36,6 +37,8 @@ class CalcOrbitTask(
                     }
                 }
             ))
+        } catch(e: DebugException) {
+            // there is an uninitialized variable.
         } catch(e: TaskCancelledException) { }
 
         return orbit

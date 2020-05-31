@@ -10,6 +10,7 @@ import kotlinx.android.parcel.Parcelize
 class FractSettings(
     val mode: Mode = FactorySettings.mode,
     val isRotationLock: Boolean = FactorySettings.factoryIsRotationLock,
+    val isCenterLock: Boolean = FactorySettings.factoryIsCenterLock,
     val isConfirmZoom: Boolean = FactorySettings.factoryIsConfirmZoom,
     val isGridEnabled: Boolean = FactorySettings.factoryIsGridEnabled,
     val excludeFromPaletteMode: List<String> = emptyList(),
@@ -18,11 +19,11 @@ class FractSettings(
 ) : Parcelable {
 
     fun withMode(mode: Mode): FractSettings {
-        return FractSettings(mode, isRotationLock, isConfirmZoom, isGridEnabled, excludeFromPaletteMode, width, height)
+        return FractSettings(mode, isRotationLock, isCenterLock, isConfirmZoom, isGridEnabled, excludeFromPaletteMode, width, height)
     }
 
     fun withSize(width: Int, height: Int): FractSettings {
-        return FractSettings(mode, isRotationLock, isConfirmZoom, isGridEnabled, excludeFromPaletteMode, width, height)
+        return FractSettings(mode, isRotationLock, isCenterLock, isConfirmZoom, isGridEnabled, excludeFromPaletteMode, width, height)
     }
 
     fun isExcludeFromPaletteMode(label: String, isChecked: Boolean): FractSettings {
@@ -30,6 +31,7 @@ class FractSettings(
             return FractSettings(
                 mode,
                 isRotationLock,
+                isCenterLock,
                 isConfirmZoom,
                 isGridEnabled,
                 excludeFromPaletteMode + label,
@@ -40,6 +42,7 @@ class FractSettings(
             return FractSettings(
                 mode,
                 isRotationLock,
+                isCenterLock,
                 isConfirmZoom,
                 isGridEnabled,
                 excludeFromPaletteMode - label,
