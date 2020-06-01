@@ -91,10 +91,10 @@ class Calculator {
 
     fun setLakeValues() {
         val lakePaletteIndex = putPalette(lakePaletteLabel, lakePaletteDescription, 4, 4,
-            [0, 0, #ffff0000], [1, 0, #ffffff00], [2, 0, #ff00aa22], [3, 0, #ff0000ff],
-            [0, 1, #ff000000], [1, 1, #ff000000], [2, 1, #ff000000], [3, 1, #ff000000],
-            [0, 2, #ffff0000], [1, 2, #ffffff00], [2, 2, #ff00aa22], [3, 2, #ff0000ff],
-            [0, 3, #ffffffff], [1, 3, #ffffffff], [2, 3, #ffffffff], [3, 3, #ffffffff]
+            [0, 0, #ff000000], [1, 0, #ff200080], [2, 0, #ffffffff], [3, 0, #ffffbb00],
+            [0, 1, #ff200080], [1, 1, #ff000000], [2, 1, #ffffbb00], [3, 1, #ffffffff],
+            [0, 2, #ffffffff], [1, 2, #ffffbb00], [2, 2, #ff000000], [3, 2, #ff200080],
+            [0, 3, #ffffbb00], [1, 3, #ffffffff], [2, 3, #ff200080], [3, 3, #ff000000]
         );
 
         extern lakeValue: lakeValueLabel = "log1p abs aggregateValue : argnorm aggregateValue";
@@ -127,10 +127,10 @@ class Calculator {
 
     fun setBailoutValues() {
         val paletteIndex = putPalette(bailoutPaletteLabel, bailoutPaletteDescription, 4, 4,
-            [0, 0, #ffff0000], [1, 0, #ffffff00], [2, 0, #ff00aa22], [3, 0, #ff0000ff],
-            [0, 1, #ff000000], [1, 1, #ff000000], [2, 1, #ff000000], [3, 1, #ff000000],
-            [0, 2, #ffff0000], [1, 2, #ffffff00], [2, 2, #ff00aa22], [3, 2, #ff0000ff],
-            [0, 3, #ffffffff], [1, 3, #ffffffff], [2, 3, #ffffffff], [3, 3, #ffffffff]
+            [0, 0, #ff000000], [1, 0, #ff200080], [2, 0, #ffffffff], [3, 0, #ffffbb00],
+            [0, 1, #ff200080], [1, 1, #ff000000], [2, 1, #ffffbb00], [3, 1, #ffffffff],
+            [0, 2, #ffffffff], [1, 2, #ffffbb00], [2, 2, #ff000000], [3, 2, #ff200080],
+            [0, 3, #ffffbb00], [1, 3, #ffffffff], [2, 3, #ff200080], [3, 3, #ff000000]
         );
 
         extern bailoutValue: bailoutValueLabel = "log1p abs aggregateValue : argnorm aggregateValue";

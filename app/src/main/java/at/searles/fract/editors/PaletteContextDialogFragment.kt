@@ -29,7 +29,7 @@ class PaletteContextDialogFragment: DialogFragment() {
         }
 
         val excludePaletteModeCheckBox = view.findViewById<CheckBox>(R.id.noPaletteModeCheckBox)!!
-        excludePaletteModeCheckBox.isChecked = (activity as FractMainActivity).getSettings().excludeFromPaletteMode.contains(label)
+        excludePaletteModeCheckBox.isChecked = (activity as FractMainActivity).getSettings().excludedFromPaletteList.contains(label)
 
         excludePaletteModeCheckBox.setOnCheckedChangeListener { _, isChecked ->
             val oldSettings = (activity as FractMainActivity).getSettings()

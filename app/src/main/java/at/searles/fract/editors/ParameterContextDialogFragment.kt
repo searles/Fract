@@ -14,6 +14,7 @@ import at.searles.fract.R
 import at.searles.fractlang.FractlangExpr
 import at.searles.fractlang.nodes.CplxNode
 import at.searles.fractlang.nodes.Node
+import kotlinx.android.synthetic.main.reset_context_dialog.*
 
 /**
  * Opens for now menu to reset a parameter.
@@ -22,6 +23,7 @@ class ParameterContextDialogFragment: DialogFragment() {
     private lateinit var key: String
     private lateinit var setToCenterButton: Button
     private lateinit var centerOnValueButton: Button
+    private lateinit var resetButton: Button
 
     @SuppressLint("InflateParams")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -43,6 +45,7 @@ class ParameterContextDialogFragment: DialogFragment() {
 
         setToCenterButton = view.findViewById(R.id.setToCenterButton)
         centerOnValueButton = view.findViewById(R.id.centerOnValueButton)
+        resetButton = view.findViewById(R.id.resetButton)
 
         if(cplxValue != null) {
             setToCenterButton.setOnClickListener {
@@ -57,6 +60,11 @@ class ParameterContextDialogFragment: DialogFragment() {
         } else {
             setToCenterButton.visibility = View.INVISIBLE
             centerOnValueButton.visibility = View.INVISIBLE
+        }
+
+        resetButton.setOnClickListener {
+            (activity as FractMainActivity).resetParameter(key)
+            dismiss()
         }
 
         return AlertDialog.Builder(activity!!)

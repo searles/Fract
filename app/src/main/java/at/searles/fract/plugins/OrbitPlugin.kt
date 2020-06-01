@@ -1,6 +1,5 @@
 package at.searles.fract.plugins
 
-import android.content.Context
 import android.content.res.Resources
 import android.graphics.Canvas
 import android.graphics.Paint
@@ -8,38 +7,67 @@ import android.graphics.PointF
 import android.graphics.RectF
 import android.util.TypedValue
 import at.searles.commons.math.Cplx
+import at.searles.fract.FractMainActivity
 import at.searles.fractbitmapmodel.FractBitmapModel
 import at.searles.fractimageview.PluginScalableImageView
 import at.searles.fractimageview.ScalableImageView
 
-class OrbitPlugin(context: Context, private val source: ScalableImageView): MotionPlugin() {
+class OrbitPlugin(private val activity: FractMainActivity, private val source: ScalableImageView): MotionPlugin() {
 
-    var path: List<PointF> = emptyList()
+    var orbit: List<Cplx> = emptyList()
+        set(value) {
+            field = value
+            updatePath()
+        }
+
+    private var path: List<PointF> = emptyList()
+        set(value) {
+            field = value
+            source.invalidate()
+        }
 
     override var isEnabled = false
         set(value) {
+            if(field == value) {
+                return
+            }
+
             field = value
-            updateOrbitIfEnabled()
+
+            if(field) {
+                path = emptyList()
+                startPoint?.let { createOrbit(it) }
+            }
         }
 
-    init {
-        source.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ -> updateOrbitIfEnabled() }
-    }
+    private var startPoint: Cplx?
+        set(value) {
+            val pt = activity.getSettings().orbitStartPoint
+
+            if(pt?.get(0) != value?.re() || pt?.get(1) != value?.im()) {
+                activity.setSettings(
+                    activity.getSettings().withOrbitStartPoint(value)
+                )
+            }
+        }
+        get() {
+            return activity.getSettings().orbitStartPoint?.let {
+                Cplx(it[0], it[1])
+            }
+        }
 
     override fun onLayoutChanged(source: PluginScalableImageView) {
-        updateOrbitIfEnabled()
+        updatePath()
     }
 
-    private fun updateOrbitIfEnabled() {
-        if(isEnabled && startPoint != null) {
-            path = emptyList()
-            createOrbit()
-        }
+    private fun updatePath() {
+        path = orbit.map { scaledPtToPixel(it) }
     }
 
     override fun movePointer(source: PluginScalableImageView) {
-        calcStartPoint()
-        createOrbit()
+        val pt = calculateStartPoint()
+        createOrbit(pt)
+        startPoint = pt
     }
 
     override fun deactivatePlugin() {
@@ -47,30 +75,28 @@ class OrbitPlugin(context: Context, private val source: ScalableImageView): Moti
     }
 
     override fun activatePlugin(source: PluginScalableImageView) {
-        calcStartPoint()
-        createOrbit()
+        val pt = calculateStartPoint()
+        createOrbit(pt)
+        startPoint = pt
     }
 
     private var bgTask: CalcOrbitTask? = null
-    private var startPoint: Cplx? = null
 
-    private fun calcStartPoint() {
+    private fun calculateStartPoint(): Cplx {
         val bm = source.bitmapModel as FractBitmapModel
-
         val normPt = source.norm(PointF(currentTouchX, currentTouchY))
-
         val scaledPt = bm.properties.scale.scalePoint(normPt.x.toDouble(), normPt.y.toDouble(), DoubleArray(2))
 
-        startPoint = Cplx(scaledPt[0], scaledPt[1])
+         return Cplx(scaledPt[0], scaledPt[1])
     }
 
-    private fun createOrbit() {
+    private fun createOrbit(startPt: Cplx) {
         bgTask?.cancel(false)
 
         val bm = source. bitmapModel as FractBitmapModel
 
         bgTask = CalcOrbitTask(
-            startPoint!!,
+            startPt,
             bm.properties.program,
             this
         ).apply {
@@ -78,25 +104,32 @@ class OrbitPlugin(context: Context, private val source: ScalableImageView): Moti
         }
     }
 
+    fun calculateOrbit() {
+        path = emptyList()
+        startPoint?.let {
+            createOrbit(it)
+        }
+    }
+
     private fun scaledPtToPixel(c: Cplx): PointF {
         val bm = source. bitmapModel as FractBitmapModel
-
         val normPt = bm.properties.scale.invScalePoint(c.re(), c.im(), DoubleArray(2))
-
         return source.invNorm(PointF(normPt[0].toFloat(), normPt[1].toFloat()))
     }
 
     override fun onDraw(source: PluginScalableImageView, canvas: Canvas) {
-        val rect = RectF(-source.width.toFloat(), -source.height.toFloat(),
-            2f * source.width.toFloat(), 2 * source.height.toFloat())
+        val startPt = startPoint ?: return
 
-        val path = this.path
-
-        if(startPoint == null || path.isEmpty()) {
+        if(path.isEmpty()) {
             return
         }
 
-        val startPointCoords = scaledPtToPixel(startPoint!!)
+        val path = this.path
+
+        val showPointsBounds = RectF(-source.width.toFloat(), -source.height.toFloat(),
+            2f * source.width.toFloat(), 2 * source.height.toFloat())
+
+        val startPointCoords = scaledPtToPixel(startPt)
 
         canvas.drawCircle(startPointCoords.x, startPointCoords.y, widthPx * 2, blackFillPaint)
         canvas.drawCircle(startPointCoords.x, startPointCoords.y, widthPx * 2, whitePaint)
@@ -104,7 +137,7 @@ class OrbitPlugin(context: Context, private val source: ScalableImageView): Moti
         var pt0 = path.first()
 
         path.drop(1).forEach {
-            if(rect.contains(pt0.x, pt0.y) || rect.contains(it.x, it.y)) {
+            if(showPointsBounds.contains(pt0.x, pt0.y) || showPointsBounds.contains(it.x, it.y)) {
                 canvas.drawLine(pt0.x, pt0.y, it.x, it.y, blackBoldPaint)
                 canvas.drawLine(pt0.x, pt0.y, it.x, it.y, whitePaint)
             }
@@ -131,12 +164,7 @@ class OrbitPlugin(context: Context, private val source: ScalableImageView): Moti
         )
     }
 
-    fun setOrbit(orbit: List<Cplx>) {
-        path = orbit.map { scaledPtToPixel(it) }
-        source.invalidate()
-    }
-
-    private val widthPx = dpToPx(widthDp, context.resources)
+    private val widthPx = dpToPx(widthDp, activity.resources)
 
     private val blackBoldPaint = Paint().apply {
         color = 0x80000000.toInt() // semi-transparent black

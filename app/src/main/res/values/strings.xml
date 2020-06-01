@@ -50,6 +50,7 @@
     <string name="editScaleOnScreen">Scale</string>
     <string name="editLightDirectionOnScreen">Light Direction</string>
     <string name="editPaletteOffsetOnScreen">Palette Offset</string>
+    <string name="editOrbitOnScreen">Show Orbits</string>
     <string name="noneOnScreen">None</string>
     <string name="customResolution">Custom</string>
     <string name="mode">Mode</string>

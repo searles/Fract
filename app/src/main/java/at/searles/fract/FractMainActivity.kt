@@ -592,8 +592,10 @@ class FractMainActivity : AppCompatActivity(), StorageEditorCallback<FavoriteEnt
     }
 
     override fun propertiesChanged(src: FractBitmapModel) {
-        // TODO Mediator
         parameterAdapter.updateFrom(src)
+        if(orbitPlugin.isEnabled) {
+            orbitPlugin.calculateOrbit()
+        }
     }
 
     override fun setProgress(progress: Float) {

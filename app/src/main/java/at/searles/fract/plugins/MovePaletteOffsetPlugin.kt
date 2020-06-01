@@ -25,7 +25,7 @@ class MovePaletteOffsetPlugin(private val settings: () -> FractSettings, private
 
     override fun activatePlugin(source: PluginScalableImageView) {
         palettes = bitmapModel().properties.paletteLabels.filter {
-            !settings().excludeFromPaletteMode.contains(it)
+            !settings().excludedFromPaletteList.contains(it)
         }.map { it to bitmapModel().properties.getPalette(it) }.toMap()
 
         bitmapModel().startAnimation(720) // TODO

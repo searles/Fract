@@ -45,7 +45,7 @@ class CalcOrbitTask(
     }
 
     override fun onPostExecute(result: List<Cplx>) {
-        parent.setOrbit(result)
+        parent.orbit = result
     }
 
     private class TaskCancelledException: RuntimeException()

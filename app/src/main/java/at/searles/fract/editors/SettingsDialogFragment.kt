@@ -21,6 +21,7 @@ class SettingsDialogFragment: DialogFragment() {
     private lateinit var centerLockCheckBox: CheckBox
     private lateinit var lightRadioButton: RadioButton
     private lateinit var paletteRadioButton: RadioButton
+    private lateinit var orbitRadioButton: RadioButton
     private lateinit var showGridCheckBox: CheckBox
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -37,6 +38,7 @@ class SettingsDialogFragment: DialogFragment() {
         showGridCheckBox = view.findViewById(R.id.showGridCheckBox)!!
         lightRadioButton = view.findViewById(R.id.lightRadioButton)!!
         paletteRadioButton = view.findViewById(R.id.paletteRadioButton)!!
+        orbitRadioButton = view.findViewById(R.id.orbitRadioButton)!!
 
         initializeFields(savedInstanceState)
 
@@ -61,6 +63,7 @@ class SettingsDialogFragment: DialogFragment() {
             confirmZoomCheckBox.isChecked = settings.isConfirmZoom
             lightRadioButton.isChecked = settings.mode == FractSettings.Mode.Light
             paletteRadioButton.isChecked = settings.mode == FractSettings.Mode.Palette
+            orbitRadioButton.isChecked = settings.mode == FractSettings.Mode.Orbit
             showGridCheckBox.isChecked = settings.isGridEnabled
         }
     }
@@ -71,6 +74,7 @@ class SettingsDialogFragment: DialogFragment() {
                 scaleRadioButton.isChecked -> FractSettings.Mode.Scale
                 lightRadioButton.isChecked -> FractSettings.Mode.Light
                 paletteRadioButton.isChecked -> FractSettings.Mode.Palette
+                orbitRadioButton.isChecked -> FractSettings.Mode.Orbit
                 else -> FractSettings.Mode.None
             }
 
