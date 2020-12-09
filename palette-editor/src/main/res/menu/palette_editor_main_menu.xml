@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/returnAction"
+        android:icon="@drawable/ic_return"
+        android:title="@string/returnPalette"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/openStorageAction"
+        android:title="@string/open"
+        android:icon="@drawable/ic_open"/>
+    <item
+        android:id="@+id/saveAction"
+        android:title="@string/save"
+        android:icon="@drawable/ic_save"
+        />
+    <item
+        android:id="@+id/saveAsAction"
+        android:title="@string/saveAs"
+        android:icon="@drawable/ic_save_as"
+        />
+</menu>

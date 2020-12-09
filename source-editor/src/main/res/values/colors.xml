@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="base03Color">#002b36</color>
+    <color name="base02Color">#073642</color>
+    <color name="base01Color">#586e75</color>
+    <color name="base00Color">#657b83</color>
+    <color name="base0Color">#839496</color>
+    <color name="base1Color">#93a1a1</color>
+    <color name="base2Color">#eee8d5</color>
+    <color name="base3Color">#fdf6e3</color>
+    <color name="yellowTextColor">#b58900</color>
+    <color name="orangeTextColor">#cb4b16</color>
+    <color name="redTextColor">#dc322f</color>
+    <color name="magentaTextColor">#d33682</color>
+    <color name="violetTextColor">#6c71c4</color>
+    <color name="blueTextColor">#268bd2</color>
+    <color name="cyanTextColor">#2aa198</color>
+    <color name="greenTextColor">#859900</color>
+    <color name="redBackgroundColor">#30dc322f</color>
+</resources>

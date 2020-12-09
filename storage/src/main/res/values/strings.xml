@@ -1,0 +1,29 @@
+<resources>
+    <string name="importItems">Import</string>
+    <string name="rename">Rename</string>
+    <string name="export">Export</string>
+    <string name="delete">Delete</string>
+    <string name="newName">New name</string>
+    <string name="share">Share</string>
+    <string name="couldNotRenameX">Could not rename to \"%s\"</string>
+    <string name="discardChangesQuestion">Discard changes and open \"%s\"?</string>
+    <string name="unsavedChanges">Unsaved changes</string>
+    <string name="xExistsInY">\"%s\" already exists in \"%s\"</string>
+    <string name="errorWithMsg">Error: %s</string>
+    <string name="deleteFailForNItems">Could not delete %d items</string>
+    <string name="returnWithoutSavingQuestion">Return item without saving?</string>
+    <string name="cancelWithoutSavingQuestion">Discard changes and close?</string>
+    <string name="search">Search</string>
+    <string name="cannotSaveBecauseNoName">Cannot save because no name has been provided</string>
+    <string name="saveInXAs">Save in \"%s\" as</string>
+    <string name="icon">icon</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+    <string name="xAlreadyExistsInY">\"%s\" already exists in \"%s\"</string>
+    <string name="skip">Skip</string>
+    <string name="appendIndexName">Append index (save as \"%s\")</string>
+    <string name="overwriteExisting">Replace existing</string>
+    <string name="applyToAll">Apply to all existing items</string>
+    <string name="nothingImported">No elements were imported</string>
+    <string name="appendIndexToX">Append index (save as \"%s\")</string>
+</resources>

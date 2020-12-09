@@ -1,0 +1,12 @@
+<!--?xml version="1.0" encoding="UTF-8"?-->
+
+<!-- from Solarized - Ethan Schoonover -->
+
+<resources>
+  <color name="primaryColor">#1a237e</color>
+  <color name="primaryLightColor">#534bae</color>
+  <color name="primaryDarkColor">#000051</color>
+  <color name="secondaryColor">#ffa000</color>
+  <color name="secondaryLightColor">#ffd149</color>
+  <color name="secondaryDarkColor">#c67100</color>
+</resources>

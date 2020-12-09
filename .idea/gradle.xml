@@ -1,18 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="GradleMigrationSettings" migrationVersion="1" />
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
+        <option name="delegatedBuild" value="true" />
+        <option name="testRunner" value="PLATFORM" />
         <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="gradleJvm" value="#JAVA_HOME" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/color-picker" />
+            <option value="$PROJECT_DIR$/fract-bitmap-model" />
+            <option value="$PROJECT_DIR$/fract-bitmap-model-demo" />
+            <option value="$PROJECT_DIR$/fractlang" />
+            <option value="$PROJECT_DIR$/item-selector" />
+            <option value="$PROJECT_DIR$/item-selector-demo" />
+            <option value="$PROJECT_DIR$/palette-editor" />
+            <option value="$PROJECT_DIR$/palette-editor-demo" />
+            <option value="$PROJECT_DIR$/scalable-imageview" />
+            <option value="$PROJECT_DIR$/scalable-imageview-demo" />
+            <option value="$PROJECT_DIR$/source-editor" />
+            <option value="$PROJECT_DIR$/source-editor-demo" />
+            <option value="$PROJECT_DIR$/storage" />
+            <option value="$PROJECT_DIR$/utils" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
-        <option name="testRunner" value="PLATFORM" />
       </GradleProjectSettings>
     </option>
   </component>

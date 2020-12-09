@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">SourceEditor</string>
+    <string name="save">Save</string>
+    <string name="saveAs">Save as</string>
+    <string name="open">Open</string>
+    <string name="filename">Filename</string>
+    <string name="editor">Editor</string>
+</resources>

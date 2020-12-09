@@ -1,0 +1,10 @@
+<resources>
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.NoActionBar">
+        <item name="colorPrimary">@color/primaryColor</item> <!-- background title bar -->
+        <item name="colorPrimaryDark">@color/primaryDarkColor</item> <!-- background status bar -->
+        <item name="colorAccent">@color/secondaryColor</item> <!-- used for eg cursor color. light version is text selection-->
+        <item name="android:actionModeBackground">@color/primaryLightColor</item> <!-- Background of title bar in action mode. Must be a link -->
+        <item name="windowActionModeOverlay">true</item>
+    </style>
+</resources>

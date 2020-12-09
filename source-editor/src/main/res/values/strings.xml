@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">SourceEditor</string>
+    <string name="saveAs">Save as</string>
+    <string name="save">Save</string>
+    <string name="open">Open</string>
+    <string name="filename">Filename</string>
+    <string name="editor">Editor</string>
+    <string name="compile">Compile</string>
+    <string name="format">Format</string>
+    <string name="returnProgram">Return</string>
+    <string name="resetParameters">Reset Parameters</string>
+    <string name="successfullyCompiled">Program was compiled successfully</string>
+    <string name="untitled">(untitled)</string>
+    <string name="lastModifiedOnX">last modified: %s</string>
+</resources>

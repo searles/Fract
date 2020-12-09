@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">PaletteEditor</string>
+    <string name="filename">Filename</string>
+    <string name="save">Save</string>
+    <string name="saveAs">Save as</string>
+    <string name="openPalette">Open Palette</string>
+    <string name="returnPalette">Return</string>
+    <string name="untitled">(untitled)</string>
+    <string name="open">Open</string>
+</resources>
