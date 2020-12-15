@@ -33,7 +33,7 @@ dependencies {
     testImplementation 'junit:junit:4.13'
     implementation 'com.google.android.material:material:1.2.1'
     implementation project(':fractlang')
-    implementation 'com.github.searles:parsing:2.9.38'
+    implementation 'com.github.searles:parsing:2.9.90'
     implementation project(':storage')
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'

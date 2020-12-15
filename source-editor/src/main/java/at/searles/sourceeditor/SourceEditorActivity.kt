@@ -17,9 +17,9 @@ import at.searles.android.storage.StorageManagerActivity
 import at.searles.android.storage.data.StorageProvider
 import at.searles.fractlang.FractlangProgram
 import at.searles.fractlang.extensions.FractlangObserver
-import at.searles.fractlang.parsing.FractlangFormatter
 import at.searles.fractlang.parsing.FractlangGrammar
 import at.searles.fractlang.semanticanalysis.SemanticAnalysisException
+import at.searles.parsing.format.CodeFormatter
 import at.searles.sourceeditor.storage.SourceEditorStorageEditor
 
 // XXX Next developments:
@@ -172,7 +172,7 @@ class SourceEditorActivity : StorageEditorCallback<String>, AppCompatActivity() 
     }
 
     private fun formatCode() {
-        FractlangFormatter.format(EditTextAdapter(sourceCodeEditor.editableText))
+        CodeFormatter(FractlangGrammar.program, FractlangGrammar.whiteSpaceId).format(EditTextAdapter(sourceCodeEditor.editableText))
     }
 
     private fun tryCompile(): Boolean {

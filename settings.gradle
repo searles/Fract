@@ -1,6 +1,7 @@
 include ':utils'
 include ':fractlang'
 include ':color-picker'
+include ':color-picker-demo'
 include ':fract-bitmap-model'
 include ':fract-bitmap-model-demo'
 include ':palette-editor'
