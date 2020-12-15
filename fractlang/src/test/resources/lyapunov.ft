@@ -1,0 +1,103 @@
+// Labels of of extern parameters
+val maxIterationLabel = "Maximum Iteration Count";
+val functionLabel = "Function (z[n])";
+val z0Label = "Start Value (z[0])";
+val lyapunovStringLabel = "Lyapunov String (as list)";
+val breakBoundLabel = "Break Bound for Lyapunov Exponent";
+
+val plusValueLabel = "Plus Value";
+val plusColorValueLabel = "Plus Color Value";
+val plusHeightLabel = "Plus Height";
+val plusPaletteLabel = "Plus Palette";
+
+val minusValueLabel = "Minus Value";
+val minusColorValueLabel = "Minus Color Value";
+val minusHeightLabel = "Minus Height";
+val minusPaletteLabel = "Minus Palette";
+
+setScale(2, 0, 0, 2, 0, 0); // Default Scale
+
+class Calculator {
+    extern maxIteration: maxIterationLabel = "250";
+
+    var n: Int = 0; // count iterations
+    var z: Real;
+
+    var lyapunovExp: Real;
+
+    var a: Real;
+    var b: Real;
+
+    fun init() {
+        var pt = point;
+
+        a = re pt;
+        b = im pt;
+
+        extern z0: z0Label = "0.5";
+        z = z0;
+
+        lyapunovExp = diff(z0, z);
+    }
+
+
+    /*
+    * Performs one full calculation step
+    * z, lastZ and n are modified.
+    * true is returned if none of the break conditions succeeds.
+    */
+    fun step() {
+        extern lyapunovString: lyapunovStringLabel = "[a,a,a,a,b,b,b,b]";
+        extern function: functionLabel = "r * z * (1 - z)";
+
+        var r: Real = lyapunovString[n];
+
+        z = function;
+
+        lyapunovExp = lyapunovExp + log abs diff(function, z);
+    }
+
+    fun isBreak() {
+        extern breakBound: breakBoundLabel = "1e-9";
+
+        if(not next(maxIteration, n) or abs lyapunovExp / n > breakBound) {
+            lyapunovExp = lyapunovExp / n;
+
+            if(lyapunovExp > 0) {
+                val plusPaletteIndex = addPalette(plusPaletteLabel, 3, 1,
+                            [0, 0, #ff000000], [1, 0, #ffffdd22], [2, 0, #ffffffff]);
+
+                extern plusValue: plusValueLabel = "sqrt(atan(-lyapunovExp) (2 / pi))";
+
+                var value = plusValue;
+
+                extern plusColorValue: plusColorValueLabel = "value";
+                extern plusHeight: plusHeightLabel = "value";
+
+                setResult(plusPaletteIndex, plusColorValue, plusHeight);
+            } else {
+                val minusPaletteIndex = addPalette(minusPaletteLabel, 2, 1,
+                            [0, 0, #ff4400aa], [1, 0, #ffccaaff]);
+
+                extern minusValue: minusValueLabel = "lyapunovExp";
+                extern minusColorValue: minusColorValueLabel = "value";
+                extern minusHeight: minusHeightLabel = "0";
+
+                setResult(minusPaletteIndex, plusColorValue, plusHeight);
+            }
+
+            true
+        } else {
+            false
+        }
+    }
+}
+
+val calculator = Calculator();
+
+calculator.init();
+
+while ({
+    calculator.step();
+    not calculator.isBreak()
+}) {}

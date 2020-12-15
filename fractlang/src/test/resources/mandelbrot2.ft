@@ -1,0 +1,140 @@
+// Labels of of extern parameters
+val maxIterationLabel = "Maximum Iteration Count";
+val functionLabel = "Function (z[n])";
+val maxExponentLabel = "Maximum Exponent";
+val isJuliaSetLabel = "Julia Set";
+val juliaSetParameterLabel = "Julia Set Parameter";
+val z0Label = "Start Value (z[0])";
+val useBailoutLabel = "Use Bailout (unset for eg Newton Fractals)";
+val bailoutRadiusLabel = "Bailout Radius";
+val bailoutValueLabel = "Bailout Value";
+val bailoutColorValueLabel = "Bailout Color Value";
+val bailoutHeightLabel = "Bailout Height";
+val bailoutPaletteLabel = "Bailout Palette";
+val epsilonRadiusLabel = "Epsilon Radius";
+val lakeValueLabel = "Lake Value";
+val lakeColorValueLabel = "Lake Color Value";
+val lakeHeightLabel = "Lake Height";
+val lakePaletteLabel = "Lake Palette";
+
+setScale(2, 0, 0, 2, 0, 0); // Default Scale
+
+class Calculator {
+    extern maxIteration: maxIterationLabel = "250";
+
+    var n: Int = 0; // count iterations
+    var c: Cplx;    // parameter
+    var z: Cplx;
+    var lastZ: Cplx = 0:0; // z[n-1]
+    var nextZ: Cplx; // z[n+1]
+    var radZ: Real; // |z[n]|
+    var dz: Cplx;   // z[n+1] - z[n]
+    var radDz: Real; //  |dz|
+
+    fun init() {
+        extern isJuliaSet: isJuliaSetLabel = "false";
+        c = if(isJuliaSet) {
+            extern juliaSetParameter: juliaSetParameterLabel = "-0.75: 0.25";
+            juliaSetParameter
+        } else {
+            point;
+        }
+
+        z = if(isJuliaSet) {
+            point
+        } else {
+            extern z0: z0Label = "0";
+            z0;
+        }
+    }
+
+    /*
+    * Performs one full calculation step
+    * z, lastZ and n are modified.
+    * true is returned if none of the break conditions succeeds.
+    */
+    fun step() {
+        extern function: functionLabel = "z^2 + c";
+        nextZ = function;
+
+        radZ = rad nextZ;
+        dz = nextZ - z;
+        radDz = rad dz;
+    }
+
+    fun advance() {
+        lastZ = z;
+        z = nextZ;
+    }
+
+    val lakePaletteIndex = addPalette(lakePaletteLabel, 1, 1, [0, 0, #ff000000]);
+
+    extern lakeValue: lakeValueLabel = "radDz : radZ";
+    extern lakeColorValue: lakeColorValueLabel = "value";
+    extern lakeHeight: lakeHeightLabel = "re value";
+
+    fun isMaxIteration() {
+        if(not next(maxIteration, n)) {
+            var value = lakeValue;
+            setResult(lakePaletteIndex, lakeColorValue, lakeHeight);
+            true
+        } else {
+            false
+        }
+    }
+
+    fun isEpsilon() {
+        extern epsilonRadius: epsilonRadiusLabel = "1e-9";
+
+        if(radDz < epsilonRadius) {
+            var value = lakeValue;
+            setResult(0, lakeColorValue, lakeHeight);
+
+            true
+        } else {
+            false
+        }
+    }
+
+    extern useBailout: useBailoutLabel = "true";
+
+    fun isBailout() {
+        val paletteIndex = addPalette(bailoutPaletteLabel, 6, 1,
+            [0, 0, #ff000000], [1, 0, #ff4400aa], [5, 0, #ff4400aa], [2, 0, #ffffdd22], [4, 0, #ffffdd22], [3, 0, #ffffffff]);
+
+        extern bailoutRadius: bailoutRadiusLabel = "64";
+
+        if(radZ >= bailoutRadius) {
+            extern maxExponent: maxExponentLabel = "2";
+
+            // smoothness value for fractal polynoms
+            var continuousAddend =
+                1 - log(log radZ / log bailoutRadius) / log maxExponent;
+
+            extern bailoutValue: bailoutValueLabel = "log(n + continuousAddend + 20.08)";
+            extern bailoutColorValue: bailoutColorValueLabel = "value";
+            extern bailoutHeight: bailoutHeightLabel = "re value";
+
+            var value = bailoutValue;
+            setResult(paletteIndex, bailoutColorValue, bailoutHeight);
+
+            true
+        } else {
+            false
+        }
+    }
+
+    fun isBreak() {
+        useBailout and isBailout() or
+        isEpsilon() or
+        isMaxIteration()
+    }
+}
+
+val calculator = Calculator();
+
+calculator.init();
+
+while (not calculator.isBreak()) {
+    calculator.advance()
+}
